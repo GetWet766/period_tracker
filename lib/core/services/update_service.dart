@@ -54,7 +54,7 @@ class UpdateService {
         final version = tagName.replaceFirst('v', '');
 
         if (_isNewerVersion(version, currentVersion)) {
-          final downloadUrl = _getDownloadUrl(release);
+          final downloadUrl = _getDownloadUrl(release as Map<String, dynamic>);
           if (downloadUrl == null) continue;
 
           return AppUpdate(
