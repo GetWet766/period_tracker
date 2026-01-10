@@ -1,21 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:period_tracker/core/injection/di.dart';
 import 'package:period_tracker/core/router/router.dart';
+import 'package:period_tracker/features/auth/presentation/cubit/auth_cubit.dart';
 
-class PeriodTracker extends StatelessWidget {
+class PeriodTracker extends StatefulWidget {
   const PeriodTracker({super.key});
 
   @override
+  State<PeriodTracker> createState() => _PeriodTrackerState();
+}
+
+class _PeriodTrackerState extends State<PeriodTracker> {
+  late final AuthCubit _authCubit;
+  late final AppRouter _appRouter;
+
+  @override
+  void initState() {
+    super.initState();
+    _authCubit = sl<AuthCubit>()..checkAuthStatus();
+    _appRouter = AppRouter(_authCubit);
+  }
+
+  @override
+  Future<void> dispose() async {
+    await _authCubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(
+          value: _authCubit,
+        ),
+      ],
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
 
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.pink)),
-      darkTheme: ThemeData(
-        brightness: .dark,
-        colorScheme: .fromSeed(brightness: .dark, seedColor: Colors.pink),
+        theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.pink)),
+        darkTheme: ThemeData(
+          brightness: .dark,
+          colorScheme: .fromSeed(brightness: .dark, seedColor: Colors.pink),
+        ),
+
+        routerConfig: _appRouter.config,
       ),
-
-      routerConfig: AppRouter().config,
     );
   }
 }

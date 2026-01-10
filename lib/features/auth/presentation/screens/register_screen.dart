@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:period_tracker/core/common/widgets/tracker_app_bar.dart';
 
-class PartnerLoginScreen extends StatefulWidget {
-  const PartnerLoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<PartnerLoginScreen> createState() => _PartnerLoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _PartnerLoginScreenState extends State<PartnerLoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _codeController = TextEditingController();
   bool _isLoading = false;
 

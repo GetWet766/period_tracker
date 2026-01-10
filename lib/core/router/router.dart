@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:period_tracker/core/common/widgets/scaffold_navigation.dart';
+import 'package:period_tracker/core/router/go_router_refresh_stream.dart';
+import 'package:period_tracker/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:period_tracker/features/auth/presentation/cubit/auth_state.dart';
+import 'package:period_tracker/features/auth/presentation/screens/login_screen.dart';
+import 'package:period_tracker/features/auth/presentation/screens/register_screen.dart';
 import 'package:period_tracker/features/calendar/presentation/screens/calendar_screen.dart';
 import 'package:period_tracker/features/care/presentation/screens/care_screen.dart';
 import 'package:period_tracker/features/home/presentation/screens/home_screen.dart';
 import 'package:period_tracker/features/learn/presentation/screens/learn_list_screen.dart';
 import 'package:period_tracker/features/learn/presentation/screens/learn_post_screen.dart';
-import 'package:period_tracker/features/onboarding/presentation/screens/partner_login_screen.dart';
+import 'package:period_tracker/features/auth/presentation/screens/partner_login_screen.dart';
 import 'package:period_tracker/features/onboarding/presentation/screens/partner_screen.dart';
 import 'package:period_tracker/features/onboarding/presentation/screens/quiz_screen.dart';
 import 'package:period_tracker/features/onboarding/presentation/screens/welcome_screen.dart';
@@ -15,11 +20,46 @@ import 'package:period_tracker/features/profile/presentation/screens/edit_profil
 import 'package:period_tracker/features/profile/presentation/screens/profile_screen.dart';
 
 class AppRouter {
-  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  AppRouter(this._authCubit);
+  final AuthCubit _authCubit;
 
-  static final GoRouter _config = GoRouter(
-    initialLocation: '/welcome',
+  final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+
+  late final GoRouter _config = GoRouter(
     navigatorKey: _rootNavigatorKey,
+    initialLocation: '/welcome',
+
+    refreshListenable: GoRouterRefreshStream(_authCubit.stream),
+    redirect: (context, state) {
+      final authState = _authCubit.state;
+
+      final isLoading = authState.maybeWhen(
+        initial: () => true,
+        loading: () => true,
+        orElse: () => false,
+      );
+      final isLoggedIn = authState.maybeWhen(
+        authenticated: (_) => true,
+        orElse: () => false,
+      );
+      final isSplash = state.matchedLocation == '/welcome';
+      final isLoggingIn = state.matchedLocation == '/login';
+      final isSigningUp = state.matchedLocation == '/register';
+
+      if (isLoading) {
+        return '/welcome';
+      }
+
+      if (!isLoggedIn && !isLoggingIn && !isSigningUp) {
+        return '/login';
+      }
+
+      if (isLoggedIn && (isLoggingIn || isSigningUp || isSplash)) {
+        return '/home';
+      }
+
+      return null;
+    },
     routes: [
       GoRoute(
         path: '/welcome',
@@ -42,6 +82,14 @@ class AppRouter {
       GoRoute(
         path: '/partner-login',
         builder: (context, state) => const PartnerLoginScreen(),
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
       ),
       GoRoute(
         path: '/profile',
