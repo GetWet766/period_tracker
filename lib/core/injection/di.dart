@@ -40,7 +40,7 @@ final GetIt sl = GetIt.I;
 
 class DependencyInjection {
   static Future<void> init() async {
-    await dotenv.load();
+    await dotenv.load(fileName: 'dotenv');
 
     // Core Services
     final prefs = await SharedPreferences.getInstance();
