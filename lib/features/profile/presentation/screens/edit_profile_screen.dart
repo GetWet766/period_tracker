@@ -3,13 +3,13 @@ import 'package:period_tracker/core/common/widgets/tracker_app_bar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({
-    required this.userName,
-    this.birthDate,
+    this.displayName,
+    this.birthday,
     super.key,
   });
 
-  final String userName;
-  final DateTime? birthDate;
+  final String? displayName;
+  final DateTime? birthday;
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -22,8 +22,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.userName);
-    _birthDate = widget.birthDate;
+    _nameController = TextEditingController(text: widget.displayName);
+    _birthDate = widget.birthday;
   }
 
   @override
@@ -35,7 +35,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
-    final textTheme = TextTheme.of(context);
 
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainerLow,
@@ -177,8 +176,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _save() {
     Navigator.pop(context, {
-      'name': _nameController.text,
-      'birthDate': _birthDate,
+      'displayName': _nameController.text,
+      'birthday': _birthDate,
     });
   }
 

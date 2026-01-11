@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:period_tracker/core/common/widgets/tracker_app_bar.dart';
 import 'package:period_tracker/features/auth/presentation/cubit/auth_cubit.dart';
 
@@ -132,7 +133,27 @@ class _LoginScreenState extends State<LoginScreen> {
                           )
                         : const Text('Войти'),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
+                  FilledButton.tonal(
+                    onPressed: () async {
+                      await context.push('/auth/register');
+                    },
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size.fromHeight(56),
+                    ),
+                    child: const Text('Зарегистрироваться'),
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () {
+                      context.read<AuthCubit>().continueAsGuest();
+                      context.go('/welcome/quiz/0');
+                    },
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size.fromHeight(48),
+                    ),
+                    child: const Text('Продолжить без аккаунта'),
+                  ),
                 ],
               ),
             ),

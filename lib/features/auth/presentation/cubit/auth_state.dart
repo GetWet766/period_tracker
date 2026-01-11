@@ -11,8 +11,10 @@ class AuthState with _$AuthState {
   const factory AuthState.loading() = _Loading;
   // Пользователь авторизован
   const factory AuthState.authenticated(UserEntity user) = _Authenticated;
-  // Пользователь не авторизован (гость)
+  // Пользователь не авторизован
   const factory AuthState.unauthenticated() = _Unauthenticated;
+  // Гостевой режим (без аккаунта)
+  const factory AuthState.guest() = _Guest;
   // Ошибка
   const factory AuthState.error(String message) = _Error;
 }

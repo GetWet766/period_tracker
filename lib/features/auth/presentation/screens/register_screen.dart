@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:period_tracker/core/common/widgets/tracker_app_bar.dart';
+import 'package:period_tracker/features/auth/presentation/cubit/auth_cubit.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -9,12 +11,18 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _codeController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _passwordConfirmController = TextEditingController();
+  final _nameController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _codeController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _passwordConfirmController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -27,7 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: colorScheme.surfaceContainerLow,
       body: CustomScrollView(
         slivers: [
-          const TrackerAppBar(title: Text('Войти как партнёр')),
+          const TrackerAppBar(title: Text('Регистрация')),
           SliverFillRemaining(
             hasScrollBody: false,
             fillOverscroll: true,
@@ -53,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.people,
+                        Icons.person_rounded,
                         size: 40,
                         color: colorScheme.onSecondaryContainer,
                       ),
@@ -61,7 +69,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Присоединитесь к партнёру',
+                    'Зарегистрируйтесь для получения преимуществ',
                     textAlign: TextAlign.center,
                     style: textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -69,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Введите код приглашения, который вам отправил партнёр, чтобы видеть календарь цикла',
+                    'После входа в аккаунт Вам станут доступны функции: отслеживание цикла с партнером, синхронизация и сохранение информации о Вашем цикле и многое другое.',
                     textAlign: TextAlign.center,
                     style: textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurfaceVariant,
@@ -77,31 +85,82 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 32),
                   TextField(
-                    controller: _codeController,
+                    controller: _emailController,
                     decoration: InputDecoration(
-                      labelText: 'Код приглашения',
-                      hintText: 'XXXX-XXXX',
+                      labelText: 'Эл. почта',
+                      hintText: 'example@mail.com',
                       filled: true,
                       fillColor: colorScheme.surfaceContainerLow,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide.none,
                       ),
-                      prefixIcon: const Icon(Icons.vpn_key),
+                      prefixIcon: const Icon(Icons.mail_outline_rounded),
                     ),
-                    textCapitalization: TextCapitalization.characters,
-                    textAlign: TextAlign.center,
-                    style: textTheme.titleLarge?.copyWith(
-                      letterSpacing: 4,
-                    ),
+                    keyboardType: .emailAddress,
+                    textAlign: TextAlign.left,
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 16),
-                  _buildInfoCard(context),
+                  TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: 'Имя',
+                      hintText: 'Александра',
+                      filled: true,
+                      fillColor: colorScheme.surfaceContainerLow,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      prefixIcon: const Icon(Icons.mail_outline_rounded),
+                    ),
+                    keyboardType: .emailAddress,
+                    textAlign: TextAlign.left,
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    obscureText: true,
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Пароль',
+                      hintText: '*******',
+                      filled: true,
+                      fillColor: colorScheme.surfaceContainerLow,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      prefixIcon: const Icon(Icons.lock_outline_rounded),
+                    ),
+                    keyboardType: .visiblePassword,
+                    textAlign: TextAlign.left,
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    obscureText: true,
+                    controller: _passwordConfirmController,
+                    decoration: InputDecoration(
+                      labelText: 'Подтверждение пароля',
+                      hintText: '*******',
+                      filled: true,
+                      fillColor: colorScheme.surfaceContainerLow,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      prefixIcon: const Icon(Icons.lock_outline_rounded),
+                    ),
+                    keyboardType: .visiblePassword,
+                    textAlign: TextAlign.left,
+                    onChanged: (_) => setState(() {}),
+                  ),
                   const Spacer(),
                   FilledButton(
-                    onPressed: _codeController.text.length >= 4 && !_isLoading
-                        ? _joinPartner
+                    onPressed: _emailController.text.length >= 4 && !_isLoading
+                        ? _signUp
                         : null,
                     style: FilledButton.styleFrom(
                       minimumSize: const Size.fromHeight(56),
@@ -112,9 +171,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             height: 24,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Присоединиться'),
+                        : const Text('Зарегистрироваться'),
                   ),
-                  const SizedBox(height: 16),
                 ],
               ),
             ),
@@ -124,60 +182,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildInfoCard(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    final textTheme = TextTheme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Что вы сможете видеть:',
-            style: textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildInfoItem(context, Icons.calendar_today, 'Календарь цикла'),
-          const SizedBox(height: 8),
-          _buildInfoItem(context, Icons.water_drop, 'Фазы менструации'),
-          const SizedBox(height: 8),
-          _buildInfoItem(context, Icons.mood, 'Прогноз самочувствия'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoItem(BuildContext context, IconData icon, String text) {
-    final colorScheme = ColorScheme.of(context);
-    final textTheme = TextTheme.of(context);
-
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: colorScheme.primary),
-        const SizedBox(width: 12),
-        Text(text, style: textTheme.bodyMedium),
-      ],
-    );
-  }
-
-  Future<void> _joinPartner() async {
+  Future<void> _signUp() async {
     setState(() => _isLoading = true);
 
-    // Имитация запроса
-    await Future.delayed(const Duration(seconds: 1));
+    await context.read<AuthCubit>().signUp(
+      _emailController.text,
+      _passwordController.text,
+      _nameController.text,
+    );
 
     if (mounted) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Функция в разработке')),
-      );
     }
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:period_tracker/core/common/widgets/custom_list_tile.dart';
 import 'package:period_tracker/core/common/widgets/tracker_app_bar.dart';
+import 'package:period_tracker/core/injection/di.dart';
+import 'package:period_tracker/core/services/local_storage_service.dart';
 import 'package:period_tracker/features/onboarding/data/quiz_data.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -16,12 +18,36 @@ class QuizScreen extends StatefulWidget {
 class _QuizScreenState extends State<QuizScreen> {
   final Set<int> _selectedOptions = {};
   DateTime? _selectedDate;
+  late final LocalStorageService _storage;
 
   QuizQuestion get question => quizQuestions[widget.questionIndex];
   bool get isLastQuestion => widget.questionIndex == quizQuestions.length - 1;
   double get progress => (widget.questionIndex + 1) / quizQuestions.length;
   bool get isDateQuestion => question.type == QuizQuestionType.date;
-  bool get canContinue => isDateQuestion ? _selectedDate != null : _selectedOptions.isNotEmpty;
+  bool get canContinue =>
+      isDateQuestion ? _selectedDate != null : _selectedOptions.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _storage = sl<LocalStorageService>();
+    _loadPreviousAnswer();
+  }
+
+  void _loadPreviousAnswer() {
+    final answers = _storage.getQuizAnswers();
+    final savedAnswer = answers[question.id];
+    if (savedAnswer == null) return;
+
+    if (isDateQuestion) {
+      _selectedDate = DateTime.tryParse(savedAnswer as String);
+    } else if (savedAnswer is List) {
+      for (final index in savedAnswer) {
+        if (index is int) _selectedOptions.add(index);
+      }
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -244,10 +270,54 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   Future<void> _continue() async {
+    await _saveAnswer();
     if (isLastQuestion) {
-      context.go('/home');
+      await _initializeMedicationsFromQuiz();
+      await context.push('/home');
     } else {
       await context.push('/welcome/quiz/${widget.questionIndex + 1}');
+    }
+  }
+
+  Future<void> _saveAnswer() async {
+    final answers = _storage.getQuizAnswers();
+    if (isDateQuestion) {
+      answers[question.id] = _selectedDate?.toIso8601String();
+    } else {
+      answers[question.id] = _selectedOptions.toList();
+    }
+    await _storage.saveQuizAnswers(answers);
+  }
+
+  Future<void> _initializeMedicationsFromQuiz() async {
+    final answers = _storage.getQuizAnswers();
+    final medicationsAnswer = answers['medications'] as List?;
+    if (medicationsAnswer == null || medicationsAnswer.isEmpty) return;
+
+    final medications = <Map<String, dynamic>>[];
+    final options = quizQuestions
+        .firstWhere((q) => q.id == 'medications')
+        .options;
+
+    for (final index in medicationsAnswer) {
+      if (index is! int || index >= options.length) continue;
+      final option = options[index];
+
+      // Пропускаем "Не принимаю" и "Другое"
+      if (option == 'Не принимаю' || option == 'Другое') continue;
+
+      medications.add({
+        'id':
+            DateTime.now().millisecondsSinceEpoch.toString() + index.toString(),
+        'name': option,
+        'hour': 9,
+        'minute': 0,
+        'isEnabled': true,
+      });
+    }
+
+    if (medications.isNotEmpty) {
+      await _storage.saveMedications(medications);
     }
   }
 }

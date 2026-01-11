@@ -66,4 +66,8 @@ class AuthCubit extends Cubit<AuthState> {
     await _signOutUseCase();
     emit(const AuthState.unauthenticated());
   }
+
+  void continueAsGuest() {
+    emit(const AuthState.guest());
+  }
 }

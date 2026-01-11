@@ -89,7 +89,7 @@ class PartnerScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               FilledButton(
-                onPressed: () => context.push('/welcome/quiz/0'),
+                onPressed: () => context.push('/auth/login'),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(56),
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:period_tracker/features/calendar/presentation/widgets/weekday_card.dart';
 import 'package:period_tracker/features/calendar/presentation/widgets/weekday_label_card.dart';
+import 'package:period_tracker/features/cycle/domain/entities/cycle_log_entity.dart';
 
 enum PregnancyProbability { none, low, medium, high }
 
@@ -288,12 +289,14 @@ class Calendar extends StatefulWidget {
     required this.periodConfig,
     this.onSelectedDayChanged,
     this.selectedDay,
+    this.cycleLogs = const [],
     super.key,
   });
 
   final DateTime? selectedDay;
   final void Function(DateTime value)? onSelectedDayChanged;
   final PeriodConfig periodConfig;
+  final List<CycleLogEntity> cycleLogs;
 
   @override
   State<Calendar> createState() => _CalendarState();
@@ -417,6 +420,7 @@ class _CalendarState extends State<Calendar> {
         final isToday = DateUtils.isSameDay(DateTime.now(), date);
         final periodDayIndex = widget.periodConfig.getPeriodDayIndex(date);
         final isInRange = periodDayIndex != null;
+        final hasLog = _hasLogForDate(date);
 
         return GestureDetector(
           onTap: () => widget.onSelectedDayChanged?.call(date),
@@ -424,11 +428,23 @@ class _CalendarState extends State<Calendar> {
             isToday: isToday,
             isSelected: isSelected,
             isInRange: isInRange,
+            hasLog: hasLog,
             rangeIndex: periodDayIndex?.toString(),
             day: '$day',
           ),
         );
       },
     );
+  }
+
+  bool _hasLogForDate(DateTime date) {
+    final normalizedDate = DateTime(date.year, date.month, date.day);
+    for (final log in widget.cycleLogs) {
+      final logDate = DateTime(log.date.year, log.date.month, log.date.day);
+      if (logDate == normalizedDate) {
+        return true;
+      }
+    }
+    return false;
   }
 }

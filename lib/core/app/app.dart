@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:period_tracker/core/injection/di.dart';
 import 'package:period_tracker/core/router/router.dart';
 import 'package:period_tracker/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:period_tracker/features/cycle/presentation/cubit/cycle_cubit.dart';
+import 'package:period_tracker/features/profile/presentation/cubit/invite/invite_cubit.dart';
+import 'package:period_tracker/features/profile/presentation/cubit/profile/profile_cubit.dart';
 
 class PeriodTracker extends StatefulWidget {
   const PeriodTracker({super.key});
@@ -34,6 +37,18 @@ class _PeriodTrackerState extends State<PeriodTracker> {
       providers: [
         BlocProvider.value(
           value: _authCubit,
+        ),
+        BlocProvider(
+          create: (context) => sl<ProfileCubit>()..getMyProfile(),
+        ),
+        BlocProvider(
+          create: (context) => sl<InviteCubit>()..createPartnerInvite(),
+        ),
+        BlocProvider(
+          create: (context) => sl<CycleCubit>()
+            ..loadCycleLogs(
+              from: DateTime.now().subtract(const Duration(days: 90)),
+            ),
         ),
       ],
       child: MaterialApp.router(

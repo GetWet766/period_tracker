@@ -7,6 +7,7 @@ class WeekdayCard extends StatelessWidget {
     this.isToday = false,
     this.isSelected = false,
     this.isInRange = false,
+    this.hasLog = false,
     super.key,
     this.rangeIndex,
     this.info,
@@ -17,6 +18,7 @@ class WeekdayCard extends StatelessWidget {
   final String day;
   final String? rangeIndex;
   final bool isInRange;
+  final bool hasLog;
   final List<String>? info;
 
   @override
@@ -75,6 +77,24 @@ class WeekdayCard extends StatelessWidget {
                     ? colorScheme.onPrimaryContainer
                     : colorScheme.onSurfaceVariant,
                 size: 12,
+              ),
+            ),
+          if (hasLog && rangeIndex == null)
+            Positioned(
+              bottom: 4,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected
+                        ? colorScheme.onPrimary
+                        : colorScheme.primary,
+                  ),
+                ),
               ),
             ),
         ],
