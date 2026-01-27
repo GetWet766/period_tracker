@@ -1,5 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:period_tracker/core/network/connection_checker.dart';
 import 'package:period_tracker/core/services/local_storage_service.dart';
 import 'package:period_tracker/core/services/notification_service.dart';
 import 'package:period_tracker/features/auth/data/datasources/auth_remote_datasource.dart';
@@ -32,20 +34,29 @@ import 'package:period_tracker/features/profile/domain/usecases/join_as_partner_
 import 'package:period_tracker/features/profile/domain/usecases/update_my_profile_usecase.dart';
 import 'package:period_tracker/features/profile/presentation/cubit/invite/invite_cubit.dart';
 import 'package:period_tracker/features/profile/presentation/cubit/profile/profile_cubit.dart';
+import 'package:period_tracker/features/quiz/data/datasources/local_quiz_datasource.dart';
+import 'package:period_tracker/features/quiz/data/datasources/remote_quiz_datasource.dart';
+import 'package:period_tracker/features/quiz/data/repositories/quiz_repository_impl.dart';
+import 'package:period_tracker/features/quiz/domain/repositories/quiz_repository.dart';
+import 'package:period_tracker/features/quiz/domain/usecases/complete_quiz_usecase.dart';
+import 'package:period_tracker/features/quiz/domain/usecases/get_quiz_answers_usecase.dart';
+import 'package:period_tracker/features/quiz/domain/usecases/save_quiz_answer_usecase.dart';
+import 'package:period_tracker/features/quiz/presentation/cubit/quiz_cubit.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 final GetIt sl = GetIt.I;
 
 class DependencyInjection {
   static Future<void> init() async {
     await dotenv.load(fileName: 'dotenv');
+    final talker = TalkerFlutter.init();
+    sl.registerLazySingleton<Talker>(() => talker);
 
-    // Core Services
-    final prefs = await SharedPreferences.getInstance();
-    sl.registerSingleton<SharedPreferences>(prefs);
-    sl.registerSingleton<LocalStorageService>(LocalStorageService(prefs));
+    // Core Services - Initialize Hive
+    await LocalStorageService.init();
+    sl.registerSingleton<LocalStorageService>(LocalStorageService.instance);
 
     final notificationService = NotificationService();
     await notificationService.init();
@@ -58,6 +69,8 @@ class DependencyInjection {
 
     sl
       ..registerSingleton(SharePlus.instance)
+      ..registerSingleton(InternetConnection())
+      ..registerSingleton<ConnectionChecker>(ConnectionCheckerImpl(sl()))
       ..registerSingleton<SupabaseClient>(Supabase.instance.client)
       // Auth
       ..registerFactory(
@@ -72,7 +85,9 @@ class DependencyInjection {
       ..registerLazySingleton(() => SignUpUseCase(sl()))
       ..registerLazySingleton(() => SignOutUseCase(sl()))
       ..registerLazySingleton(() => GetCurrentUserUseCase(sl()))
-      ..registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()))
+      ..registerLazySingleton<AuthRepository>(
+        () => AuthRepositoryImpl(sl(), sl()),
+      )
       ..registerLazySingleton<AuthRemoteDataSource>(
         () => AuthRemoteDataSourceImpl(sl()),
       )
@@ -123,6 +138,29 @@ class DependencyInjection {
       )
       ..registerLazySingleton<CycleLocalDataSource>(
         () => CycleLocalDataSourceImpl(sl()),
+      )
+      // Quiz
+      ..registerFactory(
+        () => QuizCubit(
+          getQuizAnswersUseCase: sl(),
+          saveQuizAnswerUseCase: sl(),
+          completeQuizUseCase: sl(),
+        ),
+      )
+      ..registerLazySingleton(() => GetQuizAnswersUseCase(sl()))
+      ..registerLazySingleton(() => SaveQuizAnswerUseCase(sl()))
+      ..registerLazySingleton(() => CompleteQuizUseCase(sl()))
+      ..registerLazySingleton<QuizRepository>(
+        () => QuizRepositoryImpl(
+          localDataSource: sl(),
+          remoteDataSource: sl(),
+        ),
+      )
+      ..registerLazySingleton<LocalQuizDataSource>(
+        () => LocalQuizDataSourceImpl(sl()),
+      )
+      ..registerLazySingleton<RemoteQuizDataSource>(
+        () => RemoteQuizDataSourceImpl(sl()),
       );
   }
 }

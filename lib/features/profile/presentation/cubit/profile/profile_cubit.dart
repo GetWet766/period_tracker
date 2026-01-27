@@ -27,7 +27,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> updateMyProfile({
     String? displayName,
-    DateTime? birthday,
+    DateTime? birthDate,
     int? cycleAvgLength,
     int? periodAvgLength,
     String? avatarUrl,
@@ -35,11 +35,13 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(const ProfileState.loading());
 
     final result = await _updateMyProfileUseCase(
-      displayName: displayName,
-      birthday: birthday,
-      cycleAvgLength: cycleAvgLength,
-      periodAvgLength: periodAvgLength,
-      avatarUrl: avatarUrl,
+      UpdateMyProfileParams(
+        displayName: displayName,
+        birthDate: birthDate,
+        cycleAvgLength: cycleAvgLength,
+        periodAvgLength: periodAvgLength,
+        avatarUrl: avatarUrl,
+      ),
     );
 
     result.fold(

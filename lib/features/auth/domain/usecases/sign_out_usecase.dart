@@ -1,9 +1,15 @@
+import 'package:dartz/dartz.dart';
+import 'package:period_tracker/core/common/usecase/usecase.dart';
+import 'package:period_tracker/core/errors/failures.dart';
 import 'package:period_tracker/features/auth/domain/repositories/auth_repository.dart';
 
-class SignOutUseCase {
+class SignOutUseCase implements UseCaseWithoutParams<void> {
   const SignOutUseCase(this.authRepository);
 
   final AuthRepository authRepository;
 
-  Future<void> call() async => authRepository.signOut();
+  @override
+  Future<Either<Failure, void>> call() async {
+    return authRepository.signOut();
+  }
 }

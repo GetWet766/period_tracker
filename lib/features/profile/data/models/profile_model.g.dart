@@ -9,25 +9,30 @@ part of 'profile_model.dart';
 _ProfileModel _$ProfileModelFromJson(Map<String, dynamic> json) =>
     _ProfileModel(
       id: json['id'] as String,
-      cycleAvgLength: (json['cycle_avg_length'] as num).toInt(),
-      periodAvgLength: (json['period_avg_length'] as num).toInt(),
+      role: $enumDecode(_$ProfileRoleEnumMap, json['role']),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       displayName: json['display_name'] as String?,
-      birthday: json['birthday'] == null
-          ? null
-          : DateTime.parse(json['birthday'] as String),
       avatarUrl: json['avatar_url'] as String?,
+      details: json['profile_details'] == null
+          ? null
+          : ProfileDetailsModel.fromJson(
+              json['profile_details'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$ProfileModelToJson(_ProfileModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'cycle_avg_length': instance.cycleAvgLength,
-      'period_avg_length': instance.periodAvgLength,
+      'role': _$ProfileRoleEnumMap[instance.role]!,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'display_name': instance.displayName,
-      'birthday': instance.birthday?.toIso8601String(),
       'avatar_url': instance.avatarUrl,
+      'profile_details': instance.details,
     };
+
+const _$ProfileRoleEnumMap = {
+  ProfileRole.user: 'user',
+  ProfileRole.partner: 'partner',
+};

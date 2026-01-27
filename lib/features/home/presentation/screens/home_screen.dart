@@ -8,6 +8,7 @@ import 'package:period_tracker/core/common/widgets/tracker_app_bar.dart';
 import 'package:period_tracker/features/cycle/domain/entities/cycle_log_entity.dart';
 import 'package:period_tracker/features/cycle/presentation/cubit/cycle_cubit.dart';
 import 'package:period_tracker/features/cycle/presentation/cubit/cycle_state.dart';
+import 'package:period_tracker/features/home/presentation/widgets/home_main_info.dart';
 import 'package:period_tracker/features/home/presentation/widgets/phase_card.dart';
 import 'package:period_tracker/features/home/presentation/widgets/phase_list.dart';
 import 'package:period_tracker/features/profile/presentation/cubit/profile/profile_cubit.dart';
@@ -23,9 +24,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
+    final textTheme = TextTheme.of(context);
+    final colorScheme = ColorScheme.of(context);
 
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainerLow,
@@ -44,8 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
               final cycleInfo = _calculateCycleInfo(
                 logs,
-                profile?.cycleAvgLength ?? 28,
-                profile?.periodAvgLength ?? 5,
+                profile?.details?.cycleAvgLength ?? 28,
+                profile?.details?.periodAvgLength ?? 5,
               );
 
               return CustomScrollView(
@@ -64,57 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   SliverToBoxAdapter(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 40,
-                        horizontal: 16,
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            cycleInfo.isPeriodActive
-                                ? 'День менструации:'
-                                : 'До начала менструации осталось:',
-                            style: textTheme.titleMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            cycleInfo.isPeriodActive
-                                ? '${cycleInfo.currentPeriodDay}'
-                                : '${cycleInfo.daysUntilPeriod} дней',
-                            style: textTheme.displaySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          FilledButton.tonalIcon(
-                            style: FilledButton.styleFrom(
-                              fixedSize: const Size.fromHeight(56),
-                              textStyle: textTheme.titleMedium,
-                              iconSize: 24,
-                            ),
-                            onPressed: () => _togglePeriod(cycleInfo),
-                            label: Text(
-                              cycleInfo.isPeriodActive
-                                  ? 'Закончились'
-                                  : 'Начались',
-                            ),
-                            icon: const HugeIcon(
-                              icon: HugeIcons.strokeRoundedGiveBlood,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          FilledButton(
-                            onPressed: () => _showSymptomsDialog(context),
-                            child: const Text(
-                              'Как Вы себя чувствуете сегодня?',
-                            ),
-                          ),
-                        ],
-                      ),
+                    child: HomeMainInfo(
+                      isPeriodActive: cycleInfo.isPeriodActive,
+                      currentPeriodDay: cycleInfo.currentCycleDay,
+                      daysUntilPeriod: cycleInfo.daysUntilPeriod,
                     ),
                   ),
                   SliverFillRemaining(
@@ -143,8 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           _buildCyclesInfoSection(
                             colorScheme,
                             textTheme,
-                            profile?.periodAvgLength ?? 5,
-                            profile?.cycleAvgLength ?? 28,
+                            profile?.details?.periodAvgLength ?? 5,
+                            profile?.details?.cycleAvgLength ?? 28,
                           ),
                         ],
                       ),
@@ -266,6 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 cycleInfo.cycleLength.toDouble(),
               ),
               onChanged: null,
+              year2023: false,
             ),
             const SizedBox(height: 8),
             Text(
@@ -447,119 +401,6 @@ class _HomeScreenState extends State<HomeScreen> {
       fertileWindowStart: fertileWindowStart,
       cycleLength: cycleLength,
       pregnancyProbability: pregnancyProbability,
-    );
-  }
-
-  Future<void> _togglePeriod(_CycleInfo cycleInfo) async {
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-
-    if (cycleInfo.isPeriodActive) {
-      // End period - no action needed, just informational
-      scaffoldMessenger.showSnackBar(
-        const SnackBar(content: Text('Менструация завершена')),
-      );
-    } else {
-      final cycleCubit = context.read<CycleCubit>();
-      // Start period
-      await cycleCubit.createLog(
-        date: DateTime.now(),
-        flowLevel: FlowLevel.medium,
-      );
-      scaffoldMessenger.showSnackBar(
-        const SnackBar(content: Text('Менструация началась')),
-      );
-    }
-  }
-
-  Future<void> _showSymptomsDialog(BuildContext context) async {
-    final symptoms = <String>[];
-    FlowLevel? selectedFlow;
-
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) {
-          final colorScheme = ColorScheme.of(context);
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Как Вы себя чувствуете?',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text('Интенсивность:'),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children: FlowLevel.values.map((flow) {
-                      final isSelected = selectedFlow == flow;
-                      return ChoiceChip(
-                        label: Text(flow.displayName),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          setModalState(() {
-                            selectedFlow = selected ? flow : null;
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text('Симптомы:'),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children:
-                        [
-                          'Спазмы',
-                          'Головная боль',
-                          'Усталость',
-                          'Вздутие',
-                          'Перепады настроения',
-                          'Боль в спине',
-                        ].map((symptom) {
-                          final isSelected = symptoms.contains(symptom);
-                          return FilterChip(
-                            label: Text(symptom),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              setModalState(() {
-                                if (selected) {
-                                  symptoms.add(symptom);
-                                } else {
-                                  symptoms.remove(symptom);
-                                }
-                              });
-                            },
-                          );
-                        }).toList(),
-                  ),
-                  const SizedBox(height: 24),
-                  FilledButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await _saveTodayLog(selectedFlow, symptoms);
-                    },
-                    child: const Text('Сохранить'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
     );
   }
 

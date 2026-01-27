@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
+import 'package:period_tracker/core/common/widgets/block_container.dart';
+import 'package:period_tracker/core/common/widgets/form_input_field.dart';
 import 'package:period_tracker/core/common/widgets/tracker_app_bar.dart';
+import 'package:period_tracker/core/injection/di.dart';
 import 'package:period_tracker/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:period_tracker/features/auth/presentation/cubit/auth_state.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,7 +20,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>();
+
+  bool isObscured = true;
 
   @override
   void dispose() {
@@ -27,134 +35,130 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
     final textTheme = TextTheme.of(context);
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
-      backgroundColor: colorScheme.surfaceContainerLow,
+      backgroundColor: colorScheme.surface,
       body: CustomScrollView(
+        keyboardDismissBehavior: .onDrag,
         slivers: [
-          const TrackerAppBar(title: Text('Авторизация')),
+          TrackerAppBar(
+            title: const Text('Авторизация'),
+            backgroundColor: colorScheme.surfaceContainerLow,
+          ),
           SliverFillRemaining(
             hasScrollBody: false,
             fillOverscroll: true,
-            child: Container(
+            child: BlockContainer(
+              backgroundColor: colorScheme.surfaceContainerLow,
               margin: const .only(top: 16),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: colorScheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(28),
-                ),
+              padding: .only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: bottomPadding > 0 ? bottomPadding : 20,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 20),
-                  Center(
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: colorScheme.secondaryContainer,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.person_rounded,
-                        size: 40,
-                        color: colorScheme.onSecondaryContainer,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: .stretch,
+                  children: [
+                    Text(
+                      'Добро пожаловать!',
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontWeight: .bold,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Войдите для получения преимуществ',
-                    textAlign: TextAlign.center,
-                    style: textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 4),
+                    Text(
+                      'Войдите в аккаунт и продолжите использовать приложение'
+                      ' для отслеживания цикла!',
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'После входа в аккаунт Вам станут доступны функции: отслеживание цикла с партнером, синхронизация и сохранение информации о Вашем цикле и многое другое.',
-                    textAlign: TextAlign.center,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
+                    const SizedBox(height: 32),
+                    FormInputField(
+                      controller: _emailController,
                       labelText: 'Эл. почта',
                       hintText: 'example@mail.com',
-                      filled: true,
-                      fillColor: colorScheme.surfaceContainerLow,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
                       prefixIcon: const Icon(Icons.mail_outline_rounded),
+                      keyboardType: .emailAddress,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.email(),
+                      ]),
                     ),
-                    keyboardType: .emailAddress,
-                    textAlign: TextAlign.left,
-                    onChanged: (_) => setState(() {}),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    obscureText: true,
-                    controller: _passwordController,
-                    decoration: InputDecoration(
+                    const SizedBox(height: 12),
+                    FormInputField(
+                      obscureText: isObscured,
+                      controller: _passwordController,
                       labelText: 'Пароль',
-                      hintText: '*******',
-                      filled: true,
-                      fillColor: colorScheme.surfaceContainerLow,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
+                      hintText: '********',
                       prefixIcon: const Icon(Icons.lock_outline_rounded),
+                      keyboardType: .visiblePassword,
+                      suffixIcon: IconButton(
+                        onPressed: _toggleObscurePassword,
+                        icon: Icon(
+                          isObscured
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                      ),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                      ]),
                     ),
-                    keyboardType: .visiblePassword,
-                    textAlign: TextAlign.left,
-                    onChanged: (_) => setState(() {}),
-                  ),
-                  const Spacer(),
-                  FilledButton(
-                    onPressed: _emailController.text.length >= 4 && !_isLoading
-                        ? _signIn
-                        : null,
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(56),
+                    const SizedBox(height: 12),
+                    GestureDetector(
+                      onTap: _forgotPassword,
+                      child: Text(
+                        'Забыли пароль?',
+                        textAlign: .end,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: .bold,
+                        ),
+                      ),
                     ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Войти'),
-                  ),
-                  const SizedBox(height: 12),
-                  FilledButton.tonal(
-                    onPressed: () async {
-                      await context.push('/auth/register');
-                    },
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(56),
+                    const Spacer(),
+                    BlocConsumer<AuthCubit, AuthState>(
+                      listener: (context, state) {
+                        state.maybeWhen(
+                          error: (message) => sl<Talker>().handle(message),
+                          orElse: () {},
+                        );
+                      },
+                      builder: (context, state) {
+                        final isLoading = state.maybeWhen(
+                          loading: () => true,
+                          orElse: () => false,
+                        );
+
+                        return FilledButton(
+                          onPressed: !isLoading ? _signIn : null,
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size.fromHeight(56),
+                          ),
+                          child: isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  'Войти',
+                                  style: textTheme.titleMedium?.copyWith(
+                                    color: colorScheme.onPrimary,
+                                  ),
+                                ),
+                        );
+                      },
                     ),
-                    child: const Text('Зарегистрироваться'),
-                  ),
-                  const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: () {
-                      context.read<AuthCubit>().continueAsGuest();
-                      context.go('/welcome/quiz/0');
-                    },
-                    style: TextButton.styleFrom(
-                      minimumSize: const Size.fromHeight(48),
-                    ),
-                    child: const Text('Продолжить без аккаунта'),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -163,16 +167,22 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void _toggleObscurePassword() {
+    setState(() {
+      isObscured = !isObscured;
+    });
+  }
+
   Future<void> _signIn() async {
-    setState(() => _isLoading = true);
-
-    await context.read<AuthCubit>().signIn(
-      _emailController.text,
-      _passwordController.text,
-    );
-
-    if (mounted) {
-      setState(() => _isLoading = false);
+    if (_formKey.currentState!.validate()) {
+      await context.read<AuthCubit>().signIn(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
     }
+  }
+
+  Future<void> _forgotPassword() async {
+    await context.push('/auth/forgot-password');
   }
 }

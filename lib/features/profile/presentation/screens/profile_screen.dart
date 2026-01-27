@@ -77,13 +77,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       '/profile/edit',
       extra: {
         'displayName': profile?.displayName ?? 'Пользователь',
-        'birthday': profile?.birthday,
+        'birthday': profile?.details?.birthDate,
       },
     );
     if (result != null) {
       await profileCubit.updateMyProfile(
         displayName: result['displayName'] as String?,
-        birthday: result['birthday'] as DateTime?,
+        birthDate: result['birthday'] as DateTime?,
       );
     }
   }
@@ -210,8 +210,8 @@ class _ProfileHeader extends StatelessWidget {
   }
 
   String _getBirthdayText(ProfileEntity? profile) {
-    if (profile?.birthday == null) return 'Укажите дату рождения';
-    final date = profile!.birthday!;
+    if (profile?.details?.birthDate == null) return 'Укажите дату рождения';
+    final date = profile!.details!.birthDate;
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');
     return 'Дата рождения: $day.$month.${date.year}';
@@ -320,9 +320,12 @@ class _CycleSettingsSectionState extends State<_CycleSettingsSection> {
   bool _initialized = false;
 
   void _initFromProfile(ProfileEntity? profile) {
-    if (!_initialized && profile != null) {
-      _cycleLength = profile.cycleAvgLength.toDouble();
-      _periodLength = profile.periodAvgLength.toDouble();
+    if (!_initialized &&
+        profile != null &&
+        profile.role == .user &&
+        profile.details != null) {
+      _cycleLength = profile.details!.cycleAvgLength.toDouble();
+      _periodLength = profile.details!.periodAvgLength.toDouble();
       _initialized = true;
     }
   }
@@ -332,7 +335,6 @@ class _CycleSettingsSectionState extends State<_CycleSettingsSection> {
     final colorScheme = ColorScheme.of(context);
 
     return BlocBuilder<ProfileCubit, ProfileState>(
-      buildWhen: (prev, curr) => prev != curr,
       builder: (context, state) {
         final profile = state.maybeWhen<ProfileEntity?>(
           loaded: (profile) => profile,

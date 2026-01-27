@@ -53,11 +53,9 @@ class TrackerAppBar extends StatelessWidget {
       primary: primary,
       shape:
           shape ??
-          RoundedRectangleBorder(
+          const RoundedRectangleBorder(
             borderRadius: .vertical(
-              bottom: context.isDesktop
-                  ? const .circular(28)
-                  : const .circular(28),
+              bottom: .circular(28),
             ),
           ),
       titleSpacing: titleSpacing,

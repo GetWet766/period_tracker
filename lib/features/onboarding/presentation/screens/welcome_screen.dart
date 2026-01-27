@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:period_tracker/features/onboarding/presentation/widgets/feature_item.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -10,58 +11,62 @@ class WelcomeScreen extends StatelessWidget {
     final textTheme = TextTheme.of(context);
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colorScheme.surfaceContainerLow,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const .all(16),
           child: Column(
             children: [
               const Spacer(),
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                child: Icon(
-                  Icons.favorite,
-                  size: 60,
-                  color: colorScheme.onPrimaryContainer,
+              Hero(
+                tag: 'splashAppLogo',
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: .circular(32),
+                  ),
+                  child: Icon(
+                    Icons.favorite,
+                    size: 60,
+                    color: colorScheme.onPrimaryContainer,
+                  ),
                 ),
               ),
               const SizedBox(height: 32),
-              Text(
-                'Period Tracker',
-                style: textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+              Hero(
+                tag: 'splashAppTitle',
+                child: Text(
+                  'Periodility',
+                  style: textTheme.headlineLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
               Text(
-                'Ваш персональный помощник для отслеживания менструального цикла',
+                'Ваш персональный помощник для отслеживания'
+                ' менструального цикла',
                 textAlign: TextAlign.center,
-                style: textTheme.bodyLarge?.copyWith(
+                style: textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),
               ),
               const Spacer(),
-              _buildFeatureItem(
-                context,
+              const FeatureItem(
                 icon: Icons.calendar_month,
                 title: 'Точные прогнозы',
                 subtitle: 'Отслеживайте цикл и получайте напоминания',
               ),
               const SizedBox(height: 16),
-              _buildFeatureItem(
-                context,
+              const FeatureItem(
                 icon: Icons.people,
                 title: 'Делитесь с партнёром',
                 subtitle: 'Пригласите близкого человека в приложение',
               ),
               const SizedBox(height: 16),
-              _buildFeatureItem(
-                context,
+              const FeatureItem(
                 icon: Icons.lock,
                 title: 'Конфиденциальность',
                 subtitle:
@@ -69,68 +74,21 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const Spacer(),
               FilledButton(
-                onPressed: () => context.push('/welcome/partner'),
+                onPressed: () => context.push('/welcome/lets-start'),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(56),
                 ),
-                child: const Text('Начать'),
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton(
-                onPressed: () => context.push('/partner-login'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(56),
+                child: Text(
+                  'Давайте начнем',
+                  style: textTheme.titleMedium?.copyWith(
+                    color: colorScheme.onPrimary,
+                  ),
                 ),
-                child: const Text('Войти как партнёр'),
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildFeatureItem(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String subtitle,
-  }) {
-    final colorScheme = ColorScheme.of(context);
-    final textTheme = TextTheme.of(context);
-
-    return Row(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, color: colorScheme.onPrimaryContainer),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                subtitle,
-                style: textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

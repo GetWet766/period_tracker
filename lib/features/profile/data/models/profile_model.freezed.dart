@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProfileModel {
 
- String get id;@JsonKey(name: 'cycle_avg_length') int get cycleAvgLength;@JsonKey(name: 'period_avg_length') int get periodAvgLength;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt;@JsonKey(name: 'display_name') String? get displayName; DateTime? get birthday;@JsonKey(name: 'avatar_url') String? get avatarUrl;
+ String get id; ProfileRole get role;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt;@JsonKey(name: 'display_name') String? get displayName;@JsonKey(name: 'avatar_url') String? get avatarUrl;@JsonKey(name: 'profile_details') ProfileDetailsModel? get details;
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProfileModelCopyWith<ProfileModel> get copyWith => _$ProfileModelCopyWithImpl<P
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileModel&&(identical(other.id, id) || other.id == id)&&(identical(other.cycleAvgLength, cycleAvgLength) || other.cycleAvgLength == cycleAvgLength)&&(identical(other.periodAvgLength, periodAvgLength) || other.periodAvgLength == periodAvgLength)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.birthday, birthday) || other.birthday == birthday)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileModel&&(identical(other.id, id) || other.id == id)&&(identical(other.role, role) || other.role == role)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.details, details) || other.details == details));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,cycleAvgLength,periodAvgLength,createdAt,updatedAt,displayName,birthday,avatarUrl);
+int get hashCode => Object.hash(runtimeType,id,role,createdAt,updatedAt,displayName,avatarUrl,details);
 
 @override
 String toString() {
-  return 'ProfileModel(id: $id, cycleAvgLength: $cycleAvgLength, periodAvgLength: $periodAvgLength, createdAt: $createdAt, updatedAt: $updatedAt, displayName: $displayName, birthday: $birthday, avatarUrl: $avatarUrl)';
+  return 'ProfileModel(id: $id, role: $role, createdAt: $createdAt, updatedAt: $updatedAt, displayName: $displayName, avatarUrl: $avatarUrl, details: $details)';
 }
 
 
@@ -48,11 +48,11 @@ abstract mixin class $ProfileModelCopyWith<$Res>  {
   factory $ProfileModelCopyWith(ProfileModel value, $Res Function(ProfileModel) _then) = _$ProfileModelCopyWithImpl;
 @useResult
 $Res call({
- String id,@JsonKey(name: 'cycle_avg_length') int cycleAvgLength,@JsonKey(name: 'period_avg_length') int periodAvgLength,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt,@JsonKey(name: 'display_name') String? displayName, DateTime? birthday,@JsonKey(name: 'avatar_url') String? avatarUrl
+ String id, ProfileRole role,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt,@JsonKey(name: 'display_name') String? displayName,@JsonKey(name: 'avatar_url') String? avatarUrl,@JsonKey(name: 'profile_details') ProfileDetailsModel? details
 });
 
 
-
+$ProfileDetailsModelCopyWith<$Res>? get details;
 
 }
 /// @nodoc
@@ -65,20 +65,31 @@ class _$ProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? cycleAvgLength = null,Object? periodAvgLength = null,Object? createdAt = null,Object? updatedAt = null,Object? displayName = freezed,Object? birthday = freezed,Object? avatarUrl = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? role = null,Object? createdAt = null,Object? updatedAt = null,Object? displayName = freezed,Object? avatarUrl = freezed,Object? details = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,cycleAvgLength: null == cycleAvgLength ? _self.cycleAvgLength : cycleAvgLength // ignore: cast_nullable_to_non_nullable
-as int,periodAvgLength: null == periodAvgLength ? _self.periodAvgLength : periodAvgLength // ignore: cast_nullable_to_non_nullable
-as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as ProfileRole,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
-as String?,birthday: freezed == birthday ? _self.birthday : birthday // ignore: cast_nullable_to_non_nullable
-as DateTime?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
+as ProfileDetailsModel?,
   ));
 }
+/// Create a copy of ProfileModel
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ProfileDetailsModelCopyWith<$Res>? get details {
+    if (_self.details == null) {
+    return null;
+  }
 
+  return $ProfileDetailsModelCopyWith<$Res>(_self.details!, (value) {
+    return _then(_self.copyWith(details: value));
+  });
+}
 }
 
 
@@ -160,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'cycle_avg_length')  int cycleAvgLength, @JsonKey(name: 'period_avg_length')  int periodAvgLength, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt, @JsonKey(name: 'display_name')  String? displayName,  DateTime? birthday, @JsonKey(name: 'avatar_url')  String? avatarUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  ProfileRole role, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt, @JsonKey(name: 'display_name')  String? displayName, @JsonKey(name: 'avatar_url')  String? avatarUrl, @JsonKey(name: 'profile_details')  ProfileDetailsModel? details)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileModel() when $default != null:
-return $default(_that.id,_that.cycleAvgLength,_that.periodAvgLength,_that.createdAt,_that.updatedAt,_that.displayName,_that.birthday,_that.avatarUrl);case _:
+return $default(_that.id,_that.role,_that.createdAt,_that.updatedAt,_that.displayName,_that.avatarUrl,_that.details);case _:
   return orElse();
 
 }
@@ -181,10 +192,10 @@ return $default(_that.id,_that.cycleAvgLength,_that.periodAvgLength,_that.create
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'cycle_avg_length')  int cycleAvgLength, @JsonKey(name: 'period_avg_length')  int periodAvgLength, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt, @JsonKey(name: 'display_name')  String? displayName,  DateTime? birthday, @JsonKey(name: 'avatar_url')  String? avatarUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  ProfileRole role, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt, @JsonKey(name: 'display_name')  String? displayName, @JsonKey(name: 'avatar_url')  String? avatarUrl, @JsonKey(name: 'profile_details')  ProfileDetailsModel? details)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileModel():
-return $default(_that.id,_that.cycleAvgLength,_that.periodAvgLength,_that.createdAt,_that.updatedAt,_that.displayName,_that.birthday,_that.avatarUrl);case _:
+return $default(_that.id,_that.role,_that.createdAt,_that.updatedAt,_that.displayName,_that.avatarUrl,_that.details);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +212,10 @@ return $default(_that.id,_that.cycleAvgLength,_that.periodAvgLength,_that.create
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'cycle_avg_length')  int cycleAvgLength, @JsonKey(name: 'period_avg_length')  int periodAvgLength, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt, @JsonKey(name: 'display_name')  String? displayName,  DateTime? birthday, @JsonKey(name: 'avatar_url')  String? avatarUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  ProfileRole role, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt, @JsonKey(name: 'display_name')  String? displayName, @JsonKey(name: 'avatar_url')  String? avatarUrl, @JsonKey(name: 'profile_details')  ProfileDetailsModel? details)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileModel() when $default != null:
-return $default(_that.id,_that.cycleAvgLength,_that.periodAvgLength,_that.createdAt,_that.updatedAt,_that.displayName,_that.birthday,_that.avatarUrl);case _:
+return $default(_that.id,_that.role,_that.createdAt,_that.updatedAt,_that.displayName,_that.avatarUrl,_that.details);case _:
   return null;
 
 }
@@ -216,17 +227,16 @@ return $default(_that.id,_that.cycleAvgLength,_that.periodAvgLength,_that.create
 @JsonSerializable()
 
 class _ProfileModel extends ProfileModel {
-  const _ProfileModel({required this.id, @JsonKey(name: 'cycle_avg_length') required this.cycleAvgLength, @JsonKey(name: 'period_avg_length') required this.periodAvgLength, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'updated_at') required this.updatedAt, @JsonKey(name: 'display_name') this.displayName, this.birthday, @JsonKey(name: 'avatar_url') this.avatarUrl}): super._();
+  const _ProfileModel({required this.id, required this.role, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'updated_at') required this.updatedAt, @JsonKey(name: 'display_name') this.displayName, @JsonKey(name: 'avatar_url') this.avatarUrl, @JsonKey(name: 'profile_details') this.details}): super._();
   factory _ProfileModel.fromJson(Map<String, dynamic> json) => _$ProfileModelFromJson(json);
 
 @override final  String id;
-@override@JsonKey(name: 'cycle_avg_length') final  int cycleAvgLength;
-@override@JsonKey(name: 'period_avg_length') final  int periodAvgLength;
+@override final  ProfileRole role;
 @override@JsonKey(name: 'created_at') final  DateTime createdAt;
 @override@JsonKey(name: 'updated_at') final  DateTime updatedAt;
 @override@JsonKey(name: 'display_name') final  String? displayName;
-@override final  DateTime? birthday;
 @override@JsonKey(name: 'avatar_url') final  String? avatarUrl;
+@override@JsonKey(name: 'profile_details') final  ProfileDetailsModel? details;
 
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
@@ -241,16 +251,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileModel&&(identical(other.id, id) || other.id == id)&&(identical(other.cycleAvgLength, cycleAvgLength) || other.cycleAvgLength == cycleAvgLength)&&(identical(other.periodAvgLength, periodAvgLength) || other.periodAvgLength == periodAvgLength)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.birthday, birthday) || other.birthday == birthday)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileModel&&(identical(other.id, id) || other.id == id)&&(identical(other.role, role) || other.role == role)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.details, details) || other.details == details));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,cycleAvgLength,periodAvgLength,createdAt,updatedAt,displayName,birthday,avatarUrl);
+int get hashCode => Object.hash(runtimeType,id,role,createdAt,updatedAt,displayName,avatarUrl,details);
 
 @override
 String toString() {
-  return 'ProfileModel(id: $id, cycleAvgLength: $cycleAvgLength, periodAvgLength: $periodAvgLength, createdAt: $createdAt, updatedAt: $updatedAt, displayName: $displayName, birthday: $birthday, avatarUrl: $avatarUrl)';
+  return 'ProfileModel(id: $id, role: $role, createdAt: $createdAt, updatedAt: $updatedAt, displayName: $displayName, avatarUrl: $avatarUrl, details: $details)';
 }
 
 
@@ -261,11 +271,11 @@ abstract mixin class _$ProfileModelCopyWith<$Res> implements $ProfileModelCopyWi
   factory _$ProfileModelCopyWith(_ProfileModel value, $Res Function(_ProfileModel) _then) = __$ProfileModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id,@JsonKey(name: 'cycle_avg_length') int cycleAvgLength,@JsonKey(name: 'period_avg_length') int periodAvgLength,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt,@JsonKey(name: 'display_name') String? displayName, DateTime? birthday,@JsonKey(name: 'avatar_url') String? avatarUrl
+ String id, ProfileRole role,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt,@JsonKey(name: 'display_name') String? displayName,@JsonKey(name: 'avatar_url') String? avatarUrl,@JsonKey(name: 'profile_details') ProfileDetailsModel? details
 });
 
 
-
+@override $ProfileDetailsModelCopyWith<$Res>? get details;
 
 }
 /// @nodoc
@@ -278,21 +288,32 @@ class __$ProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? cycleAvgLength = null,Object? periodAvgLength = null,Object? createdAt = null,Object? updatedAt = null,Object? displayName = freezed,Object? birthday = freezed,Object? avatarUrl = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? role = null,Object? createdAt = null,Object? updatedAt = null,Object? displayName = freezed,Object? avatarUrl = freezed,Object? details = freezed,}) {
   return _then(_ProfileModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,cycleAvgLength: null == cycleAvgLength ? _self.cycleAvgLength : cycleAvgLength // ignore: cast_nullable_to_non_nullable
-as int,periodAvgLength: null == periodAvgLength ? _self.periodAvgLength : periodAvgLength // ignore: cast_nullable_to_non_nullable
-as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as ProfileRole,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
-as String?,birthday: freezed == birthday ? _self.birthday : birthday // ignore: cast_nullable_to_non_nullable
-as DateTime?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
+as ProfileDetailsModel?,
   ));
 }
 
+/// Create a copy of ProfileModel
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ProfileDetailsModelCopyWith<$Res>? get details {
+    if (_self.details == null) {
+    return null;
+  }
 
+  return $ProfileDetailsModelCopyWith<$Res>(_self.details!, (value) {
+    return _then(_self.copyWith(details: value));
+  });
+}
 }
 
 // dart format on

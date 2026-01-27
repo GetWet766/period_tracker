@@ -14,24 +14,30 @@ class SplashScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: .center,
           children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(32),
-              ),
-              child: Icon(
-                Icons.favorite,
-                size: 60,
-                color: colorScheme.onPrimaryContainer,
+            Hero(
+              tag: 'splashAppLogo',
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Icon(
+                  Icons.favorite,
+                  size: 60,
+                  color: colorScheme.onPrimaryContainer,
+                ),
               ),
             ),
             const SizedBox(height: 32),
-            Text(
-              'Period Tracker',
-              style: textTheme.headlineLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+            Hero(
+              tag: 'splashAppTitle',
+              child: Text(
+                'Periodility',
+                style: textTheme.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],

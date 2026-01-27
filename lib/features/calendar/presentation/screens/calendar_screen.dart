@@ -46,8 +46,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
               final periodConfig = _buildPeriodConfig(
                 logs,
-                profile?.cycleAvgLength ?? 28,
-                profile?.periodAvgLength ?? 5,
+                profile?.details?.cycleAvgLength ?? 28,
+                profile?.details?.periodAvgLength ?? 5,
               );
 
               final dayInfo = periodConfig.getSelectedDayInfo(selectedDay);

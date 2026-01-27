@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:period_tracker/core/errors/failures.dart';
 import 'package:period_tracker/features/profile/data/datasource/profile_local_datasource.dart';
 import 'package:period_tracker/features/profile/data/datasource/profile_remote_datasource.dart';
+import 'package:period_tracker/features/profile/data/models/profile_details_model.dart';
 import 'package:period_tracker/features/profile/data/models/profile_model.dart';
 import 'package:period_tracker/features/profile/domain/entities/profile_entity.dart';
 import 'package:period_tracker/features/profile/domain/repositories/profile_repository.dart';
@@ -55,7 +56,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     try {
       final profile = await _remoteDataSource.updateMyProfile(
         displayName: displayName,
-        birthday: birthday,
+        birthDate: birthday,
         cycleAvgLength: cycleAvgLength,
         periodAvgLength: periodAvgLength,
         avatarUrl: avatarUrl,
@@ -88,6 +89,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   Future<Either<Failure, ProfileEntity>> _updateLocalProfile({
+    ProfileRole? role,
     String? displayName,
     DateTime? birthday,
     int? cycleAvgLength,
@@ -96,15 +98,51 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }) async {
     try {
       final existing = _localDataSource.getProfile();
+
+      // Update profile details if provided
+      ProfileDetailsModel? updatedDetails;
+      if (existing?.details != null) {
+        updatedDetails = ProfileDetailsModel(
+          id: existing!.details!.id,
+          birthDate: birthday ?? existing.details!.birthDate,
+          weight: existing.details!.weight,
+          height: existing.details!.height,
+          cycleAvgLength: cycleAvgLength ?? existing.details!.cycleAvgLength,
+          periodAvgLength: periodAvgLength ?? existing.details!.periodAvgLength,
+          lastPeriodDateStart: existing.details!.lastPeriodDateStart,
+          lastPeriodDateEnd: existing.details!.lastPeriodDateEnd,
+          createdAt: existing.details!.createdAt,
+          updatedAt: DateTime.now(),
+        );
+      } else if (birthday != null ||
+          cycleAvgLength != null ||
+          periodAvgLength != null) {
+        // Create new details if updating cycle/period info but details don't exist
+        updatedDetails = ProfileDetailsModel(
+          id: 'guest_details',
+          birthDate:
+              birthday ??
+              DateTime.now().subtract(const Duration(days: 365 * 25)),
+          weight: 60,
+          height: 165,
+          cycleAvgLength: cycleAvgLength ?? 28,
+          periodAvgLength: periodAvgLength ?? 5,
+          lastPeriodDateStart: DateTime.now().subtract(
+            const Duration(days: 14),
+          ),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+      }
+
       final updated = ProfileModel(
         id: existing?.id ?? 'guest',
+        role: role ?? existing?.role ?? ProfileRole.user,
         displayName: displayName ?? existing?.displayName,
-        birthday: birthday ?? existing?.birthday,
-        cycleAvgLength: cycleAvgLength ?? existing?.cycleAvgLength ?? 28,
-        periodAvgLength: periodAvgLength ?? existing?.periodAvgLength ?? 5,
         avatarUrl: avatarUrl ?? existing?.avatarUrl,
         createdAt: existing?.createdAt ?? DateTime.now(),
         updatedAt: DateTime.now(),
+        details: updatedDetails ?? existing?.details,
       );
       await _localDataSource.saveProfile(updated);
       return Right(updated.toEntity());
@@ -157,9 +195,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
   ProfileEntity _createGuestProfile() {
     return ProfileEntity(
       id: 'guest',
+      role: .user,
       displayName: 'Гость',
-      cycleAvgLength: 28,
-      periodAvgLength: 5,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );

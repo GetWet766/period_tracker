@@ -5,10 +5,16 @@ abstract class ProfileRemoteDataSource {
   Future<ProfileModel?> getMyProfile();
   Future<ProfileModel?> updateMyProfile({
     String? displayName,
-    DateTime? birthday,
+    String? avatarUrl,
+    ProfileRole? role,
+
+    DateTime? birthDate,
+    int? weight,
+    int? height,
     int? cycleAvgLength,
     int? periodAvgLength,
-    String? avatarUrl,
+    DateTime? lastPeriodDateStart,
+    DateTime? lastPeriodDateEnd,
   });
 
   Future<String> createPartnerInvite();
@@ -25,13 +31,12 @@ class ProfileRemoteDatasourceImpl implements ProfileRemoteDataSource {
   @override
   Future<ProfileModel?> getMyProfile() async {
     final userId = _client.auth.currentUser?.id;
-
     if (userId == null) return null;
 
     try {
       final response = await _client
           .from('profiles')
-          .select()
+          .select('*, profile_details(*)')
           .eq('id', userId)
           .single();
       final profile = ProfileModel.fromJson(response);
@@ -45,37 +50,62 @@ class ProfileRemoteDatasourceImpl implements ProfileRemoteDataSource {
   @override
   Future<ProfileModel?> updateMyProfile({
     String? displayName,
-    DateTime? birthday,
+    String? avatarUrl,
+    ProfileRole? role,
+
+    DateTime? birthDate,
+    int? weight,
+    int? height,
     int? cycleAvgLength,
     int? periodAvgLength,
-    String? avatarUrl,
+    DateTime? lastPeriodDateStart,
+    DateTime? lastPeriodDateEnd,
   }) async {
     final userId = _client.auth.currentUser?.id;
 
     if (userId == null) return null;
 
     try {
-      final sendData = <String, dynamic>{
+      final profileUpdates = <String, dynamic>{
         'display_name': ?displayName,
-        if (birthday != null) 'birthday': birthday.toIso8601String(),
+        'avatar_url': ?avatarUrl,
+        'role': ?role,
+      };
+      final profileDetailsUpdates = <String, dynamic>{
+        'birth_date': ?birthDate?.toIso8601String(),
+        'weight': ?weight,
+        'height': ?height,
         'cycle_avg_length': ?cycleAvgLength,
         'period_avg_length': ?periodAvgLength,
-        'avatar_url': ?avatarUrl,
+        'last_period_date_start': ?lastPeriodDateStart?.toIso8601String(),
+        'last_period_date_end': ?lastPeriodDateEnd?.toIso8601String(),
       };
 
-      if (sendData.isEmpty) {
-        return getMyProfile();
+      if (profileUpdates.isNotEmpty) {
+        await _client.from('profiles').update(profileUpdates).eq('id', userId);
       }
 
-      final response = await _client
-          .from('profiles')
-          .update(sendData)
-          .eq('id', userId)
-          .select()
-          .single();
-      final profile = ProfileModel.fromJson(response);
+      if (profileDetailsUpdates.isNotEmpty) {
+        final existingDetails = await _client
+            .from('profile_details')
+            .select('id')
+            .eq('id', userId)
+            .maybeSingle();
 
-      return profile;
+        if (existingDetails != null) {
+          await _client
+              .from('profile_details')
+              .update(profileDetailsUpdates)
+              .eq('id', userId);
+        } else {
+          await _client.from('profile_details').insert({
+            ...profileDetailsUpdates,
+            'id': userId,
+          });
+        }
+      }
+
+      return getMyProfile();
     } on Exception catch (e) {
       throw Exception('Ошибка обновления данных профиля: $e');
     }

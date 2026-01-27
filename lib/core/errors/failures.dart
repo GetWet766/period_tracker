@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 abstract class Failure extends Equatable {
-  const Failure(this.message);
+  const Failure([this.message = 'An unexpected error occurred,']);
 
   final String message;
 

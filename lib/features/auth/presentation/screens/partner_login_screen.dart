@@ -30,7 +30,7 @@ class _PartnerLoginScreenState extends State<PartnerLoginScreen> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _nameController = TextEditingController();
+  final _usernameController = TextEditingController();
 
   bool _isLoading = false;
   bool _isRegisterMode = false;
@@ -49,8 +49,6 @@ class _PartnerLoginScreenState extends State<PartnerLoginScreen> {
   @override
   void initState() {
     super.initState();
-    // Устанавливаем флаг что мы в процессе partner login
-    sl<LocalStorageService>().setPartnerLoginInProgress(true);
 
     // Если уже авторизован, сразу показываем ввод кода
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -70,9 +68,7 @@ class _PartnerLoginScreenState extends State<PartnerLoginScreen> {
     }
     _emailController.dispose();
     _passwordController.dispose();
-    _nameController.dispose();
-    // Сбрасываем флаг при выходе с экрана
-    sl<LocalStorageService>().setPartnerLoginInProgress(false);
+    _usernameController.dispose();
     super.dispose();
   }
 
@@ -162,7 +158,7 @@ class _PartnerLoginScreenState extends State<PartnerLoginScreen> {
         const SizedBox(height: 32),
         if (_isRegisterMode) ...[
           TextField(
-            controller: _nameController,
+            controller: _usernameController,
             decoration: InputDecoration(
               labelText: 'Имя',
               filled: true,
@@ -248,7 +244,7 @@ class _PartnerLoginScreenState extends State<PartnerLoginScreen> {
     if (_isRegisterMode) {
       return _emailController.text.length >= 4 &&
           _passwordController.text.length >= 6 &&
-          _nameController.text.isNotEmpty;
+          _usernameController.text.isNotEmpty;
     }
     return _emailController.text.length >= 4 &&
         _passwordController.text.length >= 6;
@@ -258,14 +254,13 @@ class _PartnerLoginScreenState extends State<PartnerLoginScreen> {
     final authCubit = context.read<AuthCubit>();
     if (_isRegisterMode) {
       await authCubit.signUp(
-        _emailController.text,
-        _passwordController.text,
-        _nameController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
       );
     } else {
       await authCubit.signIn(
-        _emailController.text,
-        _passwordController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
       );
     }
   }
@@ -461,16 +456,22 @@ class _PartnerLoginScreenState extends State<PartnerLoginScreen> {
             ),
           );
         },
-        (success) {
-          // Сбрасываем флаг перед переходом
-          sl<LocalStorageService>().setPartnerLoginInProgress(false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Вы успешно присоединились!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          context.go('/home');
+        (success) async {
+          // Mark partner code as entered
+          await sl<LocalStorageService>().setPartnerCodeEntered(value: true);
+          // Mark setup as complete (no longer a new user)
+          await sl<LocalStorageService>().setIsNewUser(value: false);
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Вы успешно присоединились!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            // Use goNamed with replace to clear the navigation stack
+            context.go('/splash');
+          }
         },
       );
     }
