@@ -6,6 +6,7 @@ import 'package:period_tracker/core/common/widgets/tracker_app_bar.dart';
 import 'package:period_tracker/core/injection/di.dart';
 import 'package:period_tracker/core/services/local_storage_service.dart';
 import 'package:period_tracker/core/services/notification_service.dart';
+import 'package:period_tracker/core/theme/theme.dart';
 import 'package:period_tracker/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:period_tracker/features/auth/presentation/cubit/auth_state.dart';
 import 'package:period_tracker/features/profile/domain/entities/profile_entity.dart';
@@ -21,7 +22,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  ThemeMode _themeMode = ThemeMode.system;
+  final AppTheme themeNotifier = sl();
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +47,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               const _NotificationsSection(),
               const SizedBox(height: 16),
-              _ThemeSectionCard(
-                themeMode: _themeMode,
-                onThemeChanged: (mode) => setState(() => _themeMode = mode),
+              ListenableBuilder(
+                listenable: themeNotifier,
+                builder: (context, child) {
+                  return _ThemeSectionCard(
+                    themeMode: themeNotifier.themeMode,
+                    onThemeChanged: themeNotifier.setThemeMode,
+                  );
+                },
               ),
               const SizedBox(height: 16),
               const _ArticlesSection(),

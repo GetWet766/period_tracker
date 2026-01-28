@@ -16,7 +16,7 @@ class _AboutScreenState extends State<AboutScreen> {
   bool _checkingUpdate = false;
 
   final _updateService = UpdateService(
-    owner: 'YOUR_GITHUB_USERNAME', // Замените на ваш username
+    owner: 'GetWet766', // Замените на ваш username
     repo: 'period_tracker', // Замените на название репозитория
   );
 
@@ -116,9 +116,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           )
                         : const Icon(Icons.refresh),
                     label: Text(
-                      _checkingUpdate
-                          ? 'Проверка...'
-                          : 'Проверить обновления',
+                      _checkingUpdate ? 'Проверка...' : 'Проверить обновления',
                     ),
                   ),
                   const SizedBox(height: 32),

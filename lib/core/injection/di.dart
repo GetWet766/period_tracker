@@ -4,6 +4,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import 'package:period_tracker/core/network/connection_checker.dart';
 import 'package:period_tracker/core/services/local_storage_service.dart';
 import 'package:period_tracker/core/services/notification_service.dart';
+import 'package:period_tracker/core/theme/theme.dart';
 import 'package:period_tracker/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:period_tracker/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:period_tracker/features/auth/domain/repositories/auth_repository.dart';
@@ -68,6 +69,7 @@ class DependencyInjection {
     );
 
     sl
+      ..registerLazySingleton(AppTheme.new)
       ..registerSingleton(SharePlus.instance)
       ..registerSingleton(InternetConnection())
       ..registerSingleton<ConnectionChecker>(ConnectionCheckerImpl(sl()))
