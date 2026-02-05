@@ -1,4 +1,3 @@
-import 'package:extensions_plus/extensions_plus.dart';
 import 'package:flutter/material.dart';
 
 class TrackerAppBar extends StatelessWidget {

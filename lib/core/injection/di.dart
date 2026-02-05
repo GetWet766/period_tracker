@@ -2,6 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:period_tracker/core/network/connection_checker.dart';
+import 'package:period_tracker/core/services/app_database_service.dart';
 import 'package:period_tracker/core/services/local_storage_service.dart';
 import 'package:period_tracker/core/services/notification_service.dart';
 import 'package:period_tracker/core/theme/theme.dart';
@@ -62,6 +63,8 @@ class DependencyInjection {
     final notificationService = NotificationService();
     await notificationService.init();
     sl.registerSingleton<NotificationService>(notificationService);
+
+    final db = AppDatabase();
 
     await Supabase.initialize(
       url: dotenv.env['SUPABASE_URL']!,
