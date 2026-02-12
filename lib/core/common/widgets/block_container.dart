@@ -7,6 +7,7 @@ class BlockContainer extends StatelessWidget {
     this.backgroundColor,
     this.borderRadius,
     this.child,
+    this.bottomRounded = false,
     super.key,
   });
 
@@ -15,6 +16,7 @@ class BlockContainer extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final Color? backgroundColor;
   final BorderRadiusGeometry? borderRadius;
+  final bool bottomRounded;
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +24,15 @@ class BlockContainer extends StatelessWidget {
 
     return Container(
       margin: margin,
-      padding: padding ?? const .all(20),
+      padding: padding ?? const .symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
         color: backgroundColor ?? colorScheme.surface,
-        borderRadius: borderRadius ?? .circular(28),
+        borderRadius:
+            borderRadius ??
+            .vertical(
+              top: const .circular(28),
+              bottom: bottomRounded ? const .circular(28) : .zero,
+            ),
       ),
       child: child,
     );

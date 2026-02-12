@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:period_tracker/core/common/widgets/custom_list_tile.dart';
+import 'package:periodility/core/common/widgets/custom_list_tile.dart';
 
 class SwitchListTile extends StatelessWidget {
   const SwitchListTile({
@@ -27,7 +27,7 @@ class SwitchListTile extends StatelessWidget {
   final bool value;
   final void Function()? onPressed;
   final void Function()? onLongPress;
-  final void Function(bool value)? onChanged;
+  final ValueChanged<bool>? onChanged;
 
   @override
   Widget build(BuildContext context) {

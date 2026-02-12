@@ -1,34 +1,70 @@
 import 'package:flutter/material.dart';
 
-class AppTheme with ChangeNotifier {
-  static final lightTheme = ThemeData(
-    colorScheme: .fromSeed(seedColor: Colors.pink),
-  );
-  static final darkTheme = ThemeData(
-    brightness: .dark,
-    colorScheme: .fromSeed(brightness: .dark, seedColor: Colors.pink),
-  );
+class AppTheme {
+  AppTheme._();
 
-  ThemeMode _themeMode = .system;
-  ThemeMode get themeMode => _themeMode;
+  static const Color _seedColor = Colors.pink;
 
-  void toLight() {
-    _themeMode = .light;
-    notifyListeners();
-  }
+  static final ThemeData light = _buildTheme(Brightness.light);
+  static final ThemeData dark = _buildTheme(Brightness.dark);
 
-  void toDart() {
-    _themeMode = .dark;
-    notifyListeners();
-  }
+  static ThemeData _buildTheme(Brightness brightness) {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seedColor,
+      brightness: brightness,
+    );
 
-  void toSystem() {
-    _themeMode = .system;
-    notifyListeners();
-  }
+    return ThemeData(
+      useMaterial3: true,
+      brightness: brightness,
+      colorScheme: colorScheme,
 
-  void setThemeMode(ThemeMode themeMode) {
-    _themeMode = themeMode;
-    notifyListeners();
+      scaffoldBackgroundColor: colorScheme.surfaceContainerLow,
+
+      textTheme: const TextTheme(
+        bodyLarge: TextStyle(
+          letterSpacing: .2,
+        ),
+      ),
+
+      appBarTheme: AppBarThemeData(
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: .vertical(
+            bottom: .circular(28),
+          ),
+        ),
+      ),
+
+      navigationRailTheme: NavigationRailThemeData(
+        selectedIconTheme: IconThemeData(
+          size: 24,
+          color: colorScheme.onSecondaryContainer,
+          fill: 1,
+        ),
+        unselectedIconTheme: IconThemeData(
+          size: 24,
+          color: colorScheme.onSurfaceVariant,
+          fill: 0,
+        ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((states) {
+          if (states.contains(WidgetState.selected)) {
+            return IconThemeData(
+              size: 24,
+              color: colorScheme.onSecondaryContainer,
+              fill: 1,
+            );
+          }
+          return IconThemeData(
+            size: 24,
+            color: colorScheme.onSurfaceVariant,
+            fill: 0,
+          );
+        }),
+      ),
+    );
   }
 }

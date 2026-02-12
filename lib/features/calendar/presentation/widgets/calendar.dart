@@ -1,141 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:period_tracker/features/calendar/presentation/widgets/weekday_card.dart';
-import 'package:period_tracker/features/calendar/presentation/widgets/weekday_label_card.dart';
-import 'package:period_tracker/features/cycle/domain/entities/cycle_log_entity.dart';
-
-enum PregnancyProbability { none, low, medium, high }
-
-enum CyclePhase { menstruation, follicular, ovulation, luteal }
-
-class DayInfoItem {
-  const DayInfoItem({
-    required this.id,
-    required this.label,
-    required this.value,
-    this.icon,
-    this.color,
-  });
-
-  final String id;
-  final String label;
-  final String value;
-  final IconData? icon;
-  final Color? color;
-}
-
-class DayInfo {
-  const DayInfo({
-    required this.date,
-    required this.cycleDay,
-    required this.phase,
-    required this.pregnancyProbability,
-    this.isMenstruation = false,
-    this.isOvulationDay = false,
-    this.daysUntilNextPeriod,
-  });
-
-  final DateTime date;
-  final int cycleDay;
-  final CyclePhase phase;
-  final PregnancyProbability pregnancyProbability;
-  final bool isMenstruation;
-  final bool isOvulationDay;
-  final int? daysUntilNextPeriod;
-
-  String get phaseDescription {
-    switch (phase) {
-      case CyclePhase.menstruation:
-        return 'Менструация';
-      case CyclePhase.follicular:
-        return 'Фолликулярная фаза';
-      case CyclePhase.ovulation:
-        return 'Овуляция';
-      case CyclePhase.luteal:
-        return 'Лютеиновая фаза';
-    }
-  }
-
-  String get pregnancyProbabilityDescription {
-    switch (pregnancyProbability) {
-      case PregnancyProbability.none:
-        return 'Очень низкая';
-      case PregnancyProbability.low:
-        return 'Низкая';
-      case PregnancyProbability.medium:
-        return 'Средняя';
-      case PregnancyProbability.high:
-        return 'Высокая';
-    }
-  }
-
-  Color get pregnancyProbabilityColor {
-    switch (pregnancyProbability) {
-      case PregnancyProbability.none:
-        return Colors.grey;
-      case PregnancyProbability.low:
-        return Colors.green;
-      case PregnancyProbability.medium:
-        return Colors.orange;
-      case PregnancyProbability.high:
-        return Colors.red;
-    }
-  }
-
-  String get phaseId {
-    switch (phase) {
-      case CyclePhase.menstruation:
-        return 'menstruation';
-      case CyclePhase.follicular:
-        return 'follicular';
-      case CyclePhase.ovulation:
-        return 'ovulation';
-      case CyclePhase.luteal:
-        return 'luteal';
-    }
-  }
-
-  /// Returns a list of info items for display in UI
-  List<DayInfoItem> toDisplayList() {
-    return [
-      DayInfoItem(
-        id: 'cycle-day',
-        label: 'День цикла',
-        value: '$cycleDay',
-        icon: Icons.calendar_today,
-      ),
-      DayInfoItem(
-        id: phaseId,
-        label: 'Фаза',
-        value: phaseDescription,
-        icon: isMenstruation ? Icons.water_drop : Icons.circle_outlined,
-        color: isMenstruation ? Colors.red : null,
-      ),
-      DayInfoItem(
-        id: 'pregnancy-probability',
-        label: 'Вероятность беременности',
-        value: pregnancyProbabilityDescription,
-        icon: Icons.favorite,
-        color: pregnancyProbabilityColor,
-      ),
-      if (isOvulationDay)
-        const DayInfoItem(
-          id: 'ovulation',
-          label: 'Овуляция',
-          value: 'Сегодня',
-          icon: Icons.egg_alt,
-          color: Colors.purple,
-        ),
-      if (daysUntilNextPeriod != null)
-        DayInfoItem(
-          id: 'next-period',
-          label: 'До следующей менструации',
-          value: '$daysUntilNextPeriod дн.',
-          icon: Icons.schedule,
-        ),
-    ];
-  }
-}
+import 'package:periodility/features/calendar/presentation/widgets/weekday_card.dart';
+import 'package:periodility/features/calendar/presentation/widgets/weekday_label_card.dart';
 
 class PeriodConfig {
   const PeriodConfig({
@@ -230,58 +96,6 @@ class PeriodConfig {
 
     return (daysDiff % cycleLength) + 1;
   }
-
-  /// Returns detailed info about the selected day
-  DayInfo? getSelectedDayInfo(DateTime date) {
-    if (lastPeriodStart == null) return null;
-
-    final cycleDay = getCycleDay(date);
-    if (cycleDay == null) return null;
-
-    // Ovulation typically occurs around day 14 (cycleLength - 14)
-    final ovulationDay = cycleLength - 14;
-    final fertileWindowStart = ovulationDay - 5;
-    final fertileWindowEnd = ovulationDay + 1;
-
-    // Determine cycle phase
-    CyclePhase phase;
-    if (cycleDay <= periodDuration) {
-      phase = CyclePhase.menstruation;
-    } else if (cycleDay < fertileWindowStart) {
-      phase = CyclePhase.follicular;
-    } else if (cycleDay <= fertileWindowEnd) {
-      phase = CyclePhase.ovulation;
-    } else {
-      phase = CyclePhase.luteal;
-    }
-
-    // Determine pregnancy probability
-    PregnancyProbability probability;
-    if (cycleDay <= periodDuration) {
-      probability = PregnancyProbability.none;
-    } else if (cycleDay >= fertileWindowStart && cycleDay <= fertileWindowEnd) {
-      if (cycleDay == ovulationDay || cycleDay == ovulationDay - 1) {
-        probability = PregnancyProbability.high;
-      } else {
-        probability = PregnancyProbability.medium;
-      }
-    } else {
-      probability = PregnancyProbability.low;
-    }
-
-    // Calculate days until next period
-    final daysUntilNextPeriod = cycleLength - cycleDay + 1;
-
-    return DayInfo(
-      date: date,
-      cycleDay: cycleDay,
-      phase: phase,
-      pregnancyProbability: probability,
-      isMenstruation: cycleDay <= periodDuration,
-      isOvulationDay: cycleDay == ovulationDay,
-      daysUntilNextPeriod: daysUntilNextPeriod,
-    );
-  }
 }
 
 class Calendar extends StatefulWidget {
@@ -289,14 +103,12 @@ class Calendar extends StatefulWidget {
     required this.periodConfig,
     this.onSelectedDayChanged,
     this.selectedDay,
-    this.cycleLogs = const [],
     super.key,
   });
 
   final DateTime? selectedDay;
   final void Function(DateTime value)? onSelectedDayChanged;
   final PeriodConfig periodConfig;
-  final List<CycleLogEntity> cycleLogs;
 
   @override
   State<Calendar> createState() => _CalendarState();
@@ -420,7 +232,7 @@ class _CalendarState extends State<Calendar> {
         final isToday = DateUtils.isSameDay(DateTime.now(), date);
         final periodDayIndex = widget.periodConfig.getPeriodDayIndex(date);
         final isInRange = periodDayIndex != null;
-        final hasLog = _hasLogForDate(date);
+        // final hasLog = _hasLogForDate(date);
 
         return GestureDetector(
           onTap: () => widget.onSelectedDayChanged?.call(date),
@@ -428,7 +240,6 @@ class _CalendarState extends State<Calendar> {
             isToday: isToday,
             isSelected: isSelected,
             isInRange: isInRange,
-            hasLog: hasLog,
             rangeIndex: periodDayIndex?.toString(),
             day: '$day',
           ),
@@ -437,14 +248,14 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  bool _hasLogForDate(DateTime date) {
-    final normalizedDate = DateTime(date.year, date.month, date.day);
-    for (final log in widget.cycleLogs) {
-      final logDate = DateTime(log.date.year, log.date.month, log.date.day);
-      if (logDate == normalizedDate) {
-        return true;
-      }
-    }
-    return false;
-  }
+  // bool _hasLogForDate(DateTime date) {
+  //   final normalizedDate = DateTime(date.year, date.month, date.day);
+  //   for (final log in widget.cycleLogs) {
+  //     final logDate = DateTime(log.date.year, log.date.month, log.date.day);
+  //     if (logDate == normalizedDate) {
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }
 }

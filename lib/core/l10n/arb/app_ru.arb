@@ -1,0 +1,49 @@
+{
+  "@@locale": "ru",
+  "appTitle": "Periodility",
+  "@appTitle": {
+    "description": "Название приложения."
+  },
+  "articleCategory": "{category, select, other{Все статьи} phases{Фазы цикла} care{Забота о себе} health{Здоровье} tips{Советы} additions{Дополнительно}}",
+  "@articleCategory": {
+      "description": "Категория статьи",
+      "placeholders": {
+          "category": {
+            "type":"String",
+            "example":"1" 
+          }
+      }
+  },
+  "calendarDayInfo": "{isToday, select, true{Сегодня: {date}} other{{date}}}",
+  "@calendarDayInfo": {
+    "description": "Информация о дне в календаре",
+    "placeholders": {
+      "isToday": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "phase_menstruation": "Менструация",
+  "@phase_menstruation": {},
+  "phase_follicular": "Фолликулярная фаза",
+  "@phase_follicular": {},
+  "phase_ovulation": "Овуляция",
+  "@phase_ovulation": {},
+  "phase_luteal": "Лютеиновая фаза",
+  "@phase_luteal": {},
+  "until_period": "{daysUntil, plural, =0{Сегодня ожидаются месячные} one{Завтра начнутся месячные} few{До месячных} other{До месячных}}",
+  "@until_period": {
+    "placeholders": {
+      "daysUntil": {}
+    }
+  },
+  "days_until_period": "{days, plural, =0{Осталось {days} дней} one{Остался {days} день} few{{days} дня} other{{days} дней}}",
+  "@days_until_period": {
+    "placeholders": {
+      "days": {}
+    }
+  }
+}

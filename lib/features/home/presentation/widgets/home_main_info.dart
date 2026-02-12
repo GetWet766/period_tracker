@@ -1,103 +1,137 @@
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:periodility/core/utils/locale_extension.dart';
+import 'package:periodility/features/cycle/domain/entities/cycle_entity.dart';
+import 'package:periodility/features/cycle/presentation/cubit/cycle_cubit.dart';
 
-class HomeMainInfo extends StatelessWidget {
-  const HomeMainInfo({
-    required this.isPeriodActive,
-    this.currentPeriodDay,
-    this.daysUntilPeriod,
-    super.key,
-  });
+class HomeMainInfo extends StatefulWidget {
+  const HomeMainInfo({super.key});
 
-  final bool isPeriodActive;
-  final int? currentPeriodDay;
-  final int? daysUntilPeriod;
+  @override
+  State<HomeMainInfo> createState() => _HomeMainInfoState();
+}
+
+class _HomeMainInfoState extends State<HomeMainInfo> {
+  bool isDailyExists = true;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = TextTheme.of(context);
     final colorScheme = ColorScheme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 40,
-        horizontal: 16,
-      ),
-      child: Column(
-        children: [
-          Text(
-            isPeriodActive
-                ? 'День менструации:'
-                : 'До начала менструации осталось:',
-            style: textTheme.titleMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
+    return BlocSelector<CycleCubit, CycleState, CycleEntity?>(
+      selector: (state) => state.currentCycle,
+      builder: (context, state) {
+        final hasCurrentCycle = state != null;
+        // If endDate is null, it means menstruation is currently active
+        // (based on our logic that endDate marks end of period)
+        // OR it means cycle is ongoing?
+        // Logic in CycleCalculator: periodLength = endDate - startDate.
+        // So endDate marks end of menstruation.
+        // So if endDate is null -> Menstruation is active.
+        final isPeriodActive = hasCurrentCycle && state.endDate == null;
+
+        final daysTo = state?.daysTo ?? 0;
+
+        return Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: 40,
+            horizontal: 16,
           ),
-          const SizedBox(height: 8),
-          Text(
-            isPeriodActive
-                ? '$currentPeriodDay день'
-                : getDays(daysUntilPeriod!),
-            style: textTheme.displaySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          FilledButton.tonalIcon(
-            style: FilledButton.styleFrom(
-              fixedSize: const Size.fromHeight(56),
-              textStyle: textTheme.titleMedium,
-              iconSize: 24,
-            ),
-            onPressed: () {
-              // _togglePeriod(cycleInfo);
-            },
-            label: Text(
-              isPeriodActive ? 'Закончились' : 'Начались',
-            ),
-            icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedGiveBlood,
-            ),
-          ),
-          const SizedBox(height: 8),
-          FilledButton(
-            onPressed: () {
-              //  _showSymptomsDialog(context);
-            },
-            child: const Text(
-              // TODO: "Редактировать сегодняшнее самочувствие"
-              'Как Вы себя чувствуете сегодня?',
-            ),
-          ),
-          // if (symptoms.length > 0)
-          // symptoms.map((el) => SymptomCard(name: el.name, value: el.value, isSelected: el.isSelected))
-          Wrap(
-            alignment: .center,
-            spacing: 8,
+          child: Column(
+            mainAxisSize: .min,
             children: [
-              FilterChip(
-                shape: RoundedRectangleBorder(borderRadius: .circular(9999)),
-                label: const Text('Липкие'),
-                selected: true,
-                onSelected: (value) {},
+              Text(
+                hasCurrentCycle
+                    ? context.l10n.until_period(
+                        num.tryParse(daysTo.toString()) ?? 0,
+                      )
+                    : 'Нет информации',
+                style: textTheme.titleMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
-              FilterChip(
-                shape: RoundedRectangleBorder(borderRadius: .circular(9999)),
-                label: const Text('Обильные'),
-                onSelected: (value) {},
+              const SizedBox(height: 8),
+              Text(
+                hasCurrentCycle
+                    ? context.l10n.days_until_period(
+                        num.tryParse(daysTo.toString()) ?? 0,
+                      )
+                    : 'Нет информации',
+                style: textTheme.displaySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              FilterChip(
-                shape: RoundedRectangleBorder(borderRadius: .circular(9999)),
-                label: const Text('Болезненные'),
-                selected: true,
-                onSelected: (value) {},
+              const SizedBox(height: 16),
+              FilledButton.tonalIcon(
+                style: FilledButton.styleFrom(
+                  fixedSize: const Size.fromHeight(56),
+                  textStyle: textTheme.titleMedium,
+                  iconSize: 24,
+                ),
+                onPressed: () => _togglePeriod(isPeriodActive),
+                label: Text(
+                  isPeriodActive ? 'Закончились' : 'Начались',
+                ),
+                icon: const Icon(Symbols.water_drop_rounded),
+              ),
+              const SizedBox(height: 8),
+              if (!isDailyExists)
+                FilledButton(
+                  onPressed: () {
+                    //  _showSymptomsDialog(context);
+                  },
+                  child: const Text(
+                    // TODO(mihail): "Редактировать сегодняшнее самочувствие"
+                    'Как Вы себя чувствуете сегодня?',
+                  ),
+                ),
+              // if (symptoms.length > 0)
+              // symptoms.map((el) => SymptomCard(name: el.name, value: el.value, isSelected: el.isSelected))
+              Wrap(
+                alignment: .center,
+                spacing: 8,
+                children: [
+                  FilterChip(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: .circular(9999),
+                    ),
+                    label: const Text('Липкие'),
+                    selected: true,
+                    onSelected: (value) {
+                      setState(() {
+                        isDailyExists = true;
+                      });
+                    },
+                  ),
+                  FilterChip(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: .circular(9999),
+                    ),
+                    label: const Text('Обильные'),
+                    onSelected: (value) {
+                      setState(() {
+                        isDailyExists = false;
+                      });
+                    },
+                  ),
+                  FilterChip(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: .circular(9999),
+                    ),
+                    label: const Text('Болезненные'),
+                    selected: true,
+                    onSelected: (value) {},
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -110,5 +144,13 @@ class HomeMainInfo extends StatelessWidget {
       other: '$days дней',
       locale: 'ru',
     );
+  }
+
+  Future<void> _togglePeriod(bool isPeriodActive) async {
+    if (isPeriodActive) {
+      await context.read<CycleCubit>().endPeriod();
+    } else {
+      await context.read<CycleCubit>().startPeriod();
+    }
   }
 }

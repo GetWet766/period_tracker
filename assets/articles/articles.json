@@ -1,0 +1,132 @@
+{
+  "categories": [
+    "phases",
+    "care",
+    "nutrition",
+    "partner",
+    "additions"
+  ],
+  "articles": [
+    {
+      "id": "menstruation",
+      "title": "Менструация",
+      "subtitle": "Первая фаза цикла",
+      "icon": "water_drop",
+      "color": "#F44336",
+      "contentURI": "assets/articles/md/menstruation.md",
+      "categories": [
+        "phases"
+      ]
+    },
+    {
+      "id": "follicular",
+      "title": "Фолликулярная фаза",
+      "subtitle": "Подготовка к овуляции",
+      "icon": "spa",
+      "color": "#4CAF50",
+      "contentURI": "assets/articles/md/follicular.md",
+      "categories": [
+        "phases"
+      ]
+    },
+    {
+      "id": "ovulation",
+      "title": "Овуляция",
+      "subtitle": "Пик фертильности",
+      "icon": "egg_alt",
+      "color": "#9C27B0",
+      "contentURI": "assets/articles/md/ovulation.md",
+      "categories": [
+        "phases"
+      ]
+    },
+    {
+      "id": "luteal",
+      "title": "Лютеиновая фаза",
+      "subtitle": "Вторая половина цикла",
+      "icon": "nightlight_round",
+      "color": "#FF9800",
+      "contentURI": "assets/articles/md/luteal.md",
+      "categories": [
+        "phases"
+      ]
+    },
+    {
+      "id": "hygiene",
+      "title": "Гигиена",
+      "subtitle": "Средства и правила ухода",
+      "icon": "clean_hands",
+      "color": "#2196F3",
+      "contentURI": "assets/articles/md/hygiene.md",
+      "categories": [
+        "care"
+      ]
+    },
+    {
+      "id": "nutrition-phases",
+      "title": "Питание по фазам",
+      "subtitle": "Что есть в разные дни",
+      "icon": "restaurant",
+      "color": "#8BC34A",
+      "contentURI": "assets/articles/md/nutrition_phases.md",
+      "categories": [
+        "nutrition"
+      ]
+    },
+    {
+      "id": "vitamins",
+      "title": "Витамины",
+      "subtitle": "Поддержка организма",
+      "icon": "pill",
+      "color": "#FFEB3B",
+      "contentURI": "assets/articles/md/vitamins.md",
+      "categories": [
+        "nutrition"
+      ]
+    },
+    {
+      "id": "support-partner",
+      "title": "Поддержка партнера",
+      "subtitle": "Как помочь и понять",
+      "icon": "volunteer_activism",
+      "color": "#E91E63",
+      "contentURI": "assets/articles/md/support_partner.md",
+      "categories": [
+        "partner"
+      ]
+    },
+    {
+      "id": "partner-guide",
+      "title": "Гайд для партнера",
+      "subtitle": "О биологии просто",
+      "icon": "menu_book",
+      "color": "#795548",
+      "contentURI": "assets/articles/md/partner_guide.md",
+      "categories": [
+        "partner"
+      ]
+    },
+    {
+      "id": "cycle-day",
+      "title": "День цикла",
+      "subtitle": "Как считать дни цикла",
+      "icon": "calendar_today",
+      "color": "#FF9800",
+      "contentURI": "assets/articles/md/cycle_day.md",
+      "categories": [
+        "additions"
+      ]
+    },
+    {
+      "id": "pregnancy-probability",
+      "title": "Вероятность беременности",
+      "subtitle": "Фертильные дни цикла",
+      "icon": "favorite",
+      "color": "#FF9800",
+      "contentURI": "assets/articles/md/pregnancy_probability.md",
+      "categories": [
+        "additions"
+      ]
+    }
+  ]
+}

@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
-import 'package:period_tracker/core/common/widgets/section_container.dart';
-import 'package:period_tracker/core/common/widgets/tracker_app_bar.dart';
-import 'package:period_tracker/features/cycle/domain/entities/cycle_log_entity.dart';
-import 'package:period_tracker/features/cycle/presentation/cubit/cycle_cubit.dart';
-import 'package:period_tracker/features/cycle/presentation/cubit/cycle_state.dart';
-import 'package:period_tracker/features/home/presentation/widgets/home_main_info.dart';
-import 'package:period_tracker/features/home/presentation/widgets/phase_card.dart';
-import 'package:period_tracker/features/home/presentation/widgets/phase_list.dart';
-import 'package:period_tracker/features/profile/presentation/cubit/profile/profile_cubit.dart';
-import 'package:period_tracker/features/profile/presentation/cubit/profile/profile_state.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:periodility/core/common/widgets/block_container.dart';
+import 'package:periodility/core/common/widgets/custom_list_tile.dart';
+import 'package:periodility/core/common/widgets/icon_container.dart';
+import 'package:periodility/core/common/widgets/section_container.dart';
+import 'package:periodility/core/common/widgets/sliver_fill_overscroll.dart';
+import 'package:periodility/core/common/widgets/tiles_column_view.dart';
+import 'package:periodility/core/common/widgets/tiles_row_view.dart';
+import 'package:periodility/core/common/widgets/tracker_app_bar.dart';
+import 'package:periodility/core/utils/locale_extension.dart';
+import 'package:periodility/features/articles/presentation/cubit/articles_cubit.dart';
+import 'package:periodility/features/cycle/domain/entities/cycle_entity.dart';
+import 'package:periodility/features/cycle/presentation/cubit/cycle_cubit.dart';
+import 'package:periodility/features/home/presentation/widgets/home_main_info.dart';
+import 'package:periodility/features/home/presentation/widgets/invite_partner_banner.dart';
+import 'package:sliver_header_parallax/sliver_header_parallax.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,217 +28,98 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late ScrollController _scrollController;
+  late HeaderParallaxUtils _headerParallaxUtils;
+
+  final double _minHeight = 0;
+  final double _midHeightPercent = 0.4;
+  final double _maxHeightPercent = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _headerParallaxUtils = HeaderParallaxUtils(
+      context: context,
+      mounted: mounted,
+      minHeight: _minHeight,
+      midHeightPercent: _midHeightPercent,
+      maxHeightPercent: _maxHeightPercent,
+      scrollController: _scrollController,
+      excludeSize: kToolbarHeight + kBottomNavigationBarHeight,
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _headerParallaxUtils.jumpToMidHeight();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = TextTheme.of(context);
     final colorScheme = ColorScheme.of(context);
 
+    final double frictionPoint =
+        _headerParallaxUtils.maxHeight - _headerParallaxUtils.midHeight;
+
     return Scaffold(
-      backgroundColor: colorScheme.surfaceContainerLow,
-      body: BlocBuilder<ProfileCubit, ProfileState>(
-        builder: (context, profileState) {
-          return BlocBuilder<CycleCubit, CycleState>(
-            builder: (context, cycleState) {
-              final profile = profileState.maybeWhen(
-                loaded: (p) => p,
-                orElse: () => null,
-              );
-              final logs = cycleState.maybeWhen(
-                loaded: (l) => l,
-                orElse: () => <CycleLogEntity>[],
-              );
-
-              final cycleInfo = _calculateCycleInfo(
-                logs,
-                profile?.details?.cycleAvgLength ?? 28,
-                profile?.details?.periodAvgLength ?? 5,
-              );
-
-              return CustomScrollView(
-                slivers: [
-                  TrackerAppBar(
-                    title: Text(DateFormat('d MMMM').format(DateTime.now())),
-                    actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
-                    actions: [
-                      IconButton.filled(
-                        onPressed: () => context.push('/profile'),
-                        icon: HugeIcon(
-                          icon: HugeIcons.strokeRoundedUser03,
-                          color: colorScheme.onPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SliverToBoxAdapter(
-                    child: HomeMainInfo(
-                      isPeriodActive: cycleInfo.isPeriodActive,
-                      currentPeriodDay: cycleInfo.currentCycleDay,
-                      daysUntilPeriod: cycleInfo.daysUntilPeriod,
-                    ),
-                  ),
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    fillOverscroll: true,
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: colorScheme.surface,
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        spacing: 16,
-                        children: [
-                          _buildPhasesSection(
-                            colorScheme,
-                            cycleInfo,
-                          ),
-                          _buildPartnerSection(colorScheme, textTheme),
-                          _buildProgressSection(
-                            colorScheme,
-                            textTheme,
-                            cycleInfo,
-                          ),
-                          _buildCyclesInfoSection(
-                            colorScheme,
-                            textTheme,
-                            profile?.details?.periodAvgLength ?? 5,
-                            profile?.details?.cycleAvgLength ?? 28,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          );
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification is UserScrollNotification) {
+            _headerParallaxUtils.snapListener();
+          }
+          return false;
         },
-      ),
-    );
-  }
-
-  Widget _buildPhasesSection(ColorScheme colorScheme, _CycleInfo cycleInfo) {
-    return SectionContainer(
-      title: 'Фазы цикла',
-      child: PhaseList(
-        children: [
-          PhaseCard(
-            backgroundColor: colorScheme.primary,
-            foregroundColor: colorScheme.onPrimary,
-            title: 'Следующий срок зачатия',
-            subtitle: DateFormat('d MMMM').format(cycleInfo.fertileWindowStart),
-            icon: const HugeIcon(icon: HugeIcons.strokeRoundedPlant01),
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: TensionScrollPhysics(
+            frictionStartOffset: frictionPoint,
+            tensionFactor: 0.5,
           ),
-          PhaseCard(
-            backgroundColor: colorScheme.secondary,
-            foregroundColor: colorScheme.onSecondary,
-            title: 'Овуляция',
-            subtitle: DateFormat('d MMMM').format(cycleInfo.ovulationDate),
-            icon: const HugeIcon(icon: HugeIcons.strokeRoundedBaby01),
-          ),
-          PhaseCard(
-            backgroundColor: colorScheme.tertiary,
-            foregroundColor: colorScheme.onTertiary,
-            title: 'Следующая менструация',
-            subtitle: DateFormat('d MMMM').format(cycleInfo.nextPeriodDate),
-            icon: const HugeIcon(icon: HugeIcons.strokeRoundedGiveBlood),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPartnerSection(ColorScheme colorScheme, TextTheme textTheme) {
-    return SectionContainer(
-      title: 'Добавьте партнера',
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 12,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 8,
-              children: [
-                const CircleAvatar(
-                  radius: 26,
-                  child: HugeIcon(icon: HugeIcons.strokeRoundedUser03),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: colorScheme.onSurfaceVariant,
-                    borderRadius: BorderRadius.circular(2),
+          slivers: [
+            TrackerAppBar(
+              title: Text(
+                DateFormat(
+                  'd MMMM',
+                  context.l10n.localeName,
+                ).format(DateTime.now()),
+              ),
+              actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
+              actions: [
+                IconButton.filled(
+                  onPressed: () => context.push('/profile'),
+                  icon: Icon(
+                    Symbols.person_rounded,
+                    color: colorScheme.onPrimary,
                   ),
-                  width: 60,
-                  height: 2,
-                ),
-                const CircleAvatar(
-                  radius: 26,
-                  child: HugeIcon(icon: HugeIcons.strokeRoundedUser03),
                 ),
               ],
             ),
-            Text(
-              'Укрепляйте доверие и заботу - помогите партнеру'
-              ' понять, что Вы чувствуете',
-              textAlign: TextAlign.center,
-              style: textTheme.titleMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-            FilledButton(
-              onPressed: _invitePartner,
-              child: const Text('Пригласить'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildProgressSection(
-    ColorScheme colorScheme,
-    TextTheme textTheme,
-    _CycleInfo cycleInfo,
-  ) {
-    return SectionContainer(
-      title: 'Прогресс цикла',
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: colorScheme.surfaceContainerLow,
-        ),
-        child: Column(
-          children: [
-            Slider(
-              min: 1,
-              max: cycleInfo.cycleLength.toDouble(),
-              value: cycleInfo.currentCycleDay.toDouble().clamp(
-                1,
-                cycleInfo.cycleLength.toDouble(),
-              ),
-              onChanged: null,
-              year2023: false,
+            SliverHeaderParallax(
+              minHeight: _headerParallaxUtils.minHeight,
+              midHeight: _headerParallaxUtils.midHeight,
+              maxHeight: _headerParallaxUtils.maxHeight,
+              child: const HomeMainInfo(),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'День ${cycleInfo.currentCycleDay} из ${cycleInfo.cycleLength}',
-              style: textTheme.titleMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+
+            SliverToBoxAdapter(
+              child: BlockContainer(
+                child: _buildContent(textTheme, colorScheme),
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Вероятность беременности - ${cycleInfo.pregnancyProbability}',
-              style: textTheme.labelLarge?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+
+            SliverFillOverscroll(
+              child: Container(
+                color: colorScheme.surface,
               ),
             ),
           ],
@@ -241,211 +128,154 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCyclesInfoSection(
-    ColorScheme colorScheme,
-    TextTheme textTheme,
-    int periodAvgLength,
-    int cycleAvgLength,
-  ) {
-    return SectionContainer(
-      title: 'Мои циклы',
-      child: Row(
-        spacing: 2,
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerLow,
-                borderRadius: const BorderRadius.horizontal(
-                  left: Radius.circular(16),
-                  right: Radius.circular(4),
-                ),
-              ),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 8,
+  Widget _buildContent(TextTheme textTheme, ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 16,
+      children: [
+        SectionContainer(
+          title: 'Фазы цикла',
+          onPressed: () async {
+            await context.push('/learn');
+          },
+          child: BlocBuilder<ArticlesCubit, ArticlesState>(
+            builder: (context, state) {
+              return TilesColumnView(
+                children: state.articles
+                    .where(
+                      (article) => article.categories.contains('phases'),
+                    )
+                    .map((article) {
+                      return CustomListTile(
+                        title: Text(article.title),
+                        subtitle: Text(article.subtitle),
+                        leading: IconContainer(
+                          color: article.color,
+                          icon: article.icon,
+                        ),
+                        trailing: const Icon(Symbols.arrow_right_rounded),
+                        onPressed: () => context.push(
+                          '/learn/${article.id}',
+                          extra: {'label': article.title},
+                        ),
+                      );
+                    })
+                    .toList(),
+              );
+            },
+          ),
+        ),
+        SectionContainer(
+          title: 'Добавьте партнера',
+          child: InvitePartnerBanner(
+            onPressed: () {},
+          ),
+        ),
+        SectionContainer(
+          title: 'Мои циклы',
+          child: TilesRowView(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerLow,
+                    borderRadius: .circular(4),
+                  ),
+                  child: Stack(
+                    clipBehavior: Clip.antiAlias,
                     children: [
-                      Text(
-                        'Средняя длительность месячных',
-                        style: textTheme.labelMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 8,
+                          children: [
+                            Text(
+                              'Средняя длительность месячных',
+                              style: textTheme.labelMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            BlocSelector<CycleCubit, CycleState, CycleEntity?>(
+                              selector: (state) => state.currentCycle,
+                              builder: (context, state) {
+                                // Default to 5 days for now
+                                const avgPeriod = 5;
+                                return Text(
+                                  '$avgPeriod дней',
+                                  style: textTheme.labelLarge?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        '$periodAvgLength дней',
-                        style: textTheme.labelLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: Icon(
+                          Symbols.water_drop_rounded,
+                          color: colorScheme.primary,
                         ),
                       ),
                     ],
                   ),
-                  Positioned(
-                    bottom: -4,
-                    right: -4,
-                    child: HugeIcon(
-                      icon: HugeIcons.strokeRoundedGiveBlood,
-                      color: colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerLow,
-                borderRadius: const BorderRadius.horizontal(
-                  right: Radius.circular(16),
-                  left: Radius.circular(4),
                 ),
               ),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 8,
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerLow,
+                    borderRadius: .circular(4),
+                  ),
+                  child: Stack(
+                    clipBehavior: Clip.none,
                     children: [
-                      Text(
-                        'Средняя длительность цикла',
-                        style: textTheme.labelMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 8,
+                          children: [
+                            Text(
+                              'Средняя длительность цикла',
+                              style: textTheme.labelMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            BlocSelector<CycleCubit, CycleState, CycleEntity?>(
+                              selector: (state) => state.currentCycle,
+                              builder: (context, state) {
+                                final avgCycle = state?.avg ?? 28;
+                                return Text(
+                                  '$avgCycle дней',
+                                  style: textTheme.labelLarge?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        '$cycleAvgLength дней',
-                        style: textTheme.labelLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: Icon(
+                          Symbols.sync_rounded,
+                          color: colorScheme.primary,
                         ),
                       ),
                     ],
                   ),
-                  Positioned(
-                    bottom: -4,
-                    right: -4,
-                    child: HugeIcon(
-                      icon: HugeIcons.strokeRoundedReload,
-                      color: colorScheme.primary,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
-
-  _CycleInfo _calculateCycleInfo(
-    List<CycleLogEntity> logs,
-    int cycleLength,
-    int periodLength,
-  ) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
-    // Find last period start
-    DateTime? lastPeriodStart;
-    if (logs.isNotEmpty) {
-      final sortedLogs = List<CycleLogEntity>.from(logs)
-        ..sort((a, b) => b.date.compareTo(a.date));
-
-      for (final log in sortedLogs) {
-        if (log.flowLevel != null) {
-          lastPeriodStart = log.date;
-          break;
-        }
-      }
-    }
-
-    lastPeriodStart ??= today.subtract(Duration(days: cycleLength ~/ 2));
-
-    final daysSinceLastPeriod = today.difference(lastPeriodStart).inDays;
-    final currentCycleDay = (daysSinceLastPeriod % cycleLength) + 1;
-    final daysUntilPeriod = cycleLength - currentCycleDay + 1;
-    final isPeriodActive = currentCycleDay <= periodLength;
-
-    final nextPeriodDate = today.add(Duration(days: daysUntilPeriod));
-    final ovulationDay = cycleLength - 14;
-    final daysUntilOvulation = ovulationDay - currentCycleDay;
-    final ovulationDate = today.add(Duration(days: daysUntilOvulation));
-    final fertileWindowStart = ovulationDate.subtract(const Duration(days: 5));
-
-    String pregnancyProbability;
-    if (currentCycleDay <= periodLength) {
-      pregnancyProbability = 'очень низкая';
-    } else if (currentCycleDay >= ovulationDay - 5 &&
-        currentCycleDay <= ovulationDay + 1) {
-      pregnancyProbability = 'высокая';
-    } else if (currentCycleDay >= ovulationDay - 7 &&
-        currentCycleDay <= ovulationDay + 3) {
-      pregnancyProbability = 'средняя';
-    } else {
-      pregnancyProbability = 'низкая';
-    }
-
-    return _CycleInfo(
-      currentCycleDay: currentCycleDay,
-      daysUntilPeriod: daysUntilPeriod,
-      isPeriodActive: isPeriodActive,
-      currentPeriodDay: isPeriodActive ? currentCycleDay : 0,
-      nextPeriodDate: nextPeriodDate,
-      ovulationDate: ovulationDate,
-      fertileWindowStart: fertileWindowStart,
-      cycleLength: cycleLength,
-      pregnancyProbability: pregnancyProbability,
-    );
-  }
-
-  Future<void> _saveTodayLog(FlowLevel? flow, List<String> symptoms) async {
-    if (flow == null && symptoms.isEmpty) return;
-    final cycleCubit = context.read<CycleCubit>();
-
-    await cycleCubit.createLog(
-      date: DateTime.now(),
-      flowLevel: flow,
-      symptoms: symptoms.isNotEmpty ? symptoms : null,
-    );
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Данные сохранены')),
-      );
-    }
-  }
-
-  Future<void> _invitePartner() async {
-    await context.push('/invite-partner');
-  }
-}
-
-class _CycleInfo {
-  const _CycleInfo({
-    required this.currentCycleDay,
-    required this.daysUntilPeriod,
-    required this.isPeriodActive,
-    required this.currentPeriodDay,
-    required this.nextPeriodDate,
-    required this.ovulationDate,
-    required this.fertileWindowStart,
-    required this.cycleLength,
-    required this.pregnancyProbability,
-  });
-
-  final int currentCycleDay;
-  final int daysUntilPeriod;
-  final bool isPeriodActive;
-  final int currentPeriodDay;
-  final DateTime nextPeriodDate;
-  final DateTime ovulationDate;
-  final DateTime fertileWindowStart;
-  final int cycleLength;
-  final String pregnancyProbability;
 }

@@ -1,6 +1,6 @@
 {
-    "name": "period_tracker",
-    "short_name": "period_tracker",
+    "name": "periodility",
+    "short_name": "periodility",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

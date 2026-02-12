@@ -1,0 +1,49 @@
+{
+  "@@locale": "en",
+  "appTitle": "Periodility",
+  "@appTitle": {
+    "description": "Name of the app."
+  },
+  "articleCategory": "{category, select, other{All articles} phases{Phases of cycle} care{Care of yourself} health{Health} tips{Tips} additions{Additions}}",
+  "@articleCategory": {
+      "description": "Article category",
+      "placeholders": {
+          "category": {
+            "type":"String",
+            "example":"1" 
+          }
+      }
+  },
+  "calendarDayInfo": "{isToday, select, true{Today: {date}} other{{date}}}",
+  "@calendarDayInfo": {
+    "description": "Info about days in calendar",
+    "placeholders": {
+      "isToday": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "phase_menstruation": "Menstruation",
+  "@phase_menstruation": {},
+  "phase_follicular": "Follicular phase",
+  "@phase_follicular": {},
+  "phase_ovulation": "Ovulation",
+  "@phase_ovulation": {},
+  "phase_luteal": "Lucien phase",
+  "@phase_luteal": {},
+  "until_period": "{daysUntil, plural, =0{Monthly periods are expected today} =1{Monthly periods starts tomorrow} other{Up to monthly periods}}",
+  "@until_period": {
+    "placeholders": {
+      "daysUntil": {}
+    }
+  },
+  "days_until_period": "{days, plural, =0{{days} days left} one{{days} day left} other{{days} days left}}",
+  "@days_until_period": {
+    "placeholders": {
+      "days": {}
+    }
+  }
+}

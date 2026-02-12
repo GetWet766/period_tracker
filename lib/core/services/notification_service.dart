@@ -1,32 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
-  NotificationService();
-
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
 
-  static const _channelId = 'period_tracker_channel';
-  static const _channelName = 'Period Tracker';
+  static const _channelId = 'periodility_channel';
+  static const _channelName = 'Periodility';
   static const _channelDescription = 'Уведомления о цикле и напоминания';
 
   Future<void> init() async {
-    tz.initializeTimeZones();
-
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
     const iosSettings = DarwinInitializationSettings();
-
     const settings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
     );
 
-    await _notifications.initialize(settings);
+    await _notifications.initialize(settings: settings);
   }
 
   Future<bool> requestPermissions() async {
@@ -61,17 +55,17 @@ class NotificationService {
     required DateTime nextPeriodDate,
     required int daysBefore,
   }) async {
-    await _notifications.cancel(1);
+    await _notifications.cancel(id: 1);
 
     final reminderDate = nextPeriodDate.subtract(Duration(days: daysBefore));
     if (reminderDate.isBefore(DateTime.now())) return;
 
     await _notifications.zonedSchedule(
-      1,
-      'Напоминание о менструации',
-      'Менструация ожидается через $daysBefore дн.',
-      tz.TZDateTime.from(reminderDate, tz.local),
-      const NotificationDetails(
+      id: 1,
+      title: 'Напоминание о менструации',
+      body: 'Менструация ожидается через $daysBefore дн.',
+      scheduledDate: tz.TZDateTime.from(reminderDate, tz.local),
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           _channelId,
           _channelName,
@@ -89,17 +83,17 @@ class NotificationService {
   Future<void> scheduleOvulationReminder({
     required DateTime ovulationDate,
   }) async {
-    await _notifications.cancel(2);
+    await _notifications.cancel(id: 2);
 
     final reminderDate = ovulationDate.subtract(const Duration(days: 1));
     if (reminderDate.isBefore(DateTime.now())) return;
 
     await _notifications.zonedSchedule(
-      2,
-      'Напоминание об овуляции',
-      'Овуляция ожидается завтра',
-      tz.TZDateTime.from(reminderDate, tz.local),
-      const NotificationDetails(
+      id: 2,
+      title: 'Напоминание об овуляции',
+      body: 'Овуляция ожидается завтра',
+      scheduledDate: tz.TZDateTime.from(reminderDate, tz.local),
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           _channelId,
           _channelName,
@@ -120,7 +114,7 @@ class NotificationService {
     required TimeOfDay time,
   }) async {
     final notificationId = 100 + id;
-    await _notifications.cancel(notificationId);
+    await _notifications.cancel(id: notificationId);
 
     final now = DateTime.now();
     var scheduledDate = DateTime(
@@ -136,11 +130,11 @@ class NotificationService {
     }
 
     await _notifications.zonedSchedule(
-      notificationId,
-      'Напоминание о препарате',
-      'Время принять: $medicationName',
-      tz.TZDateTime.from(scheduledDate, tz.local),
-      const NotificationDetails(
+      id: notificationId,
+      title: 'Напоминание о препарате',
+      body: 'Время принять: $medicationName',
+      scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           _channelId,
           _channelName,
@@ -157,14 +151,14 @@ class NotificationService {
 
   // Schedule water reminder (repeating)
   Future<void> scheduleWaterReminder({required int intervalHours}) async {
-    await _notifications.cancel(3);
+    await _notifications.cancel(id: 3);
 
     await _notifications.periodicallyShow(
-      3,
-      'Напоминание о воде',
-      'Не забудьте выпить стакан воды',
-      RepeatInterval.hourly,
-      const NotificationDetails(
+      id: 3,
+      title: 'Напоминание о воде',
+      body: 'Не забудьте выпить стакан воды',
+      repeatInterval: RepeatInterval.hourly,
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           _channelId,
           _channelName,
@@ -177,11 +171,11 @@ class NotificationService {
   }
 
   Future<void> cancelMedicationReminder(int id) async {
-    await _notifications.cancel(100 + id);
+    await _notifications.cancel(id: 100 + id);
   }
 
   Future<void> cancelWaterReminder() async {
-    await _notifications.cancel(3);
+    await _notifications.cancel(id: 3);
   }
 
   Future<void> cancelAll() async {

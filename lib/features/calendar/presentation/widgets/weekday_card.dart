@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class WeekdayCard extends StatelessWidget {
   const WeekdayCard({
@@ -69,8 +69,8 @@ class WeekdayCard extends StatelessWidget {
             Positioned(
               bottom: 4,
               right: 4,
-              child: HugeIcon(
-                icon: HugeIcons.strokeRoundedGiveBlood,
+              child: Icon(
+                Symbols.water_drop_rounded,
                 color: isSelected
                     ? colorScheme.onPrimary
                     : isToday || isInRange

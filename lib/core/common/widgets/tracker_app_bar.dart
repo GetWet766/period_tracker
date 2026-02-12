@@ -1,8 +1,28 @@
-import 'package:extensions_plus/extensions_plus.dart';
 import 'package:flutter/material.dart';
 
-class TrackerAppBar extends StatelessWidget {
+enum TrackerAppBarType { basic, sliver }
+
+class TrackerAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TrackerAppBar({
+    required this.title,
+    this.expandedHeight,
+    this.centerTitle = true,
+    this.floating = false,
+    this.pinned = true,
+    this.primary = true,
+    this.backgroundColor,
+    this.actions,
+    this.flexibleSpace,
+    this.bottom,
+    this.actionsPadding,
+    this.shape,
+    this.leading,
+    this.titleSpacing,
+    this.surfaceTintColor,
+    super.key,
+  }) : _variant = TrackerAppBarType.sliver;
+
+  const TrackerAppBar.basic({
     required this.title,
     this.centerTitle = true,
     this.floating = false,
@@ -18,7 +38,8 @@ class TrackerAppBar extends StatelessWidget {
     this.titleSpacing,
     this.surfaceTintColor,
     super.key,
-  });
+  }) : expandedHeight = null,
+       _variant = TrackerAppBarType.basic;
 
   final Widget title;
   final List<Widget>? actions;
@@ -34,32 +55,45 @@ class TrackerAppBar extends StatelessWidget {
   final Widget? leading;
   final double? titleSpacing;
   final Color? surfaceTintColor;
+  final double? expandedHeight;
+  final TrackerAppBarType _variant;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-
-    return SliverAppBar(
-      title: title,
-      actions: actions,
-      backgroundColor: backgroundColor ?? colorScheme.surface,
-      flexibleSpace: flexibleSpace,
-      bottom: bottom,
-      actionsPadding: actionsPadding,
-      centerTitle: centerTitle,
-      floating: floating,
-      leading: leading,
-      pinned: pinned,
-      primary: primary,
-      shape:
-          shape ??
-          const RoundedRectangleBorder(
-            borderRadius: .vertical(
-              bottom: .circular(28),
-            ),
-          ),
-      titleSpacing: titleSpacing,
-      surfaceTintColor: surfaceTintColor,
-    );
+    return _variant == .sliver
+        ? SliverAppBar(
+            title: title,
+            actions: actions,
+            backgroundColor: backgroundColor,
+            flexibleSpace: flexibleSpace,
+            bottom: bottom,
+            actionsPadding: actionsPadding,
+            centerTitle: centerTitle,
+            floating: floating,
+            leading: leading,
+            pinned: pinned,
+            primary: primary,
+            shape: shape,
+            titleSpacing: titleSpacing,
+            surfaceTintColor: surfaceTintColor,
+            expandedHeight: expandedHeight,
+          )
+        : AppBar(
+            title: title,
+            actions: actions,
+            backgroundColor: backgroundColor,
+            flexibleSpace: flexibleSpace,
+            bottom: bottom,
+            actionsPadding: actionsPadding,
+            centerTitle: centerTitle,
+            leading: leading,
+            primary: primary,
+            shape: shape,
+            titleSpacing: titleSpacing,
+            surfaceTintColor: surfaceTintColor,
+          );
   }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
