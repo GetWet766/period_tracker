@@ -31,10 +31,10 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Build App Bundle
-        run: flutter build appbundle --release
+        run: flutter build appbundle --release --no-tree-shake-icons
 
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
@@ -58,7 +58,7 @@ jobs:
         run: flutter pub get
 
       - name: Build iOS (no codesign)
-        run: flutter build ios --release --no-codesign
+        run: flutter build ios --release --no-codesign --no-tree-shake-icons
 
       - name: Create IPA directory
         run: mkdir -p build/ios/ipa
@@ -90,7 +90,7 @@ jobs:
         run: flutter pub get
 
       - name: Build Web
-        run: flutter build web --release --no-wasm-dry-run --base-href "/${{ github.event.repository.name }}/"
+        run: flutter build web --release --no-wasm-dry-run --base-href "/${{ github.event.repository.name }}/" --no-tree-shake-icons
 
       - name: Upload Web artifacts
         uses: actions/upload-artifact@v4
