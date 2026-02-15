@@ -162,7 +162,7 @@ jobs:
           path: build/ios/iphoneos/ios_app.tar.gz
 
   create-release:
-    needs: [build-android, build-ios, build-web]
+    needs: [build-android, build-ios]
     runs-on: ubuntu-latest
     steps:
       - name: Download Android artifacts
