@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:isar_community/isar.dart';
+import 'package:isar_plus/isar_plus.dart';
 import 'package:periodility/core/utils/fast_hash_extension.dart';
 import 'package:periodility/features/cycle/domain/entities/daily_log_entity.dart';
 
@@ -10,7 +10,7 @@ part 'daily_log_model.g.dart';
 
 @freezed
 @JsonSerializable()
-@Collection(ignore: {'copyWith', 'toEntity', 'hashCode'})
+@Collection()
 class DailyLogModel with _$DailyLogModel {
   const DailyLogModel({
     required this.id,
@@ -42,14 +42,14 @@ class DailyLogModel with _$DailyLogModel {
   @override
   final String? notes;
   @override
-  @Enumerated(EnumType.name)
   final FlowLevel? flowLevel;
   @override
   final DateTime? createdAt;
   @override
   final DateTime? updatedAt;
 
-  Id get isarId => id.fastHash();
+  @Id()
+  int get isarId => id.fastHash();
 
   DailyLogEntity toEntity() => DailyLogEntity(
     id: id,

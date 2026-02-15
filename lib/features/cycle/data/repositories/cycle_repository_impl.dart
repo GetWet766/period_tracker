@@ -65,7 +65,8 @@ class CycleRepositoryImpl implements CycleRepository {
         id: const Uuid().v4(),
         startDate: startDate,
         isManuallyStarted: true,
-      ).toEntity();
+      );
+
       await _localDataSource.saveCycle(newCycle);
       return const Right(null);
     } catch (e) {
@@ -85,7 +86,7 @@ class CycleRepositoryImpl implements CycleRepository {
           );
         }
 
-        final updated = current.copyWith(endDate: endDate).toEntity();
+        final updated = current.copyWith(endDate: endDate);
         await _localDataSource.saveCycle(updated);
       }
 
@@ -98,7 +99,15 @@ class CycleRepositoryImpl implements CycleRepository {
   @override
   Future<Either<Failure, void>> updateCycle(CycleEntity cycle) async {
     try {
-      await _localDataSource.saveCycle(cycle);
+      final model = CycleModel(
+        id: cycle.id,
+        startDate: cycle.startDate,
+        endDate: cycle.endDate,
+        isManuallyStarted: cycle.isManuallyStarted,
+        userId: cycle.userId,
+      );
+
+      await _localDataSource.saveCycle(model);
       return const Right(null);
     } catch (e) {
       return Left(CacheFailure(e.toString()));

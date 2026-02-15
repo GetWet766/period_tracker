@@ -3,573 +3,371 @@
 part of 'cycle_model.dart';
 
 // **************************************************************************
-// IsarCollectionGenerator
+// _IsarCollectionGenerator
 // **************************************************************************
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, invalid_use_of_protected_member, lines_longer_than_80_chars, constant_identifier_names, avoid_js_rounded_ints, no_leading_underscores_for_local_identifiers, require_trailing_commas, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_in_if_null_operators, library_private_types_in_public_api, prefer_const_constructors
+// ignore_for_file: type=lint
 
 extension GetCycleModelCollection on Isar {
-  IsarCollection<CycleModel> get cycleModels => this.collection();
+  IsarCollection<int, CycleModel> get cycleModels => this.collection();
 }
 
-const CycleModelSchema = CollectionSchema(
-  name: r'CycleModel',
-  id: 2817839902186255724,
-  properties: {
-    r'createdAt': PropertySchema(
-      id: 0,
-      name: r'createdAt',
-      type: IsarType.dateTime,
-    ),
-    r'endDate': PropertySchema(
-      id: 1,
-      name: r'endDate',
-      type: IsarType.dateTime,
-    ),
-    r'hashCode': PropertySchema(id: 2, name: r'hashCode', type: IsarType.long),
-    r'id': PropertySchema(id: 3, name: r'id', type: IsarType.string),
-    r'isManuallyStarted': PropertySchema(
-      id: 4,
-      name: r'isManuallyStarted',
-      type: IsarType.bool,
-    ),
-    r'startDate': PropertySchema(
-      id: 5,
-      name: r'startDate',
-      type: IsarType.dateTime,
-    ),
-    r'userId': PropertySchema(id: 6, name: r'userId', type: IsarType.string),
-  },
-
-  estimateSize: _cycleModelEstimateSize,
-  serialize: _cycleModelSerialize,
-  deserialize: _cycleModelDeserialize,
-  deserializeProp: _cycleModelDeserializeProp,
-  idName: r'isarId',
-  indexes: {
-    r'startDate': IndexSchema(
-      id: 7723980484494730382,
-      name: r'startDate',
-      unique: false,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'startDate',
-          type: IndexType.value,
-          caseSensitive: false,
-        ),
-      ],
-    ),
-  },
-  links: {},
-  embeddedSchemas: {},
-
-  getId: _cycleModelGetId,
-  getLinks: _cycleModelGetLinks,
-  attach: _cycleModelAttach,
-  version: '3.3.0',
+final CycleModelSchema = IsarGeneratedSchema(
+  schema: IsarSchema(
+    name: 'CycleModel',
+    idName: 'isarId',
+    embedded: false,
+    properties: [
+      IsarPropertySchema(name: 'id', type: IsarType.string),
+      IsarPropertySchema(name: 'userId', type: IsarType.string),
+      IsarPropertySchema(name: 'startDate', type: IsarType.dateTime),
+      IsarPropertySchema(name: 'endDate', type: IsarType.dateTime),
+      IsarPropertySchema(name: 'createdAt', type: IsarType.dateTime),
+      IsarPropertySchema(name: 'isManuallyStarted', type: IsarType.bool),
+    ],
+    indexes: [],
+  ),
+  converter: IsarObjectConverter<int, CycleModel>(
+    serialize: serializeCycleModel,
+    deserialize: deserializeCycleModel,
+    deserializeProperty: deserializeCycleModelProp,
+  ),
+  getEmbeddedSchemas: () => [],
 );
 
-int _cycleModelEstimateSize(
-  CycleModel object,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  var bytesCount = offsets.last;
-  bytesCount += 3 + object.id.length * 3;
+@isarProtected
+int serializeCycleModel(IsarWriter writer, CycleModel object) {
+  IsarCore.writeString(writer, 1, object.id);
   {
     final value = object.userId;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
+    if (value == null) {
+      IsarCore.writeNull(writer, 2);
+    } else {
+      IsarCore.writeString(writer, 2, value);
     }
   }
-  return bytesCount;
+  IsarCore.writeLong(
+    writer,
+    3,
+    object.startDate.toUtc().microsecondsSinceEpoch,
+  );
+  IsarCore.writeLong(
+    writer,
+    4,
+    object.endDate?.toUtc().microsecondsSinceEpoch ?? -9223372036854775808,
+  );
+  IsarCore.writeLong(
+    writer,
+    5,
+    object.createdAt?.toUtc().microsecondsSinceEpoch ?? -9223372036854775808,
+  );
+  IsarCore.writeBool(writer, 6, value: object.isManuallyStarted);
+  return object.isarId;
 }
 
-void _cycleModelSerialize(
-  CycleModel object,
-  IsarWriter writer,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  writer.writeDateTime(offsets[0], object.createdAt);
-  writer.writeDateTime(offsets[1], object.endDate);
-  writer.writeLong(offsets[2], object.hashCode);
-  writer.writeString(offsets[3], object.id);
-  writer.writeBool(offsets[4], object.isManuallyStarted);
-  writer.writeDateTime(offsets[5], object.startDate);
-  writer.writeString(offsets[6], object.userId);
-}
-
-CycleModel _cycleModelDeserialize(
-  Id id,
-  IsarReader reader,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
+@isarProtected
+CycleModel deserializeCycleModel(IsarReader reader) {
+  final String _id;
+  _id = IsarCore.readString(reader, 1) ?? '';
+  final String? _userId;
+  _userId = IsarCore.readString(reader, 2);
+  final DateTime _startDate;
+  {
+    final value = IsarCore.readLong(reader, 3);
+    if (value == -9223372036854775808) {
+      _startDate = DateTime.fromMillisecondsSinceEpoch(
+        0,
+        isUtc: true,
+      ).toLocal();
+    } else {
+      _startDate = DateTime.fromMicrosecondsSinceEpoch(
+        value,
+        isUtc: true,
+      ).toLocal();
+    }
+  }
+  final DateTime? _endDate;
+  {
+    final value = IsarCore.readLong(reader, 4);
+    if (value == -9223372036854775808) {
+      _endDate = null;
+    } else {
+      _endDate = DateTime.fromMicrosecondsSinceEpoch(
+        value,
+        isUtc: true,
+      ).toLocal();
+    }
+  }
+  final DateTime? _createdAt;
+  {
+    final value = IsarCore.readLong(reader, 5);
+    if (value == -9223372036854775808) {
+      _createdAt = null;
+    } else {
+      _createdAt = DateTime.fromMicrosecondsSinceEpoch(
+        value,
+        isUtc: true,
+      ).toLocal();
+    }
+  }
+  final bool _isManuallyStarted;
+  _isManuallyStarted = IsarCore.readBool(reader, 6);
   final object = CycleModel(
-    createdAt: reader.readDateTimeOrNull(offsets[0]),
-    endDate: reader.readDateTimeOrNull(offsets[1]),
-    id: reader.readString(offsets[3]),
-    isManuallyStarted: reader.readBoolOrNull(offsets[4]) ?? false,
-    startDate: reader.readDateTime(offsets[5]),
-    userId: reader.readStringOrNull(offsets[6]),
+    id: _id,
+    userId: _userId,
+    startDate: _startDate,
+    endDate: _endDate,
+    createdAt: _createdAt,
+    isManuallyStarted: _isManuallyStarted,
   );
   return object;
 }
 
-P _cycleModelDeserializeProp<P>(
-  IsarReader reader,
-  int propertyId,
-  int offset,
-  Map<Type, List<int>> allOffsets,
-) {
-  switch (propertyId) {
-    case 0:
-      return (reader.readDateTimeOrNull(offset)) as P;
+@isarProtected
+dynamic deserializeCycleModelProp(IsarReader reader, int property) {
+  switch (property) {
     case 1:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return IsarCore.readString(reader, 1) ?? '';
     case 2:
-      return (reader.readLong(offset)) as P;
+      return IsarCore.readString(reader, 2);
     case 3:
-      return (reader.readString(offset)) as P;
+      {
+        final value = IsarCore.readLong(reader, 3);
+        if (value == -9223372036854775808) {
+          return DateTime.fromMillisecondsSinceEpoch(0, isUtc: true).toLocal();
+        } else {
+          return DateTime.fromMicrosecondsSinceEpoch(
+            value,
+            isUtc: true,
+          ).toLocal();
+        }
+      }
     case 4:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      {
+        final value = IsarCore.readLong(reader, 4);
+        if (value == -9223372036854775808) {
+          return null;
+        } else {
+          return DateTime.fromMicrosecondsSinceEpoch(
+            value,
+            isUtc: true,
+          ).toLocal();
+        }
+      }
     case 5:
-      return (reader.readDateTime(offset)) as P;
+      {
+        final value = IsarCore.readLong(reader, 5);
+        if (value == -9223372036854775808) {
+          return null;
+        } else {
+          return DateTime.fromMicrosecondsSinceEpoch(
+            value,
+            isUtc: true,
+          ).toLocal();
+        }
+      }
     case 6:
-      return (reader.readStringOrNull(offset)) as P;
+      return IsarCore.readBool(reader, 6);
+    case 0:
+      return IsarCore.readId(reader);
     default:
-      throw IsarError('Unknown property with id $propertyId');
+      throw ArgumentError('Unknown property: $property');
   }
 }
 
-Id _cycleModelGetId(CycleModel object) {
-  return object.isarId;
+sealed class _CycleModelUpdate {
+  bool call({
+    required int isarId,
+    String? id,
+    String? userId,
+    DateTime? startDate,
+    DateTime? endDate,
+    DateTime? createdAt,
+    bool? isManuallyStarted,
+  });
 }
 
-List<IsarLinkBase<dynamic>> _cycleModelGetLinks(CycleModel object) {
-  return [];
+class _CycleModelUpdateImpl implements _CycleModelUpdate {
+  const _CycleModelUpdateImpl(this.collection);
+
+  final IsarCollection<int, CycleModel> collection;
+
+  @override
+  bool call({
+    required int isarId,
+    Object? id = ignore,
+    Object? userId = ignore,
+    Object? startDate = ignore,
+    Object? endDate = ignore,
+    Object? createdAt = ignore,
+    Object? isManuallyStarted = ignore,
+  }) {
+    return collection.updateProperties(
+          [isarId],
+          {
+            if (id != ignore) 1: id as String?,
+            if (userId != ignore) 2: userId as String?,
+            if (startDate != ignore) 3: startDate as DateTime?,
+            if (endDate != ignore) 4: endDate as DateTime?,
+            if (createdAt != ignore) 5: createdAt as DateTime?,
+            if (isManuallyStarted != ignore) 6: isManuallyStarted as bool?,
+          },
+        ) >
+        0;
+  }
 }
 
-void _cycleModelAttach(IsarCollection<dynamic> col, Id id, CycleModel object) {}
+sealed class _CycleModelUpdateAll {
+  int call({
+    required List<int> isarId,
+    String? id,
+    String? userId,
+    DateTime? startDate,
+    DateTime? endDate,
+    DateTime? createdAt,
+    bool? isManuallyStarted,
+  });
+}
 
-extension CycleModelQueryWhereSort
-    on QueryBuilder<CycleModel, CycleModel, QWhere> {
-  QueryBuilder<CycleModel, CycleModel, QAfterWhere> anyIsarId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(const IdWhereClause.any());
-    });
-  }
+class _CycleModelUpdateAllImpl implements _CycleModelUpdateAll {
+  const _CycleModelUpdateAllImpl(this.collection);
 
-  QueryBuilder<CycleModel, CycleModel, QAfterWhere> anyStartDate() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'startDate'),
-      );
+  final IsarCollection<int, CycleModel> collection;
+
+  @override
+  int call({
+    required List<int> isarId,
+    Object? id = ignore,
+    Object? userId = ignore,
+    Object? startDate = ignore,
+    Object? endDate = ignore,
+    Object? createdAt = ignore,
+    Object? isManuallyStarted = ignore,
+  }) {
+    return collection.updateProperties(isarId, {
+      if (id != ignore) 1: id as String?,
+      if (userId != ignore) 2: userId as String?,
+      if (startDate != ignore) 3: startDate as DateTime?,
+      if (endDate != ignore) 4: endDate as DateTime?,
+      if (createdAt != ignore) 5: createdAt as DateTime?,
+      if (isManuallyStarted != ignore) 6: isManuallyStarted as bool?,
     });
   }
 }
 
-extension CycleModelQueryWhere
-    on QueryBuilder<CycleModel, CycleModel, QWhereClause> {
-  QueryBuilder<CycleModel, CycleModel, QAfterWhereClause> isarIdEqualTo(
-    Id isarId,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.between(lower: isarId, upper: isarId),
-      );
-    });
-  }
+extension CycleModelUpdate on IsarCollection<int, CycleModel> {
+  _CycleModelUpdate get update => _CycleModelUpdateImpl(this);
 
-  QueryBuilder<CycleModel, CycleModel, QAfterWhereClause> isarIdNotEqualTo(
-    Id isarId,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: isarId, includeUpper: false),
-            )
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: isarId, includeLower: false),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: isarId, includeLower: false),
-            )
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: isarId, includeUpper: false),
-            );
-      }
-    });
-  }
+  _CycleModelUpdateAll get updateAll => _CycleModelUpdateAllImpl(this);
+}
 
-  QueryBuilder<CycleModel, CycleModel, QAfterWhereClause> isarIdGreaterThan(
-    Id isarId, {
-    bool include = false,
+sealed class _CycleModelQueryUpdate {
+  int call({
+    String? id,
+    String? userId,
+    DateTime? startDate,
+    DateTime? endDate,
+    DateTime? createdAt,
+    bool? isManuallyStarted,
+  });
+}
+
+class _CycleModelQueryUpdateImpl implements _CycleModelQueryUpdate {
+  const _CycleModelQueryUpdateImpl(this.query, {this.limit});
+
+  final IsarQuery<CycleModel> query;
+  final int? limit;
+
+  @override
+  int call({
+    Object? id = ignore,
+    Object? userId = ignore,
+    Object? startDate = ignore,
+    Object? endDate = ignore,
+    Object? createdAt = ignore,
+    Object? isManuallyStarted = ignore,
   }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.greaterThan(lower: isarId, includeLower: include),
-      );
+    return query.updateProperties(limit: limit, {
+      if (id != ignore) 1: id as String?,
+      if (userId != ignore) 2: userId as String?,
+      if (startDate != ignore) 3: startDate as DateTime?,
+      if (endDate != ignore) 4: endDate as DateTime?,
+      if (createdAt != ignore) 5: createdAt as DateTime?,
+      if (isManuallyStarted != ignore) 6: isManuallyStarted as bool?,
     });
   }
+}
 
-  QueryBuilder<CycleModel, CycleModel, QAfterWhereClause> isarIdLessThan(
-    Id isarId, {
-    bool include = false,
+extension CycleModelQueryUpdate on IsarQuery<CycleModel> {
+  _CycleModelQueryUpdate get updateFirst =>
+      _CycleModelQueryUpdateImpl(this, limit: 1);
+
+  _CycleModelQueryUpdate get updateAll => _CycleModelQueryUpdateImpl(this);
+}
+
+class _CycleModelQueryBuilderUpdateImpl implements _CycleModelQueryUpdate {
+  const _CycleModelQueryBuilderUpdateImpl(this.query, {this.limit});
+
+  final QueryBuilder<CycleModel, CycleModel, QOperations> query;
+  final int? limit;
+
+  @override
+  int call({
+    Object? id = ignore,
+    Object? userId = ignore,
+    Object? startDate = ignore,
+    Object? endDate = ignore,
+    Object? createdAt = ignore,
+    Object? isManuallyStarted = ignore,
   }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.lessThan(upper: isarId, includeUpper: include),
-      );
-    });
+    final q = query.build();
+    try {
+      return q.updateProperties(limit: limit, {
+        if (id != ignore) 1: id as String?,
+        if (userId != ignore) 2: userId as String?,
+        if (startDate != ignore) 3: startDate as DateTime?,
+        if (endDate != ignore) 4: endDate as DateTime?,
+        if (createdAt != ignore) 5: createdAt as DateTime?,
+        if (isManuallyStarted != ignore) 6: isManuallyStarted as bool?,
+      });
+    } finally {
+      q.close();
+    }
   }
+}
 
-  QueryBuilder<CycleModel, CycleModel, QAfterWhereClause> isarIdBetween(
-    Id lowerIsarId,
-    Id upperIsarId, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.between(
-          lower: lowerIsarId,
-          includeLower: includeLower,
-          upper: upperIsarId,
-          includeUpper: includeUpper,
-        ),
-      );
-    });
-  }
+extension CycleModelQueryBuilderUpdate
+    on QueryBuilder<CycleModel, CycleModel, QOperations> {
+  _CycleModelQueryUpdate get updateFirst =>
+      _CycleModelQueryBuilderUpdateImpl(this, limit: 1);
 
-  QueryBuilder<CycleModel, CycleModel, QAfterWhereClause> startDateEqualTo(
-    DateTime startDate,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(indexName: r'startDate', value: [startDate]),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterWhereClause> startDateNotEqualTo(
-    DateTime startDate,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'startDate',
-                lower: [],
-                upper: [startDate],
-                includeUpper: false,
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'startDate',
-                lower: [startDate],
-                includeLower: false,
-                upper: [],
-              ),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'startDate',
-                lower: [startDate],
-                includeLower: false,
-                upper: [],
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'startDate',
-                lower: [],
-                upper: [startDate],
-                includeUpper: false,
-              ),
-            );
-      }
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterWhereClause> startDateGreaterThan(
-    DateTime startDate, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'startDate',
-          lower: [startDate],
-          includeLower: include,
-          upper: [],
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterWhereClause> startDateLessThan(
-    DateTime startDate, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'startDate',
-          lower: [],
-          upper: [startDate],
-          includeUpper: include,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterWhereClause> startDateBetween(
-    DateTime lowerStartDate,
-    DateTime upperStartDate, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'startDate',
-          lower: [lowerStartDate],
-          includeLower: includeLower,
-          upper: [upperStartDate],
-          includeUpper: includeUpper,
-        ),
-      );
-    });
-  }
+  _CycleModelQueryUpdate get updateAll =>
+      _CycleModelQueryBuilderUpdateImpl(this);
 }
 
 extension CycleModelQueryFilter
     on QueryBuilder<CycleModel, CycleModel, QFilterCondition> {
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
-  createdAtIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'createdAt'),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
-  createdAtIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'createdAt'),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> createdAtEqualTo(
-    DateTime? value,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'createdAt', value: value),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
-  createdAtGreaterThan(DateTime? value, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'createdAt',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> createdAtLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'createdAt',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> createdAtBetween(
-    DateTime? lower,
-    DateTime? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'createdAt',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> endDateIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'endDate'),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
-  endDateIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'endDate'),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> endDateEqualTo(
-    DateTime? value,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'endDate', value: value),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
-  endDateGreaterThan(DateTime? value, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'endDate',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> endDateLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'endDate',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> endDateBetween(
-    DateTime? lower,
-    DateTime? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'endDate',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> hashCodeEqualTo(
-    int value,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'hashCode', value: value),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
-  hashCodeGreaterThan(int value, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'hashCode',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> hashCodeLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'hashCode',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> hashCodeBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'hashCode',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
-    });
-  }
-
   QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> idEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'id',
+        EqualCondition(property: 1, value: value, caseSensitive: caseSensitive),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> idGreaterThan(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 1,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -577,16 +375,12 @@ extension CycleModelQueryFilter
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> idGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  idGreaterThanOrEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'id',
+        GreaterOrEqualCondition(
+          property: 1,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -596,14 +390,21 @@ extension CycleModelQueryFilter
 
   QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> idLessThan(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'id',
+        LessCondition(property: 1, value: value, caseSensitive: caseSensitive),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  idLessThanOrEqualTo(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 1,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -614,18 +415,14 @@ extension CycleModelQueryFilter
   QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> idBetween(
     String lower,
     String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'id',
+        BetweenCondition(
+          property: 1,
           lower: lower,
-          includeLower: includeLower,
           upper: upper,
-          includeUpper: includeUpper,
           caseSensitive: caseSensitive,
         ),
       );
@@ -638,8 +435,8 @@ extension CycleModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'id',
+        StartsWithCondition(
+          property: 1,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -653,8 +450,8 @@ extension CycleModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'id',
+        EndsWithCondition(
+          property: 1,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -668,8 +465,8 @@ extension CycleModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'id',
+        ContainsCondition(
+          property: 1,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -683,8 +480,8 @@ extension CycleModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'id',
+        MatchesCondition(
+          property: 1,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -695,7 +492,7 @@ extension CycleModelQueryFilter
   QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> idIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'id', value: ''),
+        const EqualCondition(property: 1, value: ''),
       );
     });
   }
@@ -703,150 +500,21 @@ extension CycleModelQueryFilter
   QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> idIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'id', value: ''),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
-  isManuallyStartedEqualTo(bool value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'isManuallyStarted', value: value),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> isarIdEqualTo(
-    Id value,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'isarId', value: value),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> isarIdGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'isarId',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> isarIdLessThan(
-    Id value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'isarId',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> isarIdBetween(
-    Id lower,
-    Id upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'isarId',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> startDateEqualTo(
-    DateTime value,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'startDate', value: value),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
-  startDateGreaterThan(DateTime value, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'startDate',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> startDateLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'startDate',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> startDateBetween(
-    DateTime lower,
-    DateTime upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'startDate',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
+        const GreaterCondition(property: 1, value: ''),
       );
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> userIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'userId'),
-      );
+      return query.addFilterCondition(const IsNullCondition(property: 2));
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
   userIdIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'userId'),
-      );
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 2));
     });
   }
 
@@ -856,8 +524,19 @@ extension CycleModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'userId',
+        EqualCondition(property: 2, value: value, caseSensitive: caseSensitive),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> userIdGreaterThan(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 2,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -865,16 +544,12 @@ extension CycleModelQueryFilter
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> userIdGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  userIdGreaterThanOrEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'userId',
+        GreaterOrEqualCondition(
+          property: 2,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -884,14 +559,21 @@ extension CycleModelQueryFilter
 
   QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> userIdLessThan(
     String? value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'userId',
+        LessCondition(property: 2, value: value, caseSensitive: caseSensitive),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  userIdLessThanOrEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 2,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -902,18 +584,14 @@ extension CycleModelQueryFilter
   QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> userIdBetween(
     String? lower,
     String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'userId',
+        BetweenCondition(
+          property: 2,
           lower: lower,
-          includeLower: includeLower,
           upper: upper,
-          includeUpper: includeUpper,
           caseSensitive: caseSensitive,
         ),
       );
@@ -926,8 +604,8 @@ extension CycleModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'userId',
+        StartsWithCondition(
+          property: 2,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -941,8 +619,8 @@ extension CycleModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'userId',
+        EndsWithCondition(
+          property: 2,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -956,8 +634,8 @@ extension CycleModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'userId',
+        ContainsCondition(
+          property: 2,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -971,8 +649,8 @@ extension CycleModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'userId',
+        MatchesCondition(
+          property: 2,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -983,7 +661,7 @@ extension CycleModelQueryFilter
   QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> userIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'userId', value: ''),
+        const EqualCondition(property: 2, value: ''),
       );
     });
   }
@@ -992,7 +670,268 @@ extension CycleModelQueryFilter
   userIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'userId', value: ''),
+        const GreaterCondition(property: 2, value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> startDateEqualTo(
+    DateTime value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(property: 3, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  startDateGreaterThan(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(property: 3, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  startDateGreaterThanOrEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(property: 3, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> startDateLessThan(
+    DateTime value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(LessCondition(property: 3, value: value));
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  startDateLessThanOrEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(property: 3, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> startDateBetween(
+    DateTime lower,
+    DateTime upper,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(property: 3, lower: lower, upper: upper),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> endDateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 4));
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  endDateIsNotNull() {
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 4));
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> endDateEqualTo(
+    DateTime? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(property: 4, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  endDateGreaterThan(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(property: 4, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  endDateGreaterThanOrEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(property: 4, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> endDateLessThan(
+    DateTime? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(LessCondition(property: 4, value: value));
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  endDateLessThanOrEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(property: 4, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> endDateBetween(
+    DateTime? lower,
+    DateTime? upper,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(property: 4, lower: lower, upper: upper),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  createdAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 5));
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  createdAtIsNotNull() {
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 5));
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> createdAtEqualTo(
+    DateTime? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(property: 5, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  createdAtGreaterThan(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(property: 5, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  createdAtGreaterThanOrEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(property: 5, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> createdAtLessThan(
+    DateTime? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(LessCondition(property: 5, value: value));
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  createdAtLessThanOrEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(property: 5, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> createdAtBetween(
+    DateTime? lower,
+    DateTime? upper,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(property: 5, lower: lower, upper: upper),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  isManuallyStartedEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(property: 6, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> isarIdEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(property: 0, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> isarIdGreaterThan(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(property: 0, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  isarIdGreaterThanOrEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(property: 0, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> isarIdLessThan(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(LessCondition(property: 0, value: value));
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition>
+  isarIdLessThanOrEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(property: 0, value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterFilterCondition> isarIdBetween(
+    int lower,
+    int upper,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(property: 0, lower: lower, upper: upper),
       );
     });
   }
@@ -1001,294 +940,377 @@ extension CycleModelQueryFilter
 extension CycleModelQueryObject
     on QueryBuilder<CycleModel, CycleModel, QFilterCondition> {}
 
-extension CycleModelQueryLinks
-    on QueryBuilder<CycleModel, CycleModel, QFilterCondition> {}
-
 extension CycleModelQuerySortBy
     on QueryBuilder<CycleModel, CycleModel, QSortBy> {
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByCreatedAt() {
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortById({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'createdAt', Sort.asc);
+      return query.addSortBy(1, caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByCreatedAtDesc() {
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByIdDesc({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'createdAt', Sort.desc);
+      return query.addSortBy(1, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByUserId({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(2, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByUserIdDesc({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(2, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByStartDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(3);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByStartDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(3, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByEndDate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'endDate', Sort.asc);
+      return query.addSortBy(4);
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByEndDateDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'endDate', Sort.desc);
+      return query.addSortBy(4, sort: Sort.desc);
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByHashCode() {
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'hashCode', Sort.asc);
+      return query.addSortBy(5);
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByHashCodeDesc() {
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'hashCode', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortById() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.desc);
+      return query.addSortBy(5, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByIsManuallyStarted() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManuallyStarted', Sort.asc);
+      return query.addSortBy(6);
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterSortBy>
   sortByIsManuallyStartedDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManuallyStarted', Sort.desc);
+      return query.addSortBy(6, sort: Sort.desc);
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByStartDate() {
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByIsarId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'startDate', Sort.asc);
+      return query.addSortBy(0);
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByStartDateDesc() {
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByIsarIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'startDate', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByUserId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'userId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> sortByUserIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'userId', Sort.desc);
+      return query.addSortBy(0, sort: Sort.desc);
     });
   }
 }
 
 extension CycleModelQuerySortThenBy
     on QueryBuilder<CycleModel, CycleModel, QSortThenBy> {
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByCreatedAt() {
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenById({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'createdAt', Sort.asc);
+      return query.addSortBy(1, caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByCreatedAtDesc() {
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByIdDesc({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'createdAt', Sort.desc);
+      return query.addSortBy(1, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByUserId({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(2, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByUserIdDesc({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(2, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByStartDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(3);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByStartDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(3, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByEndDate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'endDate', Sort.asc);
+      return query.addSortBy(4);
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByEndDateDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'endDate', Sort.desc);
+      return query.addSortBy(4, sort: Sort.desc);
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByHashCode() {
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'hashCode', Sort.asc);
+      return query.addSortBy(5);
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByHashCodeDesc() {
+  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'hashCode', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenById() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.desc);
+      return query.addSortBy(5, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByIsManuallyStarted() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManuallyStarted', Sort.asc);
+      return query.addSortBy(6);
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterSortBy>
   thenByIsManuallyStartedDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManuallyStarted', Sort.desc);
+      return query.addSortBy(6, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByIsarId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isarId', Sort.asc);
+      return query.addSortBy(0);
     });
   }
 
   QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByIsarIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isarId', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByStartDate() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'startDate', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByStartDateDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'startDate', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByUserId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'userId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QAfterSortBy> thenByUserIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'userId', Sort.desc);
+      return query.addSortBy(0, sort: Sort.desc);
     });
   }
 }
 
 extension CycleModelQueryWhereDistinct
     on QueryBuilder<CycleModel, CycleModel, QDistinct> {
-  QueryBuilder<CycleModel, CycleModel, QDistinct> distinctByCreatedAt() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'createdAt');
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QDistinct> distinctByEndDate() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'endDate');
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QDistinct> distinctByHashCode() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'hashCode');
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QDistinct> distinctById({
+  QueryBuilder<CycleModel, CycleModel, QAfterDistinct> distinctById({
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'id', caseSensitive: caseSensitive);
+      return query.addDistinctBy(1, caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CycleModel, CycleModel, QDistinct>
+  QueryBuilder<CycleModel, CycleModel, QAfterDistinct> distinctByUserId({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(2, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterDistinct> distinctByStartDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(3);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterDistinct> distinctByEndDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(4);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterDistinct> distinctByCreatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(5);
+    });
+  }
+
+  QueryBuilder<CycleModel, CycleModel, QAfterDistinct>
   distinctByIsManuallyStarted() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'isManuallyStarted');
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QDistinct> distinctByStartDate() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'startDate');
-    });
-  }
-
-  QueryBuilder<CycleModel, CycleModel, QDistinct> distinctByUserId({
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'userId', caseSensitive: caseSensitive);
+      return query.addDistinctBy(6);
     });
   }
 }
 
-extension CycleModelQueryProperty
-    on QueryBuilder<CycleModel, CycleModel, QQueryProperty> {
-  QueryBuilder<CycleModel, int, QQueryOperations> isarIdProperty() {
+extension CycleModelQueryProperty1
+    on QueryBuilder<CycleModel, CycleModel, QProperty> {
+  QueryBuilder<CycleModel, String, QAfterProperty> idProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'isarId');
+      return query.addProperty(1);
     });
   }
 
-  QueryBuilder<CycleModel, DateTime?, QQueryOperations> createdAtProperty() {
+  QueryBuilder<CycleModel, String?, QAfterProperty> userIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'createdAt');
+      return query.addProperty(2);
     });
   }
 
-  QueryBuilder<CycleModel, DateTime?, QQueryOperations> endDateProperty() {
+  QueryBuilder<CycleModel, DateTime, QAfterProperty> startDateProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'endDate');
+      return query.addProperty(3);
     });
   }
 
-  QueryBuilder<CycleModel, int, QQueryOperations> hashCodeProperty() {
+  QueryBuilder<CycleModel, DateTime?, QAfterProperty> endDateProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'hashCode');
+      return query.addProperty(4);
     });
   }
 
-  QueryBuilder<CycleModel, String, QQueryOperations> idProperty() {
+  QueryBuilder<CycleModel, DateTime?, QAfterProperty> createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'id');
+      return query.addProperty(5);
     });
   }
 
-  QueryBuilder<CycleModel, bool, QQueryOperations> isManuallyStartedProperty() {
+  QueryBuilder<CycleModel, bool, QAfterProperty> isManuallyStartedProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'isManuallyStarted');
+      return query.addProperty(6);
     });
   }
 
-  QueryBuilder<CycleModel, DateTime, QQueryOperations> startDateProperty() {
+  QueryBuilder<CycleModel, int, QAfterProperty> isarIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'startDate');
+      return query.addProperty(0);
+    });
+  }
+}
+
+extension CycleModelQueryProperty2<R>
+    on QueryBuilder<CycleModel, R, QAfterProperty> {
+  QueryBuilder<CycleModel, (R, String), QAfterProperty> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(1);
     });
   }
 
-  QueryBuilder<CycleModel, String?, QQueryOperations> userIdProperty() {
+  QueryBuilder<CycleModel, (R, String?), QAfterProperty> userIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'userId');
+      return query.addProperty(2);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R, DateTime), QAfterProperty> startDateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(3);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R, DateTime?), QAfterProperty> endDateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(4);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R, DateTime?), QAfterProperty> createdAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R, bool), QAfterProperty>
+  isManuallyStartedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R, int), QAfterProperty> isarIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(0);
+    });
+  }
+}
+
+extension CycleModelQueryProperty3<R1, R2>
+    on QueryBuilder<CycleModel, (R1, R2), QAfterProperty> {
+  QueryBuilder<CycleModel, (R1, R2, String), QOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(1);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R1, R2, String?), QOperations> userIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(2);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R1, R2, DateTime), QOperations>
+  startDateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(3);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R1, R2, DateTime?), QOperations> endDateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(4);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R1, R2, DateTime?), QOperations>
+  createdAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R1, R2, bool), QOperations>
+  isManuallyStartedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
+    });
+  }
+
+  QueryBuilder<CycleModel, (R1, R2, int), QOperations> isarIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(0);
     });
   }
 }

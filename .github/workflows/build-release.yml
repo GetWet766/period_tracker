@@ -1,120 +1,55 @@
-name: Build and Release
+name: Build and Deploy
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
+# Права, необходимые для деплоя в GitHub Pages
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  build-android:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build APK
-        run: flutter build apk --release --no-tree-shake-icons
-
-      - name: Build App Bundle
-        run: flutter build appbundle --release --no-tree-shake-icons
-
-      - name: Upload Android artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-release
-          path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab
-
-  build-ios:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build iOS (no codesign)
-        run: flutter build ios --release --no-codesign --no-tree-shake-icons
-
-      - name: Create IPA directory
-        run: mkdir -p build/ios/ipa
-
-      - name: Create unsigned IPA
-        run: |
-          cd build/ios/iphoneos
-          mkdir Payload
-          cp -r Runner.app Payload/
-          zip -r ../ipa/app-release-unsigned.ipa Payload
-
-      - name: Upload iOS artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-release
-          path: build/ios/ipa/app-release-unsigned.ipa
-
+  # ---------------------------------------------------
+  # 1. WEB BUILD & DEPLOY
+  # ---------------------------------------------------
   build-web:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v6
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true # Встроенное кэширование SDK
 
-      - name: Get dependencies
+      - name: Cache Pub dependencies
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.pub-cache/hosted
+            ~/.pub-cache/git
+          key: ${{ runner.os }}-pub-web-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-web-
+
+      - name: Install dependencies
         run: flutter pub get
 
       - name: Build Web
-        run: flutter build web --release --no-wasm-dry-run --base-href "/${{ github.event.repository.name }}/" --no-tree-shake-icons
+        run: flutter build web --release --no-wasm --no-tree-shake-icons --base-href "/${{ github.event.repository.name }}/"
+        # Обрати внимание: base-href нужен, если сайт не в корне домена (например username.github.io/repo-name/)
 
-      - name: Upload Web artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-release
-          path: build/web
-
-  deploy-pages:
-    needs: build-web
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Download web artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: web-release
-          path: build/web
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload to Pages
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
@@ -123,39 +58,105 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  create-release:
-    needs: [build-android, build-ios, build-web]
+  # ---------------------------------------------------
+  # 2. ANDROID BUILD
+  # ---------------------------------------------------
+  build-android:
     runs-on: ubuntu-latest
     steps:
-      - name: Download Android artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-release
-          path: android-release
+      - name: Checkout code
+        uses: actions/checkout@v6
 
-      - name: Download iOS artifacts
-        uses: actions/download-artifact@v4
+      - name: Setup Java
+        uses: actions/setup-java@v5
         with:
-          name: ios-release
-          path: ios-release
+          distribution: 'temurin'
+          java-version: '17' # Flutter требует Java 11 или 17 для новых версий
+          cache: 'gradle' # Встроенный кэш для Gradle
 
-      - name: Determine release type
-        id: release-type
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.pub-cache/hosted
+            ~/.pub-cache/git
+          key: ${{ runner.os }}-pub-android-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-android-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        # Используем --release и указанный флаг. 
+        # Если нужен AAB (для Google Play), замени apk на appbundle
+        run: flutter build apk --release --no-tree-shake-icons
+
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: android-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  # ---------------------------------------------------
+  # 3. iOS BUILD (Без подписи кода)
+  # ---------------------------------------------------
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.pub-cache/hosted
+            ~/.pub-cache/git
+          key: ${{ runner.os }}-pub-ios-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-ios-
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v5
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install CocoaPods
         run: |
-          if [[ "${{ github.ref_name }}" == *"-"* ]]; then
-            echo "prerelease=true" >> $GITHUB_OUTPUT
-          else
-            echo "prerelease=false" >> $GITHUB_OUTPUT
-          fi
+          cd ios
+          pod install
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
+      - name: Build iOS (No Codesign)
+        # Собираем в режиме release без подписи (--no-codesign), 
+        # так как для подписи нужны сертификаты Apple Developer в Secrets.
+        run: flutter build ios --release --no-codesign --no-tree-shake-icons
+
+      - name: Compress iOS App
+        run: |
+          cd build/ios/iphoneos
+          tar -czf ios_app.tar.gz Runner.app
+
+      - name: Upload iOS Artifact
+        uses: actions/upload-artifact@v6
         with:
-          prerelease: ${{ steps.release-type.outputs.prerelease }}
-          generate_release_notes: true
-          files: |
-            android-release/flutter-apk/app-release.apk
-            android-release/bundle/release/app-release.aab
-            ios-release/app-release-unsigned.ipa
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: ios-release-app
+          path: build/ios/iphoneos/ios_app.tar.gz

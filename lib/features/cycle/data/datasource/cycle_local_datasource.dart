@@ -1,9 +1,11 @@
-import 'package:isar_community/isar.dart';
+import 'package:isar_plus/isar_plus.dart';
+import 'package:periodility/core/dependencies/injection.dart';
+import 'package:periodility/core/utils/fast_hash_extension.dart';
 import 'package:periodility/features/cycle/data/models/cycle_model.dart';
-import 'package:periodility/features/cycle/domain/entities/cycle_entity.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 abstract class CycleLocalDataSource {
-  Future<void> saveCycle(CycleEntity cycle);
+  Future<void> saveCycle(CycleModel cycle);
   Future<CycleModel?> getLatestCycle();
   Future<List<CycleModel>> getAllCycles();
   Future<CycleModel?> getCycleByDate(DateTime date);
@@ -16,24 +18,27 @@ class CycleLocalDataSourceImpl implements CycleLocalDataSource {
   final Isar _client;
 
   @override
-  Future<void> saveCycle(CycleEntity cycle) async {
-    final cycleModel = CycleModel(
-      id: cycle.id,
-      userId: cycle.userId,
-      startDate: cycle.startDate,
-      endDate: cycle.endDate,
+  Future<void> saveCycle(CycleModel cycle) async {
+    final cycleModel = cycle.copyWith(
       createdAt: DateTime.now(),
-      isManuallyStarted: cycle.isManuallyStarted,
     );
 
-    await _client.writeTxn(() async {
-      await _client.cycleModels.put(cycleModel);
+    await _client.writeAsync((isar) {
+      isar.cycleModels.put(cycleModel);
     });
   }
 
   // Получить самый свежий цикл (текущий)
   @override
   Future<CycleModel?> getLatestCycle() async {
+    sl<Talker>().handle(await getAllCycles());
+
+    // await _client.writeAsync(
+    //   (isar) {
+    //     isar.cycleModels.clear();
+    //   },
+    // );
+
     return _client.cycleModels.where().sortByStartDateDesc().findFirst();
   }
 
@@ -47,29 +52,17 @@ class CycleLocalDataSourceImpl implements CycleLocalDataSource {
   @override
   Future<CycleModel?> getCycleByDate(DateTime date) async {
     return _client.cycleModels
-        .filter()
-        .group(
-          (q) => q.startDateLessThan(date).or().startDateEqualTo(date),
-        )
+        .where()
+        .startDateLessThanOrEqualTo(date)
         .and()
-        .group(
-          (q) => q.endDateIsNull().or().group(
-            (q) => q.endDateGreaterThan(date).or().endDateEqualTo(date),
-          ),
-        )
+        .endDateGreaterThanOrEqualTo(date)
         .findFirst();
   }
 
   @override
   Future<void> deleteCycle(String id) async {
-    await _client.writeTxn(() async {
-      final cycle = await _client.cycleModels
-          .filter()
-          .idEqualTo(id)
-          .findFirst();
-      if (cycle != null) {
-        await _client.cycleModels.delete(cycle.isarId);
-      }
+    await _client.writeAsync((isar) {
+      isar.cycleModels.delete(id.fastHash());
     });
   }
 }

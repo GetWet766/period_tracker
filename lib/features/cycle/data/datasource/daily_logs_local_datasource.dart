@@ -1,4 +1,5 @@
-import 'package:isar_community/isar.dart';
+import 'package:isar_plus/isar_plus.dart';
+import 'package:periodility/core/utils/fast_hash_extension.dart';
 import 'package:periodility/features/cycle/data/models/daily_log_model.dart';
 
 abstract class DailyLogsLocalDataSource {
@@ -17,9 +18,9 @@ class DailyLogsLocalDataSourceImpl implements DailyLogsLocalDataSource {
 
   @override
   Future<void> saveDailyLog(DailyLogModel log) async {
-    await _client.writeTxn(
-      () async {
-        await _client.dailyLogModels.put(log);
+    await _client.writeAsync(
+      (isar) {
+        isar.dailyLogModels.put(log);
       },
     );
   }
@@ -30,7 +31,7 @@ class DailyLogsLocalDataSourceImpl implements DailyLogsLocalDataSource {
     final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
 
     return _client.dailyLogModels
-        .filter()
+        .where()
         .dateBetween(startOfDay, endOfDay)
         .findFirst();
   }
@@ -41,7 +42,7 @@ class DailyLogsLocalDataSourceImpl implements DailyLogsLocalDataSource {
     final endOfMonth = DateTime(year, month + 1, 0, 23, 59, 59);
 
     return _client.dailyLogModels
-        .filter()
+        .where()
         .dateBetween(startOfMonth, endOfMonth)
         .sortByDate()
         .findAll();
@@ -53,7 +54,7 @@ class DailyLogsLocalDataSourceImpl implements DailyLogsLocalDataSource {
     DateTime end,
   ) async {
     return _client.dailyLogModels
-        .filter()
+        .where()
         .dateBetween(start, end)
         .sortByDate()
         .findAll();
@@ -66,16 +67,12 @@ class DailyLogsLocalDataSourceImpl implements DailyLogsLocalDataSource {
 
   @override
   Future<bool> deleteLog(String uuid) async {
-    return _client.writeTxn(() async {
-      // Ищем запись по нашему String UUID
-      final log = await _client.dailyLogModels
-          .filter()
-          .idEqualTo(uuid)
-          .findFirst();
-      if (log != null) {
-        return _client.dailyLogModels.delete(log.isarId);
-      }
-      return false;
-    });
+    final result = await _client.writeAsync(
+      (isar) {
+        return isar.dailyLogModels.delete(uuid.fastHash());
+      },
+    );
+
+    return result;
   }
 }

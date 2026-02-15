@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:periodility/core/dependencies/injection.dart';
 import 'package:periodility/core/errors/failures.dart';
 import 'package:periodility/features/cycle/domain/services/cycle_calculator.dart';
 import 'package:periodility/features/cycle/domain/entities/cycle_entity.dart';
@@ -11,6 +12,7 @@ import 'package:periodility/features/cycle/domain/usecases/get_current_cycle_use
 import 'package:periodility/features/cycle/domain/usecases/get_cycle_history_usecase.dart';
 import 'package:periodility/features/cycle/domain/usecases/start_new_cycle_usecase.dart';
 import 'package:periodility/features/cycle/domain/usecases/update_cycle_usecase.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 part 'cycle_state.dart';
 part 'cycle_cubit.freezed.dart';
@@ -62,9 +64,13 @@ class CycleCubit extends Cubit<CycleState> {
     // Subscribe to stream
     _historySubscription = historyStream.listen((event) {
       event.fold(
-        (l) => print('CycleCubit: History stream error: $l'), // Log error
+        (l) => sl<Talker>().handle(
+          'CycleCubit: History stream error: $l',
+        ), // Log error
         (r) {
-          print('CycleCubit: History stream emitted ${r.length} cycles');
+          sl<Talker>().info(
+            'CycleCubit: History stream emitted ${r.length} cycles',
+          );
           final sortedHistory = List<CycleEntity>.from(
             r,
           )..sort((a, b) => b.startDate.compareTo(a.startDate)); // Newest first
@@ -103,7 +109,9 @@ class CycleCubit extends Cubit<CycleState> {
     int? avgCycle,
     int? avgPeriod,
   }) {
-    print('CycleCubit: _updateStateWithData(current: ${current?.id})');
+    sl<Talker>().info(
+      'CycleCubit: _updateStateWithData(current: ${current?.id})',
+    );
     final newHistory = history ?? state.history;
     final newAvgCycle = avgCycle ?? (state.currentCycle?.avg ?? 28); // Fallback
     // We need to store avg somewhere? CycleEntity has 'avg'.
@@ -132,7 +140,7 @@ class CycleCubit extends Cubit<CycleState> {
         currentCycle: newCurrent,
       ),
     );
-    print(
+    sl<Talker>().info(
       'CycleCubit: state emitted with currentCycle: ${state.currentCycle?.id}',
     );
   }
@@ -141,11 +149,11 @@ class CycleCubit extends Cubit<CycleState> {
   Future<void> startPeriod() async {
     final result = await _startNewCycleUseCase(startDate: DateTime.now());
     result.fold(
-      (l) => print('Error starting cycle: $l'),
+      (l) => sl<Talker>().handle('Error starting cycle: $l'),
       (r) async {
         // Refresh current manually
         (await _getCurrentCycleUseCase()).fold(
-          (l) => print('Error fetching current cycle: $l'),
+          (l) => sl<Talker>().handle('Error fetching current cycle: $l'),
           (r) => _updateStateWithData(current: r),
         );
       },

@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:isar_community/isar.dart';
+import 'package:isar_plus/isar_plus.dart';
 import 'package:periodility/core/utils/fast_hash_extension.dart';
 import 'package:periodility/features/cycle/domain/entities/cycle_entity.dart';
 
@@ -8,7 +8,7 @@ part 'cycle_model.g.dart';
 
 @freezed
 @JsonSerializable()
-@Collection(ignore: {'copyWith', 'toEntity'})
+@Collection()
 class CycleModel with _$CycleModel {
   const CycleModel({
     required this.id,
@@ -38,7 +38,8 @@ class CycleModel with _$CycleModel {
   @override
   final bool isManuallyStarted;
 
-  Id get isarId => id.fastHash();
+  @Id()
+  int get isarId => id.fastHash();
 
   CycleEntity toEntity() => CycleEntity(
     id: id,

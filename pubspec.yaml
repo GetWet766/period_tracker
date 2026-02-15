@@ -7,8 +7,6 @@ environment:
   sdk: '>=3.10.0 <4.0.0'
   flutter: '>=3.38.0'
 
-isar_community_version: &isar_community_version ^3.3.0
-
 dependencies:
   flutter:
     sdk: flutter
@@ -46,8 +44,8 @@ dependencies:
   # Storage
   supabase_flutter: ^2.12.0
   shared_preferences: ^2.5.4
-  isar_community: *isar_community_version
-  isar_community_flutter_libs: *isar_community_version
+  isar_plus: ^1.2.2
+  isar_plus_flutter_libs: ^1.2.2
 
   # Share
   share_plus: ^12.0.1
@@ -74,8 +72,6 @@ dev_dependencies:
   # Generators
   freezed: ^3.2.5
   json_serializable: ^6.12.0
-  # isar_community_generator:
-  #   path: dependencies/isar-community/packages/isar_community_generator
 
   # Analysis options
   very_good_analysis: ^10.1.0

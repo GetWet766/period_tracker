@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:isar_community/isar.dart';
+import 'package:isar_plus/isar_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:periodility/core/common/cubit/theme/theme_cubit.dart';
 import 'package:periodility/core/services/cycle_service.dart';
@@ -60,8 +60,8 @@ Future<void> _initSystem() async {
   await notificationService.init();
 
   final dir = await getApplicationDocumentsDirectory();
-  final isar = await Isar.open(
-    [CycleModelSchema, DailyLogModelSchema],
+  final isar = Isar.open(
+    schemas: [CycleModelSchema, DailyLogModelSchema],
     directory: dir.path,
   );
 

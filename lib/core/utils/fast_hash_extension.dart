@@ -1,7 +1,6 @@
 extension FastHashExtension on String {
   int fastHash() {
     var hash = 0xcbf29ce484222325;
-
     var i = 0;
     while (i < length) {
       final codeUnit = codeUnitAt(i++);
@@ -10,7 +9,6 @@ extension FastHashExtension on String {
       hash ^= codeUnit & 0xFF;
       hash *= 0x100000001b3;
     }
-
     return hash;
   }
 }
