@@ -93,16 +93,28 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Cache build
+        uses: actions/cache@v5
+        with:
+          path: |
+            build
+          key: ${{ runner.os }}-build-android
+          restore-keys: |
+            ${{ runner.os }}-build-android
+
       - name: Build APK
-        # Используем --release и указанный флаг. 
-        # Если нужен AAB (для Google Play), замени apk на appbundle
         run: flutter build apk --release --no-tree-shake-icons
+
+      - name: Build AAB
+        run: flutter build appbundle --release --no-tree-shake-icons
 
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v6
         with:
-          name: android-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: android-release
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
 
   # ---------------------------------------------------
   # 3. iOS BUILD (Без подписи кода)
@@ -150,16 +162,21 @@ jobs:
         # так как для подписи нужны сертификаты Apple Developer в Secrets.
         run: flutter build ios --release --no-codesign --no-tree-shake-icons
 
+      - name: Create IPA directory
+        run: mkdir -p build/ios/ipa
+
       - name: Compress iOS App
         run: |
           cd build/ios/iphoneos
-          tar -czf ios_app.tar.gz Runner.app
+          mkdir Payload
+          cp -r Runner.app Payload/
+          zip -r ../ipa/app-release-unsigned.ipa Payload
 
       - name: Upload iOS Artifact
         uses: actions/upload-artifact@v6
         with:
-          name: ios-release-app
-          path: build/ios/iphoneos/ios_app.tar.gz
+          name: ios-release
+          path: build/ios/ipa/app-release-unsigned.ipa
 
   create-release:
     needs: [build-android, build-ios]
