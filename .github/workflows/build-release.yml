@@ -208,8 +208,8 @@ jobs:
           prerelease: ${{ steps.release-type.outputs.prerelease }}
           generate_release_notes: true
           files: |
-            android-release/app-release.apk
-            android-release/app-release.aab
+            android-release/flutter-apk/app-release.apk
+            android-release/bundle/release/app-release.aab
             ios-release/app-release-unsigned.ipa
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
