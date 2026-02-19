@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 enum TrackerAppBarType { basic, sliver }
 
@@ -60,6 +61,8 @@ class TrackerAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+
     return _variant == .sliver
         ? SliverAppBar(
             title: title,
@@ -77,6 +80,9 @@ class TrackerAppBar extends StatelessWidget implements PreferredSizeWidget {
             titleSpacing: titleSpacing,
             surfaceTintColor: surfaceTintColor,
             expandedHeight: expandedHeight,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: colorScheme.surface,
+            ),
           )
         : AppBar(
             title: title,
@@ -91,6 +97,9 @@ class TrackerAppBar extends StatelessWidget implements PreferredSizeWidget {
             shape: shape,
             titleSpacing: titleSpacing,
             surfaceTintColor: surfaceTintColor,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: colorScheme.surface,
+            ),
           );
   }
 

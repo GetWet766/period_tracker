@@ -9,13 +9,13 @@ import 'package:periodility/core/common/widgets/icon_container.dart';
 import 'package:periodility/core/common/widgets/section_container.dart';
 import 'package:periodility/core/common/widgets/sliver_fill_overscroll.dart';
 import 'package:periodility/core/common/widgets/tracker_app_bar.dart';
+import 'package:periodility/core/dependencies/injection.dart';
 import 'package:periodility/core/utils/locale_extension.dart';
 import 'package:periodility/features/calendar/presentation/widgets/calendar.dart';
-import 'package:periodility/features/cycle/presentation/cubit/cycle_cubit.dart';
-import 'package:periodility/core/dependencies/injection.dart';
 import 'package:periodility/features/cycle/domain/entities/daily_log_entity.dart';
 import 'package:periodility/features/cycle/domain/entities/day_info.dart';
 import 'package:periodility/features/cycle/domain/services/cycle_calculator.dart';
+import 'package:periodility/features/cycle/presentation/cubit/cycle_cubit.dart';
 import 'package:periodility/features/cycle/presentation/cubit/daily_logs_cubit.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -31,7 +31,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
-    // final textTheme = TextTheme.of(context);
+    final textTheme = TextTheme.of(context);
 
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainerLow,
@@ -117,22 +117,41 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           // Remove dummy notes
                           SectionContainer(
                             title: 'Заметки',
-                            child: TextFormField(
-                              // Use logsState value? Or controller handling in a separate widget/method
-                              initialValue: selectedDayLog?.notes,
-                              // Logic to save notes needs a debouncer or save button.
-                              // Simple 'read only' for now or Basic field.
-                              decoration: InputDecoration(
-                                labelText: selectedDayLog?.notes != null
-                                    ? null
-                                    : 'Нет заметок',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              readOnly:
-                                  true, // For now since we don't have save logic hooked up in this precise widget tree spot without local state management
-                            ),
+                            child: selectedDayLog == null
+                                ? OutlinedButton(
+                                    onPressed: () {},
+                                    style: OutlinedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: .circular(16),
+                                      ),
+                                      alignment: .centerLeft,
+                                      minimumSize: const Size.fromHeight(56),
+                                    ),
+                                    child: Text(
+                                      'Нет заметок',
+                                      style: textTheme.bodyLarge,
+                                    ),
+                                  )
+                                : TextFormField(
+                                    // Use logsState value? Or controller handling in a separate widget/method
+                                    initialValue: selectedDayLog.notes,
+                                    // Logic to save notes needs a debouncer or save button.
+                                    // Simple 'read only' for now or Basic field.
+                                    decoration: InputDecoration(
+                                      labelText: selectedDayLog.notes != null
+                                          ? null
+                                          : 'Нет заметок',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                    focusNode: FocusNode(),
+                                    readOnly: true,
+                                    // For now since we don't have
+                                    // save logic
+                                    // hooked up in this precise widget tree
+                                    // spot without local state management
+                                  ),
                           ),
                           // _buildLogDetailsSection(context, selectedDayLog), // Can implement if needed
                         ],
