@@ -1,7 +1,7 @@
 name: periodility
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.4
+version: 0.2.1
 
 environment:
   sdk: '>=3.10.0 <4.0.0'
@@ -75,6 +75,9 @@ dev_dependencies:
 
   # Analysis options
   very_good_analysis: ^10.1.0
+
+  # Utils
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   generate: true

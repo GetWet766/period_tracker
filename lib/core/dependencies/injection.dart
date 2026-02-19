@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -59,10 +60,19 @@ Future<void> _initSystem() async {
   final notificationService = NotificationService();
   await notificationService.init();
 
-  final dir = await getApplicationDocumentsDirectory();
+  String? path;
+  if (!kIsWeb) {
+    final dir = await getApplicationDocumentsDirectory();
+    path = dir.path;
+  } else {
+    await Isar.initialize();
+  }
+
   final isar = Isar.open(
     schemas: [CycleModelSchema, DailyLogModelSchema],
-    directory: dir.path,
+    engine: kIsWeb ? .sqlite : .isar,
+    directory: path ?? '',
+    inspector: false,
   );
 
   sl

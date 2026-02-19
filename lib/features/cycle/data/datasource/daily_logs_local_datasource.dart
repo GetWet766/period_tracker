@@ -1,5 +1,6 @@
 import 'package:isar_plus/isar_plus.dart';
 import 'package:periodility/core/utils/fast_hash_extension.dart';
+import 'package:periodility/core/utils/isar_extension.dart';
 import 'package:periodility/features/cycle/data/models/daily_log_model.dart';
 
 abstract class DailyLogsLocalDataSource {
@@ -18,7 +19,7 @@ class DailyLogsLocalDataSourceImpl implements DailyLogsLocalDataSource {
 
   @override
   Future<void> saveDailyLog(DailyLogModel log) async {
-    await _client.writeAsync(
+    await _client.writeAdaptive(
       (isar) {
         isar.dailyLogModels.put(log);
       },
@@ -67,7 +68,7 @@ class DailyLogsLocalDataSourceImpl implements DailyLogsLocalDataSource {
 
   @override
   Future<bool> deleteLog(String uuid) async {
-    final result = await _client.writeAsync(
+    final result = await _client.writeAdaptive(
       (isar) {
         return isar.dailyLogModels.delete(uuid.fastHash());
       },

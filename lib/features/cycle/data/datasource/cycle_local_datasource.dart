@@ -1,6 +1,7 @@
 import 'package:isar_plus/isar_plus.dart';
 import 'package:periodility/core/dependencies/injection.dart';
 import 'package:periodility/core/utils/fast_hash_extension.dart';
+import 'package:periodility/core/utils/isar_extension.dart';
 import 'package:periodility/features/cycle/data/models/cycle_model.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
@@ -23,7 +24,7 @@ class CycleLocalDataSourceImpl implements CycleLocalDataSource {
       createdAt: DateTime.now(),
     );
 
-    await _client.writeAsync((isar) {
+    await _client.writeAdaptive((isar) {
       isar.cycleModels.put(cycleModel);
     });
   }
@@ -33,7 +34,7 @@ class CycleLocalDataSourceImpl implements CycleLocalDataSource {
   Future<CycleModel?> getLatestCycle() async {
     sl<Talker>().handle(await getAllCycles());
 
-    // await _client.writeAsync(
+    // await _client.writeAdaptive(
     //   (isar) {
     //     isar.cycleModels.clear();
     //   },
@@ -61,7 +62,7 @@ class CycleLocalDataSourceImpl implements CycleLocalDataSource {
 
   @override
   Future<void> deleteCycle(String id) async {
-    await _client.writeAsync((isar) {
+    await _client.writeAdaptive((isar) {
       isar.cycleModels.delete(id.fastHash());
     });
   }

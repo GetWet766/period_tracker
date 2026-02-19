@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
-  static const Color _seedColor = Colors.pink;
+  static const Color _seedColor = Colors.green;
 
   static final ThemeData light = _buildTheme(Brightness.light);
   static final ThemeData dark = _buildTheme(Brightness.dark);
