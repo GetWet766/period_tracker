@@ -6,11 +6,13 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:periodility/core/router/go_router_refresh_stream.dart';
 import 'package:periodility/features/articles/presentation/screens/learn_list_screen.dart';
 import 'package:periodility/features/articles/presentation/screens/learn_post_screen.dart';
+import 'package:periodility/features/calendar/presentation/modals/calendar_add_log_sheet.dart';
 import 'package:periodility/features/calendar/presentation/screens/calendar_screen.dart';
 import 'package:periodility/features/home/presentation/screens/home_screen.dart';
 import 'package:periodility/features/splash/presentation/cubit/splash_cubit.dart';
 import 'package:periodility/features/splash/presentation/screens/splash_screen.dart';
 import 'package:scaffold_navigation/scaffold_navigation.dart';
+import 'package:smooth_sheets/smooth_sheets.dart';
 
 class AppRouter {
   AppRouter({required SplashCubit splashCubit}) : _splashCubit = splashCubit;
@@ -89,6 +91,36 @@ class AppRouter {
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: CalendarScreen(),
                 ),
+                routes: [
+                  GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
+                    path: 'add-log',
+                    pageBuilder: (context, state) {
+                      final dateStr = state.uri.queryParameters['date'];
+                      final date = dateStr != null
+                          ? DateTime.parse(dateStr)
+                          : DateTime.now();
+
+                      return ModalSheetPage(
+                        key: state.pageKey,
+                        swipeDismissible: true,
+                        swipeDismissSensitivity: const SwipeDismissSensitivity(
+                          dismissalOffset: SheetOffset.proportionalToViewport(
+                            0.4,
+                          ),
+                        ),
+                        viewportBuilder: (context, child) => SheetViewport(
+                          padding: EdgeInsets.only(
+                            // Add the top padding to avoid the status bar.
+                            top: MediaQuery.viewPaddingOf(context).top,
+                          ),
+                          child: child,
+                        ),
+                        child: CalendarAddLogSheet(date: date),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

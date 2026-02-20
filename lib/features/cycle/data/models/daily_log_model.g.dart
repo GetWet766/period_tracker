@@ -27,10 +27,16 @@ final DailyLogModelSchema = IsarGeneratedSchema(
       IsarPropertySchema(name: 'mood', type: IsarType.string),
       IsarPropertySchema(name: 'notes', type: IsarType.string),
       IsarPropertySchema(
-        name: 'flowLevel',
-        type: IsarType.string,
+        name: 'flowLevels',
+        type: IsarType.stringList,
 
-        enumMap: {"low": "Скудные", "medium": "Умеренные", "heavy": "Обильные"},
+        enumMap: {
+          "spotting": "Мажущие",
+          "low": "Скудные",
+          "medium": "Умеренные",
+          "heavy": "Обильные",
+          "sticky": "Вязкие",
+        },
       ),
       IsarPropertySchema(name: 'createdAt', type: IsarType.dateTime),
       IsarPropertySchema(name: 'updatedAt', type: IsarType.dateTime),
@@ -86,11 +92,15 @@ int serializeDailyLogModel(IsarWriter writer, DailyLogModel object) {
     }
   }
   {
-    final value = object.flowLevel?.displayName;
-    if (value == null) {
+    final list = object.flowLevels;
+    if (list == null) {
       IsarCore.writeNull(writer, 7);
     } else {
-      IsarCore.writeString(writer, 7, value);
+      final listWriter = IsarCore.beginList(writer, 7, list.length);
+      for (var i = 0; i < list.length; i++) {
+        IsarCore.writeString(listWriter, i, list[i].displayName);
+      }
+      IsarCore.endList(writer, listWriter);
     }
   }
   IsarCore.writeLong(
@@ -142,8 +152,30 @@ DailyLogModel deserializeDailyLogModel(IsarReader reader) {
   _mood = IsarCore.readString(reader, 5);
   final String? _notes;
   _notes = IsarCore.readString(reader, 6);
-  final FlowLevel? _flowLevel;
-  _flowLevel = _dailyLogModelFlowLevel[IsarCore.readString(reader, 7)] ?? null;
+  final List<FlowLevel>? _flowLevels;
+  {
+    final length = IsarCore.readList(reader, 7, IsarCore.readerPtrPtr);
+    {
+      final reader = IsarCore.readerPtr;
+      if (reader.isNull) {
+        _flowLevels = null;
+      } else {
+        final list = List<FlowLevel>.filled(
+          length,
+          FlowLevel.spotting,
+          growable: true,
+        );
+        for (var i = 0; i < length; i++) {
+          list[i] =
+              _dailyLogModelFlowLevels[IsarCore.readString(reader, i) ??
+                  FlowLevel.spotting] ??
+              FlowLevel.spotting;
+        }
+        IsarCore.freeReader(reader);
+        _flowLevels = list;
+      }
+    }
+  }
   final DateTime? _createdAt;
   {
     final value = IsarCore.readLong(reader, 8);
@@ -175,7 +207,7 @@ DailyLogModel deserializeDailyLogModel(IsarReader reader) {
     symptoms: _symptoms,
     mood: _mood,
     notes: _notes,
-    flowLevel: _flowLevel,
+    flowLevels: _flowLevels,
     createdAt: _createdAt,
     updatedAt: _updatedAt,
   );
@@ -223,7 +255,29 @@ dynamic deserializeDailyLogModelProp(IsarReader reader, int property) {
     case 6:
       return IsarCore.readString(reader, 6);
     case 7:
-      return _dailyLogModelFlowLevel[IsarCore.readString(reader, 7)] ?? null;
+      {
+        final length = IsarCore.readList(reader, 7, IsarCore.readerPtrPtr);
+        {
+          final reader = IsarCore.readerPtr;
+          if (reader.isNull) {
+            return null;
+          } else {
+            final list = List<FlowLevel>.filled(
+              length,
+              FlowLevel.spotting,
+              growable: true,
+            );
+            for (var i = 0; i < length; i++) {
+              list[i] =
+                  _dailyLogModelFlowLevels[IsarCore.readString(reader, i) ??
+                      FlowLevel.spotting] ??
+                  FlowLevel.spotting;
+            }
+            IsarCore.freeReader(reader);
+            return list;
+          }
+        }
+      }
     case 8:
       {
         final value = IsarCore.readLong(reader, 8);
@@ -263,7 +317,6 @@ sealed class _DailyLogModelUpdate {
     DateTime? date,
     String? mood,
     String? notes,
-    FlowLevel? flowLevel,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -282,7 +335,6 @@ class _DailyLogModelUpdateImpl implements _DailyLogModelUpdate {
     Object? date = ignore,
     Object? mood = ignore,
     Object? notes = ignore,
-    Object? flowLevel = ignore,
     Object? createdAt = ignore,
     Object? updatedAt = ignore,
   }) {
@@ -294,7 +346,6 @@ class _DailyLogModelUpdateImpl implements _DailyLogModelUpdate {
             if (date != ignore) 3: date as DateTime?,
             if (mood != ignore) 5: mood as String?,
             if (notes != ignore) 6: notes as String?,
-            if (flowLevel != ignore) 7: flowLevel as FlowLevel?,
             if (createdAt != ignore) 8: createdAt as DateTime?,
             if (updatedAt != ignore) 9: updatedAt as DateTime?,
           },
@@ -311,7 +362,6 @@ sealed class _DailyLogModelUpdateAll {
     DateTime? date,
     String? mood,
     String? notes,
-    FlowLevel? flowLevel,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -330,7 +380,6 @@ class _DailyLogModelUpdateAllImpl implements _DailyLogModelUpdateAll {
     Object? date = ignore,
     Object? mood = ignore,
     Object? notes = ignore,
-    Object? flowLevel = ignore,
     Object? createdAt = ignore,
     Object? updatedAt = ignore,
   }) {
@@ -340,7 +389,6 @@ class _DailyLogModelUpdateAllImpl implements _DailyLogModelUpdateAll {
       if (date != ignore) 3: date as DateTime?,
       if (mood != ignore) 5: mood as String?,
       if (notes != ignore) 6: notes as String?,
-      if (flowLevel != ignore) 7: flowLevel as FlowLevel?,
       if (createdAt != ignore) 8: createdAt as DateTime?,
       if (updatedAt != ignore) 9: updatedAt as DateTime?,
     });
@@ -360,7 +408,6 @@ sealed class _DailyLogModelQueryUpdate {
     DateTime? date,
     String? mood,
     String? notes,
-    FlowLevel? flowLevel,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -379,7 +426,6 @@ class _DailyLogModelQueryUpdateImpl implements _DailyLogModelQueryUpdate {
     Object? date = ignore,
     Object? mood = ignore,
     Object? notes = ignore,
-    Object? flowLevel = ignore,
     Object? createdAt = ignore,
     Object? updatedAt = ignore,
   }) {
@@ -389,7 +435,6 @@ class _DailyLogModelQueryUpdateImpl implements _DailyLogModelQueryUpdate {
       if (date != ignore) 3: date as DateTime?,
       if (mood != ignore) 5: mood as String?,
       if (notes != ignore) 6: notes as String?,
-      if (flowLevel != ignore) 7: flowLevel as FlowLevel?,
       if (createdAt != ignore) 8: createdAt as DateTime?,
       if (updatedAt != ignore) 9: updatedAt as DateTime?,
     });
@@ -418,7 +463,6 @@ class _DailyLogModelQueryBuilderUpdateImpl
     Object? date = ignore,
     Object? mood = ignore,
     Object? notes = ignore,
-    Object? flowLevel = ignore,
     Object? createdAt = ignore,
     Object? updatedAt = ignore,
   }) {
@@ -430,7 +474,6 @@ class _DailyLogModelQueryBuilderUpdateImpl
         if (date != ignore) 3: date as DateTime?,
         if (mood != ignore) 5: mood as String?,
         if (notes != ignore) 6: notes as String?,
-        if (flowLevel != ignore) 7: flowLevel as FlowLevel?,
         if (createdAt != ignore) 8: createdAt as DateTime?,
         if (updatedAt != ignore) 9: updatedAt as DateTime?,
       });
@@ -449,10 +492,12 @@ extension DailyLogModelQueryBuilderUpdate
       _DailyLogModelQueryBuilderUpdateImpl(this);
 }
 
-const _dailyLogModelFlowLevel = {
+const _dailyLogModelFlowLevels = {
+  r'Мажущие': FlowLevel.spotting,
   r'Скудные': FlowLevel.low,
   r'Умеренные': FlowLevel.medium,
   r'Обильные': FlowLevel.heavy,
+  r'Вязкие': FlowLevel.sticky,
 };
 
 extension DailyLogModelQueryFilter
@@ -1315,73 +1360,87 @@ extension DailyLogModelQueryFilter
   }
 
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterFilterCondition>
-  flowLevelIsNull() {
+  flowLevelsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const IsNullCondition(property: 7));
     });
   }
 
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterFilterCondition>
-  flowLevelIsNotNull() {
+  flowLevelsIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
       return query.addFilterCondition(const IsNullCondition(property: 7));
     });
   }
 
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterFilterCondition>
-  flowLevelEqualTo(FlowLevel? value) {
+  flowLevelsElementEqualTo(FlowLevel value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        EqualCondition(property: 7, value: value?.displayName),
+        EqualCondition(property: 7, value: value.displayName),
       );
     });
   }
 
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterFilterCondition>
-  flowLevelGreaterThan(FlowLevel? value) {
+  flowLevelsElementGreaterThan(FlowLevel value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        GreaterCondition(property: 7, value: value?.displayName),
+        GreaterCondition(property: 7, value: value.displayName),
       );
     });
   }
 
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterFilterCondition>
-  flowLevelGreaterThanOrEqualTo(FlowLevel? value) {
+  flowLevelsElementGreaterThanOrEqualTo(FlowLevel value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        GreaterOrEqualCondition(property: 7, value: value?.displayName),
+        GreaterOrEqualCondition(property: 7, value: value.displayName),
       );
     });
   }
 
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterFilterCondition>
-  flowLevelLessThan(FlowLevel? value) {
+  flowLevelsElementLessThan(FlowLevel value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        LessCondition(property: 7, value: value?.displayName),
+        LessCondition(property: 7, value: value.displayName),
       );
     });
   }
 
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterFilterCondition>
-  flowLevelLessThanOrEqualTo(FlowLevel? value) {
+  flowLevelsElementLessThanOrEqualTo(FlowLevel value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        LessOrEqualCondition(property: 7, value: value?.displayName),
+        LessOrEqualCondition(property: 7, value: value.displayName),
       );
     });
   }
 
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterFilterCondition>
-  flowLevelBetween(FlowLevel? lower, FlowLevel? upper) {
+  flowLevelsElementBetween(FlowLevel lower, FlowLevel upper) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
           property: 7,
-          lower: lower?.displayName,
-          upper: upper?.displayName,
+          lower: lower.displayName,
+          upper: upper.displayName,
         ),
+      );
+    });
+  }
+
+  QueryBuilder<DailyLogModel, DailyLogModel, QAfterFilterCondition>
+  flowLevelsIsEmpty() {
+    return not().group((q) => q.flowLevelsIsNull().or().flowLevelsIsNotEmpty());
+  }
+
+  QueryBuilder<DailyLogModel, DailyLogModel, QAfterFilterCondition>
+  flowLevelsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const GreaterOrEqualCondition(property: 7, value: null),
       );
     });
   }
@@ -1652,22 +1711,6 @@ extension DailyLogModelQuerySortBy
     });
   }
 
-  QueryBuilder<DailyLogModel, DailyLogModel, QAfterSortBy> sortByFlowLevel({
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(7, caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<DailyLogModel, DailyLogModel, QAfterSortBy> sortByFlowLevelDesc({
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(7, sort: Sort.desc, caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterSortBy> sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(8);
@@ -1785,22 +1828,6 @@ extension DailyLogModelQuerySortThenBy
     });
   }
 
-  QueryBuilder<DailyLogModel, DailyLogModel, QAfterSortBy> thenByFlowLevel({
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(7, caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<DailyLogModel, DailyLogModel, QAfterSortBy> thenByFlowLevelDesc({
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(7, sort: Sort.desc, caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterSortBy> thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(8);
@@ -1888,9 +1915,9 @@ extension DailyLogModelQueryWhereDistinct
   }
 
   QueryBuilder<DailyLogModel, DailyLogModel, QAfterDistinct>
-  distinctByFlowLevel({bool caseSensitive = true}) {
+  distinctByFlowLevels() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(7, caseSensitive: caseSensitive);
+      return query.addDistinctBy(7);
     });
   }
 
@@ -1948,7 +1975,8 @@ extension DailyLogModelQueryProperty1
     });
   }
 
-  QueryBuilder<DailyLogModel, FlowLevel?, QAfterProperty> flowLevelProperty() {
+  QueryBuilder<DailyLogModel, List<FlowLevel>?, QAfterProperty>
+  flowLevelsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(7);
     });
@@ -2012,8 +2040,8 @@ extension DailyLogModelQueryProperty2<R>
     });
   }
 
-  QueryBuilder<DailyLogModel, (R, FlowLevel?), QAfterProperty>
-  flowLevelProperty() {
+  QueryBuilder<DailyLogModel, (R, List<FlowLevel>?), QAfterProperty>
+  flowLevelsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(7);
     });
@@ -2079,8 +2107,8 @@ extension DailyLogModelQueryProperty3<R1, R2>
     });
   }
 
-  QueryBuilder<DailyLogModel, (R1, R2, FlowLevel?), QOperations>
-  flowLevelProperty() {
+  QueryBuilder<DailyLogModel, (R1, R2, List<FlowLevel>?), QOperations>
+  flowLevelsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(7);
     });
@@ -2121,7 +2149,9 @@ DailyLogModel _$DailyLogModelFromJson(Map<String, dynamic> json) =>
           .toList(),
       mood: json['mood'] as String?,
       notes: json['notes'] as String?,
-      flowLevel: $enumDecodeNullable(_$FlowLevelEnumMap, json['flow_level']),
+      flowLevels: (json['flow_levels'] as List<dynamic>?)
+          ?.map((e) => $enumDecode(_$FlowLevelEnumMap, e))
+          .toList(),
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -2138,13 +2168,17 @@ Map<String, dynamic> _$DailyLogModelToJson(DailyLogModel instance) =>
       'symptoms': instance.symptoms,
       'mood': instance.mood,
       'notes': instance.notes,
-      'flow_level': _$FlowLevelEnumMap[instance.flowLevel],
+      'flow_levels': instance.flowLevels
+          ?.map((e) => _$FlowLevelEnumMap[e]!)
+          .toList(),
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };
 
 const _$FlowLevelEnumMap = {
+  FlowLevel.spotting: 'spotting',
   FlowLevel.low: 'low',
   FlowLevel.medium: 'medium',
   FlowLevel.heavy: 'heavy',
+  FlowLevel.sticky: 'sticky',
 };

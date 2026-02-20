@@ -2,75 +2,136 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:periodility/features/calendar/presentation/widgets/weekday_card.dart';
 import 'package:periodility/features/calendar/presentation/widgets/weekday_label_card.dart';
+import 'package:periodility/features/cycle/domain/entities/cycle_entity.dart';
 
 class PeriodConfig {
   const PeriodConfig({
-    this.lastPeriodStart,
+    this.currentCycle,
+    this.history = const [],
     this.periodDuration = 5,
     this.cycleLength = 28,
   });
 
-  final DateTime? lastPeriodStart;
+  final CycleEntity? currentCycle;
+  final List<CycleEntity> history;
   final int periodDuration;
   final int cycleLength;
 
   int? getPeriodDayIndex(DateTime date) {
-    if (this.lastPeriodStart == null) return null;
+    if (currentCycle == null && history.isEmpty) return null;
 
-    final lastPeriodStart = DateTime(
-      this.lastPeriodStart!.year,
-      this.lastPeriodStart!.month,
-      this.lastPeriodStart!.day,
-    );
     final checkDate = DateTime(date.year, date.month, date.day);
 
-    // Calculate days since last period start
-    final daysDiff = checkDate.difference(lastPeriodStart).inDays;
+    // 1. Check if date falls within any historical cycle's actual menstruation period
+    for (final cycle in history) {
+      if (cycle.endDate != null) {
+        final start = DateTime(
+          cycle.startDate.year,
+          cycle.startDate.month,
+          cycle.startDate.day,
+        );
+        final end = DateTime(
+          cycle.endDate!.year,
+          cycle.endDate!.month,
+          cycle.endDate!.day,
+        );
 
-    // Find which cycle this date falls into
-    final cycleNumber = (daysDiff / cycleLength).floor();
+        if (!checkDate.isBefore(start) && !checkDate.isAfter(end)) {
+          return checkDate.difference(start).inDays + 1;
+        }
+      }
+    }
 
-    // Calculate the start of the period for this cycle
-    final periodStart = lastPeriodStart.add(
-      Duration(days: cycleNumber * cycleLength),
-    );
+    // 2. Check current cycle
+    if (currentCycle != null) {
+      final start = DateTime(
+        currentCycle!.startDate.year,
+        currentCycle!.startDate.month,
+        currentCycle!.startDate.day,
+      );
 
-    // Check if date is within this period
-    final daysIntoPeriod = checkDate.difference(periodStart).inDays;
+      if (checkDate.isBefore(start)) return null;
 
-    if (daysIntoPeriod >= 0 && daysIntoPeriod < periodDuration) {
-      return daysIntoPeriod + 1; // 1-based index
+      if (currentCycle!.endDate != null) {
+        final end = DateTime(
+          currentCycle!.endDate!.year,
+          currentCycle!.endDate!.month,
+          currentCycle!.endDate!.day,
+        );
+
+        if (!checkDate.isAfter(end)) {
+          return checkDate.difference(start).inDays + 1;
+        }
+
+        final daysDiff = checkDate.difference(start).inDays;
+        final latestCycleLength = currentCycle!.avg ?? cycleLength;
+        final projectedCycleNumber = (daysDiff / latestCycleLength).floor();
+
+        if (projectedCycleNumber > 0) {
+          final projectedStart = start.add(
+            Duration(days: projectedCycleNumber * latestCycleLength),
+          );
+          final daysIntoPeriod = checkDate.difference(projectedStart).inDays;
+          if (daysIntoPeriod >= 0 && daysIntoPeriod < periodDuration) {
+            return daysIntoPeriod + 1;
+          }
+        }
+      } else {
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+
+        if (!checkDate.isAfter(today)) {
+          return checkDate.difference(start).inDays + 1;
+        } else {
+          final daysPassed = today.difference(start).inDays + 1;
+
+          if (daysPassed < periodDuration) {
+            final predictedEnd = start.add(Duration(days: periodDuration - 1));
+            if (!checkDate.isAfter(predictedEnd)) {
+              return checkDate.difference(start).inDays + 1;
+            }
+          }
+
+          final daysDiff = checkDate.difference(start).inDays;
+          final latestCycleLength = currentCycle!.avg ?? cycleLength;
+          final projectedCycleNumber = (daysDiff / latestCycleLength).floor();
+
+          if (projectedCycleNumber > 0) {
+            final projectedStart = start.add(
+              Duration(days: projectedCycleNumber * latestCycleLength),
+            );
+            final daysIntoPeriod = checkDate.difference(projectedStart).inDays;
+            if (daysIntoPeriod >= 0 && daysIntoPeriod < periodDuration) {
+              return daysIntoPeriod + 1;
+            }
+          }
+        }
+      }
     }
 
     return null;
   }
 
   int? getPregnancyProbabilityDayIndex(DateTime date) {
-    if (this.lastPeriodStart == null) return null;
+    if (currentCycle == null && history.isEmpty) return null;
 
-    final lastPeriodStart = DateTime(
-      this.lastPeriodStart!.year,
-      this.lastPeriodStart!.month,
-      this.lastPeriodStart!.day,
+    final baseCycle = currentCycle ?? history.first;
+    final baseStart = DateTime(
+      baseCycle.startDate.year,
+      baseCycle.startDate.month,
+      baseCycle.startDate.day,
     );
     final checkDate = DateTime(date.year, date.month, date.day);
 
-    // Calculate days since last period start
-    final daysDiff = checkDate.difference(lastPeriodStart).inDays;
+    final daysDiff = checkDate.difference(baseStart).inDays;
+    final cLength = baseCycle.avg ?? cycleLength;
+    final cycleNumber = (daysDiff / cLength).floor();
+    final periodStart = baseStart.add(Duration(days: cycleNumber * cLength));
 
-    // Find which cycle this date falls into
-    final cycleNumber = (daysDiff / cycleLength).floor();
-
-    // Calculate the start of the period for this cycle
-    final periodStart = lastPeriodStart.add(
-      Duration(days: cycleNumber * cycleLength),
-    );
-
-    // Check if date is within this period
     final daysIntoPeriod = checkDate.difference(periodStart).inDays;
 
     if (daysIntoPeriod >= 0 && daysIntoPeriod < 11) {
-      return daysIntoPeriod + 1; // 1-based index
+      return daysIntoPeriod + 1;
     }
 
     return null;
@@ -80,21 +141,22 @@ class PeriodConfig {
     return getPeriodDayIndex(date) != null;
   }
 
-  /// Returns the day number within the current cycle (1-based)
   int? getCycleDay(DateTime date) {
-    if (lastPeriodStart == null) return null;
+    if (currentCycle == null && history.isEmpty) return null;
 
+    final baseCycle = currentCycle ?? history.first;
     final normalizedStart = DateTime(
-      lastPeriodStart!.year,
-      lastPeriodStart!.month,
-      lastPeriodStart!.day,
+      baseCycle.startDate.year,
+      baseCycle.startDate.month,
+      baseCycle.startDate.day,
     );
     final checkDate = DateTime(date.year, date.month, date.day);
 
     final daysDiff = checkDate.difference(normalizedStart).inDays;
     if (daysDiff < 0) return null;
 
-    return (daysDiff % cycleLength) + 1;
+    final cLength = baseCycle.avg ?? cycleLength;
+    return (daysDiff % cLength) + 1;
   }
 }
 

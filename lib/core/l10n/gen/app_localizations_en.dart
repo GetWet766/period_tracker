@@ -77,4 +77,28 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get today_is_period_day => 'Today is period day';
+
+  @override
+  String period_day_number(num day) {
+    String _temp0 = intl.Intl.pluralLogic(
+      day,
+      locale: localeName,
+      other: 'Day $day',
+      one: 'Day $day',
+      zero: 'Day $day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get days_until_period_top => 'Days until period';
+
+  @override
+  String get no_info => 'No information';
+
+  @override
+  String get how_do_you_feel_today => 'How are you feeling today?';
 }

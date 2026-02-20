@@ -79,4 +79,29 @@ class AppLocalizationsRu extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get today_is_period_day => 'Сегодня день месячных';
+
+  @override
+  String period_day_number(num day) {
+    String _temp0 = intl.Intl.pluralLogic(
+      day,
+      locale: localeName,
+      other: '$day дней',
+      few: '$day дня',
+      one: '$day день',
+      zero: '$day день',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get days_until_period_top => 'До месячных осталось';
+
+  @override
+  String get no_info => 'Нет информации';
+
+  @override
+  String get how_do_you_feel_today => 'Как Вы себя чувствуете сегодня?';
 }

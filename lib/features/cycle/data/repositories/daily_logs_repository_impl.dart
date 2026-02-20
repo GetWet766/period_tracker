@@ -33,7 +33,7 @@ class DailyLogsRepositoryImpl implements DailyLogsRepository {
         symptoms: log.symptoms,
         mood: log.mood,
         notes: log.notes,
-        flowLevel: log.flowLevel,
+        flowLevels: log.flowLevels,
         updatedAt: DateTime.now(),
         // We might want to preserve createdAt if it exists, but Entity doesn't have it.
         // Assuming update or create logic in data source handles ID collision.

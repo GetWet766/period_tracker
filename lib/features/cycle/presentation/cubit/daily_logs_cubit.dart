@@ -28,17 +28,17 @@ class DailyLogsCubit extends Cubit<DailyLogsState> {
     List<String>? symptoms,
     String? mood,
     String? notes,
-    FlowLevel? flowLevel,
+    List<FlowLevel>? flowLevels,
   }) async {
     final currentLog = state.currentLog;
     final newLog = DailyLogEntity(
       id: currentLog?.id ?? const Uuid().v4(),
       date: state.selectedDate,
       userId: currentLog?.userId, // Preserve or set if needed
-      symptoms: symptoms ?? currentLog?.symptoms,
-      mood: mood ?? currentLog?.mood,
-      notes: notes ?? currentLog?.notes,
-      flowLevel: flowLevel ?? currentLog?.flowLevel,
+      symptoms: symptoms,
+      mood: mood,
+      notes: notes,
+      flowLevels: flowLevels,
     );
 
     await _saveDailyLogUseCase(newLog);

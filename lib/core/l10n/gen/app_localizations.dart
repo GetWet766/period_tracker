@@ -150,6 +150,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{days, plural, =0{{days} days left} one{{days} day left} other{{days} days left}}'**
   String days_until_period(num days);
+
+  /// No description provided for @today_is_period_day.
+  ///
+  /// In en, this message translates to:
+  /// **'Today is period day'**
+  String get today_is_period_day;
+
+  /// No description provided for @period_day_number.
+  ///
+  /// In en, this message translates to:
+  /// **'{day, plural, =0{Day {day}} one{Day {day}} other{Day {day}}}'**
+  String period_day_number(num day);
+
+  /// No description provided for @days_until_period_top.
+  ///
+  /// In en, this message translates to:
+  /// **'Days until period'**
+  String get days_until_period_top;
+
+  /// No description provided for @no_info.
+  ///
+  /// In en, this message translates to:
+  /// **'No information'**
+  String get no_info;
+
+  /// No description provided for @how_do_you_feel_today.
+  ///
+  /// In en, this message translates to:
+  /// **'How are you feeling today?'**
+  String get how_do_you_feel_today;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

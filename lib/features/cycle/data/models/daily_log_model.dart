@@ -19,7 +19,7 @@ class DailyLogModel with _$DailyLogModel {
     this.symptoms,
     this.mood,
     this.notes,
-    @JsonKey(name: 'flow_level') this.flowLevel,
+    @JsonKey(name: 'flow_levels') this.flowLevels,
     @JsonKey(name: 'created_at') this.createdAt,
     @JsonKey(name: 'updated_at') this.updatedAt,
   });
@@ -42,7 +42,7 @@ class DailyLogModel with _$DailyLogModel {
   @override
   final String? notes;
   @override
-  final FlowLevel? flowLevel;
+  final List<FlowLevel>? flowLevels;
   @override
   final DateTime? createdAt;
   @override
@@ -58,6 +58,6 @@ class DailyLogModel with _$DailyLogModel {
     symptoms: symptoms,
     mood: mood,
     notes: notes,
-    flowLevel: flowLevel,
+    flowLevels: flowLevels,
   );
 }

@@ -45,5 +45,19 @@
     "placeholders": {
       "days": {}
     }
-  }
+  },
+  "today_is_period_day": "Today is period day",
+  "@today_is_period_day": {},
+  "period_day_number": "{day, plural, =0{Day {day}} one{Day {day}} other{Day {day}}}",
+  "@period_day_number": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "days_until_period_top": "Days until period",
+  "@days_until_period_top": {},
+  "no_info": "No information",
+  "@no_info": {},
+  "how_do_you_feel_today": "How are you feeling today?",
+  "@how_do_you_feel_today": {}
 }

@@ -9,6 +9,7 @@ import 'package:periodility/core/common/widgets/icon_container.dart';
 import 'package:periodility/core/common/widgets/section_container.dart';
 import 'package:periodility/core/common/widgets/sliver_fill_overscroll.dart';
 import 'package:periodility/core/common/widgets/tracker_app_bar.dart';
+import 'package:periodility/core/constants/log_constants.dart';
 import 'package:periodility/core/dependencies/injection.dart';
 import 'package:periodility/core/utils/locale_extension.dart';
 import 'package:periodility/features/calendar/presentation/widgets/calendar.dart';
@@ -46,7 +47,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 builder: (context, state) {
                   return Calendar(
                     periodConfig: PeriodConfig(
-                      lastPeriodStart: state.currentCycle?.startDate,
+                      currentCycle: state.currentCycle,
+                      history: state.history,
                     ),
                     selectedDay: selectedDay,
                     onSelectedDayChanged: (value) {
@@ -94,6 +96,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       final dayInfo = cycleCalculator.getDayInfo(
                         selectedDay,
                         currentCycle,
+                        history: cycleState.history,
                         cycleLength: avgCycle,
                       );
 
@@ -112,48 +115,36 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             dayInfo,
                             selectedDayLog,
                           ),
-                          // Remove dummy section container
-                          // const SectionContainer(title: 'Запись', ...),
-                          // Remove dummy notes
-                          SectionContainer(
-                            title: 'Заметки',
-                            child: selectedDayLog == null
-                                ? OutlinedButton(
-                                    onPressed: () {},
-                                    style: OutlinedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: .circular(16),
-                                      ),
-                                      alignment: .centerLeft,
-                                      minimumSize: const Size.fromHeight(56),
-                                    ),
-                                    child: Text(
-                                      'Нет заметок',
-                                      style: textTheme.bodyLarge,
-                                    ),
-                                  )
-                                : TextFormField(
-                                    // Use logsState value? Or controller handling in a separate widget/method
-                                    initialValue: selectedDayLog.notes,
-                                    // Logic to save notes needs a debouncer or save button.
-                                    // Simple 'read only' for now or Basic field.
-                                    decoration: InputDecoration(
-                                      labelText: selectedDayLog.notes != null
-                                          ? null
-                                          : 'Нет заметок',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                    ),
-                                    focusNode: FocusNode(),
-                                    readOnly: true,
-                                    // For now since we don't have
-                                    // save logic
-                                    // hooked up in this precise widget tree
-                                    // spot without local state management
+                          if (selectedDayLog == null ||
+                              ((selectedDayLog.flowLevels?.isEmpty ?? true) &&
+                                  (selectedDayLog.symptoms?.isEmpty ?? true) &&
+                                  selectedDayLog.mood == null &&
+                                  (selectedDayLog.notes?.isEmpty ?? true)))
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: OutlinedButton(
+                                onPressed: showCreateLogs,
+                                style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
-                          ),
-                          // _buildLogDetailsSection(context, selectedDayLog), // Can implement if needed
+                                  alignment: Alignment.center,
+                                  minimumSize: const Size.fromHeight(56),
+                                ),
+                                child: Text(
+                                  'Добавить запись',
+                                  style: textTheme.bodyLarge,
+                                ),
+                              ),
+                            )
+                          else
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: _buildLogDetailsSection(
+                                context,
+                                selectedDayLog,
+                              ),
+                            ),
                         ],
                       );
                     },
@@ -168,6 +159,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> showCreateLogs() async {
+    final dateStr = selectedDay.toIso8601String();
+    await context.push('/calendar/add-log?date=$dateStr');
   }
 
   String getCalendarDayInfo(DateTime date) {
@@ -196,7 +192,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       title:
           '${(dayInfo.date.year == DateTime.now().year && dayInfo.date.month == DateTime.now().month && dayInfo.date.day == DateTime.now().day) ? 'Сегодня: ' : ''}${DateFormat('d MMMM').format(dayInfo.date)}',
       child: Container(
-        margin: const .only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: 16),
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
         child: Column(
@@ -217,7 +213,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               dayInfo.phaseDescription,
               dayInfo.phaseIcon,
               dayInfo.phaseColor,
-            ), // You might want to map colors/icons based on phase
+            ),
             _buildInfoRow(
               context,
               'pregnancy-probability',
@@ -242,9 +238,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     Color color, {
     bool isDanger = false,
   }) {
-    final colorScheme = ColorScheme.of(context);
-    final textTheme = TextTheme.of(context);
-
     return CustomListTile(
       leading: IconContainer(
         color: color,
@@ -257,289 +250,120 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  // Widget _buildLogDetailsSection(BuildContext context, CycleLogEntity log) {
-  //   final colorScheme = ColorScheme.of(context);
-  //   final textTheme = TextTheme.of(context);
+  Widget _buildLogDetailsSection(BuildContext context, DailyLogEntity log) {
+    if ((log.flowLevels == null || log.flowLevels!.isEmpty) &&
+        (log.symptoms == null || log.symptoms!.isEmpty) &&
+        log.mood == null &&
+        (log.notes == null || log.notes!.isEmpty)) {
+      return const SizedBox.shrink();
+    }
 
-  //   return SectionContainer(
-  //     title: 'Записанные данные',
-  //     child: Container(
-  //       padding: const EdgeInsets.all(16),
-  //       decoration: BoxDecoration(
-  //         color: colorScheme.surfaceContainerLow,
-  //         borderRadius: BorderRadius.circular(16),
-  //       ),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         spacing: 12,
-  //         children: [
-  //           if (log.flowLevel != null)
-  //             Row(
-  //               children: [
-  //                 Icon(
-  //                   Icons.water_drop,
-  //                   color: colorScheme.primary,
-  //                   size: 20,
-  //                 ),
-  //                 const SizedBox(width: 8),
-  //                 Text(
-  //                   'Интенсивность: ${log.flowLevel!.displayName}',
-  //                   style: textTheme.bodyMedium,
-  //                 ),
-  //               ],
-  //             ),
-  //           if (log.symptoms.isNotEmpty) ...[
-  //             Text(
-  //               'Симптомы:',
-  //               style: textTheme.bodyMedium?.copyWith(
-  //                 fontWeight: FontWeight.w600,
-  //               ),
-  //             ),
-  //             Wrap(
-  //               spacing: 8,
-  //               runSpacing: 4,
-  //               children: log.symptoms.map((symptom) {
-  //                 return Chip(
-  //                   label: Text(symptom),
-  //                   visualDensity: VisualDensity.compact,
-  //                 );
-  //               }).toList(),
-  //             ),
-  //           ],
-  //           if (log.notes != null && log.notes!.isNotEmpty)
-  //             Text(
-  //               'Заметки: ${log.notes}',
-  //               style: textTheme.bodyMedium,
-  //             ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+    final colorScheme = ColorScheme.of(context);
+    final textTheme = TextTheme.of(context);
 
-  // Widget _buildAddLogButton(BuildContext context) {
-  //   return FilledButton.icon(
-  //     onPressed: () => _showAddLogDialog(context),
-  //     icon: const Icon(Icons.add),
-  //     label: Text(
-  //       _getLogForDate(
-  //                 context.read<CycleCubit>().state.maybeWhen(
-  //                   loaded: (l) => l,
-  //                   orElse: () => [],
-  //                 ),
-  //                 selectedDay,
-  //               ) !=
-  //               null
-  //           ? 'Редактировать запись'
-  //           : 'Добавить запись',
-  //     ),
-  //   );
-  // }
-
-  // Future<void> _showAddLogDialog(BuildContext context) async {
-  //   final existingLog = _getLogForDate(
-  //     context.read<CycleCubit>().state.maybeWhen(
-  //       loaded: (l) => l,
-  //       orElse: () => [],
-  //     ),
-  //     selectedDay,
-  //   );
-
-  //   final symptoms = List<String>.from(existingLog?.symptoms ?? []);
-  //   var selectedFlow = existingLog?.flowLevel;
-  //   var notes = existingLog?.notes ?? '';
-
-  //   await showModalBottomSheet<void>(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     builder: (context) => StatefulBuilder(
-  //       builder: (context, setModalState) {
-  //         return Padding(
-  //           padding: EdgeInsets.only(
-  //             bottom: MediaQuery.of(context).viewInsets.bottom,
-  //           ),
-  //           child: Container(
-  //             padding: const EdgeInsets.all(24),
-  //             child: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               crossAxisAlignment: CrossAxisAlignment.stretch,
-  //               children: [
-  //                 Text(
-  //                   DateFormat('d MMMM yyyy').format(selectedDay),
-  //                   style: const TextStyle(
-  //                     fontSize: 20,
-  //                     fontWeight: FontWeight.bold,
-  //                   ),
-  //                 ),
-  //                 const SizedBox(height: 16),
-  //                 const Text('Интенсивность:'),
-  //                 const SizedBox(height: 8),
-  //                 Wrap(
-  //                   spacing: 8,
-  //                   children: FlowLevel.values.map((flow) {
-  //                     final isSelected = selectedFlow == flow;
-  //                     return ChoiceChip(
-  //                       label: Text(flow.displayName),
-  //                       selected: isSelected,
-  //                       onSelected: (selected) {
-  //                         setModalState(() {
-  //                           selectedFlow = selected ? flow : null;
-  //                         });
-  //                       },
-  //                     );
-  //                   }).toList(),
-  //                 ),
-  //                 const SizedBox(height: 16),
-  //                 const Text('Симптомы:'),
-  //                 const SizedBox(height: 8),
-  //                 Wrap(
-  //                   spacing: 8,
-  //                   children:
-  //                       [
-  //                         'Спазмы',
-  //                         'Головная боль',
-  //                         'Усталость',
-  //                         'Вздутие',
-  //                         'Перепады настроения',
-  //                         'Боль в спине',
-  //                       ].map((symptom) {
-  //                         final isSelected = symptoms.contains(symptom);
-  //                         return FilterChip(
-  //                           label: Text(symptom),
-  //                           selected: isSelected,
-  //                           onSelected: (selected) {
-  //                             setModalState(() {
-  //                               if (selected) {
-  //                                 symptoms.add(symptom);
-  //                               } else {
-  //                                 symptoms.remove(symptom);
-  //                               }
-  //                             });
-  //                           },
-  //                         );
-  //                       }).toList(),
-  //                 ),
-  //                 const SizedBox(height: 16),
-  //                 TextField(
-  //                   decoration: const InputDecoration(
-  //                     labelText: 'Заметки',
-  //                     border: OutlineInputBorder(),
-  //                   ),
-  //                   maxLines: 2,
-  //                   controller: TextEditingController(text: notes),
-  //                   onChanged: (value) => notes = value,
-  //                 ),
-  //                 const SizedBox(height: 24),
-  //                 Row(
-  //                   spacing: 12,
-  //                   children: [
-  //                     if (existingLog != null)
-  //                       Expanded(
-  //                         child: OutlinedButton(
-  //                           onPressed: () {
-  //                             Navigator.pop(context);
-  //                             _deleteLog(existingLog.id);
-  //                           },
-  //                           child: const Text('Удалить'),
-  //                         ),
-  //                       ),
-  //                     Expanded(
-  //                       child: FilledButton(
-  //                         onPressed: () {
-  //                           Navigator.pop(context);
-  //                           _saveLog(
-  //                             existingLog?.id,
-  //                             selectedFlow,
-  //                             symptoms,
-  //                             notes,
-  //                           );
-  //                         },
-  //                         child: const Text('Сохранить'),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
-  // Future<void> _saveLog(
-  //   String? existingId,
-  //   FlowLevel? flow,
-  //   List<String> symptoms,
-  //   String notes,
-  // ) async {
-  //   if (existingId != null) {
-  //     await context.read<CycleCubit>().updateLog(
-  //       id: existingId,
-  //       flowLevel: flow,
-  //       symptoms: symptoms.isNotEmpty ? symptoms : null,
-  //       notes: notes.isNotEmpty ? notes : null,
-  //     );
-  //   } else {
-  //     await context.read<CycleCubit>().createLog(
-  //       date: selectedDay,
-  //       flowLevel: flow,
-  //       symptoms: symptoms.isNotEmpty ? symptoms : null,
-  //       notes: notes.isNotEmpty ? notes : null,
-  //     );
-  //   }
-
-  //   if (mounted) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Данные сохранены')),
-  //     );
-  //   }
-  // }
-
-  // Future<void> _deleteLog(String id) async {
-  //   await context.read<CycleCubit>().deleteLog(id);
-  //   if (mounted) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Запись удалена')),
-  //     );
-  //   }
-  // }
-
-  // PeriodConfig _buildPeriodConfig(
-  //   List<CycleLogEntity> logs,
-  //   int cycleLength,
-  //   int periodLength,
-  // ) {
-  //   DateTime? lastPeriodStart;
-
-  //   if (logs.isNotEmpty) {
-  //     final sortedLogs = List<CycleLogEntity>.from(logs)
-  //       ..sort((a, b) => b.date.compareTo(a.date));
-
-  //     for (final log in sortedLogs) {
-  //       if (log.flowLevel != null) {
-  //         lastPeriodStart = log.date;
-  //         break;
-  //       }
-  //     }
-  //   }
-
-  //   return PeriodConfig(
-  //     lastPeriodStart: lastPeriodStart,
-  //     cycleLength: cycleLength,
-  //     periodDuration: periodLength,
-  //   );
-  // }
-
-  // CycleLogEntity? _getLogForDate(List<CycleLogEntity> logs, DateTime date) {
-  //   final normalizedDate = DateTime(date.year, date.month, date.day);
-  //   for (final log in logs) {
-  //     final logDate = DateTime(log.date.year, log.date.month, log.date.day);
-  //     if (logDate == normalizedDate) {
-  //       return log;
-  //     }
-  //   }
-  //   return null;
-  // }
+    return SectionContainer(
+      title: 'Записанные данные',
+      onPressed: showCreateLogs,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 12,
+          children: [
+            if (log.flowLevels != null && log.flowLevels!.isNotEmpty)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.water_drop,
+                    color: colorScheme.primary,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Интенсивность: ${log.flowLevels!.map((e) => e.displayName).join(', ')}',
+                      style: textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+            if (log.mood != null)
+              Row(
+                children: [
+                  Icon(
+                    Icons.mood,
+                    color: colorScheme.tertiary,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Настроение: ${log.mood}',
+                    style: textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            if (log.symptoms != null && log.symptoms!.isNotEmpty) ...[
+              Text(
+                'Симптомы:',
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              ...LogConstants.symptomsByCategory.entries
+                  .where((entry) => entry.value.any(log.symptoms!.contains))
+                  .expand((entry) {
+                    final category = entry.key;
+                    final symptoms =
+                        (entry.value.where(log.symptoms!.contains).toList()
+                          ..sort());
+                    return [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4, bottom: 4),
+                        child: Text(
+                          category,
+                          style: textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        children: symptoms.map((symptom) {
+                          return Chip(
+                            label: Text(symptom),
+                            visualDensity: VisualDensity.compact,
+                          );
+                        }).toList(),
+                      ),
+                    ];
+                  }),
+            ],
+            if (log.notes != null && log.notes!.isNotEmpty) ...[
+              if (log.symptoms != null && log.symptoms!.isNotEmpty ||
+                  log.mood != null ||
+                  (log.flowLevels != null && log.flowLevels!.isNotEmpty))
+                const Divider(),
+              Text(
+                'Заметки:',
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                log.notes!,
+                style: textTheme.bodyMedium,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }

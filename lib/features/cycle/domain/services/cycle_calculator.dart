@@ -51,40 +51,119 @@ class CycleCalculator {
   DayInfo? getDayInfo(
     DateTime date,
     CycleEntity? currentCycle, {
+    List<CycleEntity> history = const [],
     int cycleLength = defaultCycleLength,
     int periodLength = defaultPeriodLength,
   }) {
-    if (currentCycle == null) return null;
+    if (currentCycle == null && history.isEmpty) return null;
 
+    final baseCycle = currentCycle ?? history.first;
     final start = DateTime(
-      currentCycle.startDate.year,
-      currentCycle.startDate.month,
-      currentCycle.startDate.day,
+      baseCycle.startDate.year,
+      baseCycle.startDate.month,
+      baseCycle.startDate.day,
     );
     final checkDate = DateTime(date.year, date.month, date.day);
 
     final daysDiff = checkDate.difference(start).inDays;
 
-    // Use modulo for days into cycle, but only if daysDiff >= 0.
-    // If daysDiff < 0, it means the date is before this cycle started.
-    // Ideally we should find the cycle that covers this date.
-    // But as a fallback/simplification for "current view" relative to "current cycle":
     if (daysDiff < 0) return null;
 
-    final cycleDay = (daysDiff % cycleLength) + 1;
+    final cLength = baseCycle.avg ?? cycleLength;
+    final cycleDay = (daysDiff % cLength) + 1;
+
+    // Determine if it's menstruation
+    bool isMenstruation = false;
+
+    // 1. Check history
+    for (final cycle in history) {
+      if (cycle.endDate != null) {
+        final cStart = DateTime(
+          cycle.startDate.year,
+          cycle.startDate.month,
+          cycle.startDate.day,
+        );
+        final cEnd = DateTime(
+          cycle.endDate!.year,
+          cycle.endDate!.month,
+          cycle.endDate!.day,
+        );
+
+        if (!checkDate.isBefore(cStart) && !checkDate.isAfter(cEnd)) {
+          isMenstruation = true;
+          break;
+        }
+      }
+    }
+
+    // 2. Check current cycle
+    if (!isMenstruation && currentCycle != null) {
+      final cStart = DateTime(
+        currentCycle.startDate.year,
+        currentCycle.startDate.month,
+        currentCycle.startDate.day,
+      );
+      if (!checkDate.isBefore(cStart)) {
+        if (currentCycle.endDate != null) {
+          final cEnd = DateTime(
+            currentCycle.endDate!.year,
+            currentCycle.endDate!.month,
+            currentCycle.endDate!.day,
+          );
+          if (!checkDate.isAfter(cEnd)) {
+            isMenstruation = true;
+          } else {
+            final projectedCycleNumber = (daysDiff / cLength).floor();
+            if (projectedCycleNumber > 0) {
+              final projectedStart = cStart.add(
+                Duration(days: projectedCycleNumber * cLength),
+              );
+              final daysIntoPeriod = checkDate
+                  .difference(projectedStart)
+                  .inDays;
+              if (daysIntoPeriod >= 0 && daysIntoPeriod < periodLength) {
+                isMenstruation = true;
+              }
+            }
+          }
+        } else {
+          final now = DateTime.now();
+          final today = DateTime(now.year, now.month, now.day);
+
+          if (!checkDate.isAfter(today)) {
+            isMenstruation = true;
+          } else {
+            final daysPassed = today.difference(cStart).inDays + 1;
+            if (daysPassed < periodLength) {
+              final predictedEnd = cStart.add(Duration(days: periodLength - 1));
+              if (!checkDate.isAfter(predictedEnd)) {
+                isMenstruation = true;
+              }
+            }
+            final projectedCycleNumber = (daysDiff / cLength).floor();
+            if (projectedCycleNumber > 0) {
+              final projectedStart = cStart.add(
+                Duration(days: projectedCycleNumber * cLength),
+              );
+              final daysIntoPeriod = checkDate
+                  .difference(projectedStart)
+                  .inDays;
+              if (daysIntoPeriod >= 0 && daysIntoPeriod < periodLength) {
+                isMenstruation = true;
+              }
+            }
+          }
+        }
+      }
+    }
 
     // Ovulation calculation
-    final ovulationDay = cycleLength - ovulationBeforeNextPeriod;
+    final ovulationDay = cLength - ovulationBeforeNextPeriod;
     final fertileWindowStart = ovulationDay - 5;
     final fertileWindowEnd = ovulationDay + 1;
 
-    // Phase
-    CyclePhase
-    phase; // Uses CyclePhase from cycle_entity (imported via day_info logic or direct?)
-    // Wait, day_info.dart imports cycle_entity.dart which defines CyclePhase.
-    // So CyclePhase is available if I import cycle_entity.dart.
-
-    if (cycleDay <= periodLength) {
+    CyclePhase phase;
+    if (isMenstruation) {
       phase = CyclePhase.menstruation;
     } else if (cycleDay < fertileWindowStart) {
       phase = CyclePhase.follicular;
@@ -94,9 +173,8 @@ class CycleCalculator {
       phase = CyclePhase.luteal;
     }
 
-    // Pregnancy Probability
     PregnancyProbability probability;
-    if (cycleDay <= periodLength) {
+    if (isMenstruation) {
       probability = PregnancyProbability.none;
     } else if (cycleDay >= fertileWindowStart && cycleDay <= fertileWindowEnd) {
       if (cycleDay == ovulationDay || cycleDay == ovulationDay - 1) {
@@ -108,14 +186,14 @@ class CycleCalculator {
       probability = PregnancyProbability.low;
     }
 
-    final daysUntilNextPeriod = cycleLength - cycleDay + 1;
+    final daysUntilNextPeriod = cLength - cycleDay + 1;
 
     return DayInfo(
       date: date,
       cycleDay: cycleDay,
       phase: phase,
       pregnancyProbability: probability,
-      isMenstruation: cycleDay <= periodLength,
+      isMenstruation: isMenstruation,
       isOvulationDay: cycleDay == ovulationDay,
       daysUntilNextPeriod: daysUntilNextPeriod,
     );

@@ -32,6 +32,7 @@ dependencies:
   material_symbols_icons: ^4.2906.0
   skeletonizer: ^2.1.2
   pinput: ^6.0.2
+  smooth_sheets: ^0.16.0
   scaffold_navigation:
     path: dependencies/scaffold_navigation
   sliver_header_parallax:

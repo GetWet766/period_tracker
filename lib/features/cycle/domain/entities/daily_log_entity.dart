@@ -9,7 +9,7 @@ class DailyLogEntity extends Equatable {
     this.symptoms,
     this.mood,
     this.notes,
-    this.flowLevel,
+    this.flowLevels,
   });
 
   final String id;
@@ -18,7 +18,7 @@ class DailyLogEntity extends Equatable {
   final List<String>? symptoms;
   final String? mood;
   final String? notes;
-  final FlowLevel? flowLevel;
+  final List<FlowLevel>? flowLevels;
 
   @override
   List<Object?> get props => [
@@ -28,6 +28,6 @@ class DailyLogEntity extends Equatable {
     symptoms,
     mood,
     notes,
-    flowLevel,
+    flowLevels,
   ];
 }

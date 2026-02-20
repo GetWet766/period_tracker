@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomListTile extends StatelessWidget {
+class CustomListTile extends StatefulWidget {
   const CustomListTile({
     required this.title,
     this.backgroundColor,
@@ -14,6 +14,9 @@ class CustomListTile extends StatelessWidget {
     this.onPressed,
     this.onLongPress,
     this.iconSize = 24,
+    this.children,
+    this.initiallyExpanded = false,
+    this.onExpansionChanged,
     super.key,
   });
 
@@ -29,75 +32,125 @@ class CustomListTile extends StatelessWidget {
   final double iconSize;
   final void Function()? onPressed;
   final void Function()? onLongPress;
+  final List<Widget>? children;
+  final bool initiallyExpanded;
+  final ValueChanged<bool>? onExpansionChanged;
+
+  @override
+  State<CustomListTile> createState() => _CustomListTileState();
+}
+
+class _CustomListTileState extends State<CustomListTile> {
+  late bool _isExpanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _isExpanded = widget.initiallyExpanded;
+  }
+
+  void _handleTap() {
+    if (widget.children != null && widget.children!.isNotEmpty) {
+      setState(() {
+        _isExpanded = !_isExpanded;
+      });
+      widget.onExpansionChanged?.call(_isExpanded);
+    }
+    widget.onPressed?.call();
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
     final textTheme = TextTheme.of(context);
+    final hasChildren = widget.children != null && widget.children!.isNotEmpty;
+
+    final effectiveForegroundColor =
+        widget.foregroundColor ?? colorScheme.onSurfaceVariant;
+    final titleTextStyle = textTheme.bodyLarge!
+        .copyWith(fontWeight: FontWeight.bold, color: effectiveForegroundColor)
+        .merge(widget.titleStyle);
 
     return Material(
-      color: backgroundColor ?? colorScheme.surfaceContainerLow,
-      borderRadius: .circular(4),
-      clipBehavior: .antiAlias,
-      child: InkWell(
-        onLongPress: onLongPress,
-        onTap: onPressed,
-        child: Padding(
-          padding: const .symmetric(vertical: 12, horizontal: 16),
-          child: Row(
-            spacing: 12,
-            children: [
-              if (leading != null)
-                IconTheme(
-                  data: IconThemeData(
-                    color: iconColor ?? colorScheme.primary,
-                  ),
-                  child: leading!,
-                ),
-              Expanded(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: iconSize),
-                  child: Column(
-                    crossAxisAlignment: .start,
-                    children: [
-                      DefaultTextStyle(
-                        textAlign: .start,
-                        style: textTheme.bodyLarge!
-                            .copyWith(
-                              fontWeight: .bold,
-                              color:
-                                  foregroundColor ??
-                                  colorScheme.onSurfaceVariant,
-                            )
-                            .merge(titleStyle),
-                        child: title,
+      color: widget.backgroundColor ?? colorScheme.surfaceContainerLow,
+      borderRadius: BorderRadius.circular(4),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            onLongPress: widget.onLongPress,
+            onTap: hasChildren ? _handleTap : widget.onPressed,
+            child: Padding(
+              padding: const .symmetric(vertical: 12, horizontal: 16),
+              child: Row(
+                spacing: 12,
+                children: [
+                  if (widget.leading != null)
+                    IconTheme(
+                      data: IconThemeData(
+                        color: widget.iconColor ?? colorScheme.primary,
                       ),
-                      if (subtitle != null)
-                        DefaultTextStyle(
-                          textAlign: .start,
-                          style: textTheme.bodyMedium!
-                              .copyWith(
-                                color:
-                                    foregroundColor ??
-                                    colorScheme.onSurfaceVariant,
-                              )
-                              .merge(subtitleStyle),
-                          child: subtitle!,
-                        ),
-                    ],
+                      child: widget.leading!,
+                    ),
+                  Expanded(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(minHeight: widget.iconSize),
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          DefaultTextStyle(
+                            textAlign: .start,
+                            style: titleTextStyle,
+                            child: widget.title,
+                          ),
+                          if (widget.subtitle != null)
+                            DefaultTextStyle(
+                              textAlign: .start,
+                              style: textTheme.bodyMedium!
+                                  .copyWith(color: effectiveForegroundColor)
+                                  .merge(widget.subtitleStyle),
+                              child: widget.subtitle!,
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  if (widget.trailing != null)
+                    IconTheme(
+                      data: IconThemeData(
+                        color: widget.iconColor ?? colorScheme.primary,
+                      ),
+                      child: widget.trailing!,
+                    )
+                  else if (hasChildren)
+                    AnimatedRotation(
+                      turns: _isExpanded ? -0.5 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        Icons.expand_more_rounded,
+                        color: widget.iconColor ?? colorScheme.primary,
+                      ),
+                    ),
+                ],
               ),
-              if (trailing != null)
-                IconTheme(
-                  data: IconThemeData(
-                    color: iconColor ?? colorScheme.primary,
-                  ),
-                  child: trailing!,
-                ),
-            ],
+            ),
           ),
-        ),
+          if (hasChildren)
+            AnimatedSize(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              alignment: Alignment.topCenter,
+              child: _isExpanded
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: widget.children!,
+                    )
+                  : const SizedBox.shrink(),
+            ),
+        ],
       ),
     );
   }

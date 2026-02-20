@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DailyLogModel {
 
- String get id; String? get userId; DateTime get date; List<String>? get symptoms; String? get mood; String? get notes; FlowLevel? get flowLevel; DateTime? get createdAt; DateTime? get updatedAt;
+ String get id; String? get userId; DateTime get date; List<String>? get symptoms; String? get mood; String? get notes; List<FlowLevel>? get flowLevels; DateTime? get createdAt; DateTime? get updatedAt;
 /// Create a copy of DailyLogModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $DailyLogModelCopyWith<DailyLogModel> get copyWith => _$DailyLogModelCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyLogModel&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.date, date) || other.date == date)&&const DeepCollectionEquality().equals(other.symptoms, symptoms)&&(identical(other.mood, mood) || other.mood == mood)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.flowLevel, flowLevel) || other.flowLevel == flowLevel)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyLogModel&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.date, date) || other.date == date)&&const DeepCollectionEquality().equals(other.symptoms, symptoms)&&(identical(other.mood, mood) || other.mood == mood)&&(identical(other.notes, notes) || other.notes == notes)&&const DeepCollectionEquality().equals(other.flowLevels, flowLevels)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,date,const DeepCollectionEquality().hash(symptoms),mood,notes,flowLevel,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,date,const DeepCollectionEquality().hash(symptoms),mood,notes,const DeepCollectionEquality().hash(flowLevels),createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'DailyLogModel(id: $id, userId: $userId, date: $date, symptoms: $symptoms, mood: $mood, notes: $notes, flowLevel: $flowLevel, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'DailyLogModel(id: $id, userId: $userId, date: $date, symptoms: $symptoms, mood: $mood, notes: $notes, flowLevels: $flowLevels, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $DailyLogModelCopyWith<$Res>  {
   factory $DailyLogModelCopyWith(DailyLogModel value, $Res Function(DailyLogModel) _then) = _$DailyLogModelCopyWithImpl;
 @useResult
 $Res call({
- String id, DateTime date,@JsonKey(name: 'user_id') String? userId, List<String>? symptoms, String? mood, String? notes,@JsonKey(name: 'flow_level') FlowLevel? flowLevel,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt
+ String id, DateTime date,@JsonKey(name: 'user_id') String? userId, List<String>? symptoms, String? mood, String? notes,@JsonKey(name: 'flow_levels') List<FlowLevel>? flowLevels,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt
 });
 
 
@@ -63,7 +63,7 @@ class _$DailyLogModelCopyWithImpl<$Res>
 
 /// Create a copy of DailyLogModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? date = null,Object? userId = freezed,Object? symptoms = freezed,Object? mood = freezed,Object? notes = freezed,Object? flowLevel = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? date = null,Object? userId = freezed,Object? symptoms = freezed,Object? mood = freezed,Object? notes = freezed,Object? flowLevels = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(DailyLogModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
@@ -71,8 +71,8 @@ as DateTime,userId: freezed == userId ? _self.userId : userId // ignore: cast_nu
 as String?,symptoms: freezed == symptoms ? _self.symptoms : symptoms // ignore: cast_nullable_to_non_nullable
 as List<String>?,mood: freezed == mood ? _self.mood : mood // ignore: cast_nullable_to_non_nullable
 as String?,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
-as String?,flowLevel: freezed == flowLevel ? _self.flowLevel : flowLevel // ignore: cast_nullable_to_non_nullable
-as FlowLevel?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String?,flowLevels: freezed == flowLevels ? _self.flowLevels : flowLevels // ignore: cast_nullable_to_non_nullable
+as List<FlowLevel>?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

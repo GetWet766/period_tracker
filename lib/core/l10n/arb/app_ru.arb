@@ -45,5 +45,19 @@
     "placeholders": {
       "days": {}
     }
-  }
+  },
+  "today_is_period_day": "Сегодня день месячных",
+  "@today_is_period_day": {},
+  "period_day_number": "{day, plural, =0{{day} день} one{{day} день} few{{day} дня} other{{day} дней}}",
+  "@period_day_number": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "days_until_period_top": "До месячных осталось",
+  "@days_until_period_top": {},
+  "no_info": "Нет информации",
+  "@no_info": {},
+  "how_do_you_feel_today": "Как Вы себя чувствуете сегодня?",
+  "@how_do_you_feel_today": {}
 }
