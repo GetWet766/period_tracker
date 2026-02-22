@@ -15,11 +15,32 @@ class ArticlesRepositoryImpl implements ArticlesRepository {
   }) async {
     try {
       final articlesModel = await _localDataSource.getArticles();
-      final articles = articlesModel.map((el) => el.toEntity()).toList();
+      final articles = articlesModel
+          .map((el) => _withImage(el.toEntity()))
+          .toList();
       return Right(articles);
     } catch (e) {
       return Left(CacheFailure(e.toString()));
     }
+  }
+
+  ArticleEntity _withImage(ArticleEntity article) {
+    String? imageUrl;
+    switch (article.id) {
+      case 'nutrition-phases':
+      case 'vitamins':
+        imageUrl = 'assets/images/nutrition_bg.png';
+      case 'hygiene':
+        imageUrl = 'assets/images/hygiene_bg.png';
+      case 'menstruation':
+      case 'follicular':
+      case 'ovulation':
+      case 'luteal':
+        imageUrl = 'assets/images/care_bg.png';
+      default:
+        imageUrl = null;
+    }
+    return article.copyWith(imageUrl: imageUrl);
   }
 
   @override
@@ -31,7 +52,7 @@ class ArticlesRepositoryImpl implements ArticlesRepository {
       final articleContent = await _localDataSource.getArticleContent(
         contentUri: articleModel.contentURI,
       );
-      final articleEntity = articleModel.toEntity().copyWith(
+      final articleEntity = _withImage(articleModel.toEntity()).copyWith(
         content: articleContent,
       );
       return Right(articleEntity);

@@ -8,6 +8,7 @@ class BlockContainer extends StatelessWidget {
     this.borderRadius,
     this.child,
     this.bottomRounded = false,
+    this.constraints,
     super.key,
   });
 
@@ -17,12 +18,14 @@ class BlockContainer extends StatelessWidget {
   final Color? backgroundColor;
   final BorderRadiusGeometry? borderRadius;
   final bool bottomRounded;
+  final BoxConstraints? constraints;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
 
     return Container(
+      constraints: constraints,
       margin: margin,
       padding: padding ?? const .symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(

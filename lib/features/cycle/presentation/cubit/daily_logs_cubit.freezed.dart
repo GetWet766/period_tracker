@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DailyLogsState {
 
- DateTime get selectedDate; DailyLogEntity? get currentLog; bool get isLoading;
+ DateTime get selectedDate; DailyLogEntity? get selectedLog; DailyLogEntity? get currentLog; bool get isLoading;
 /// Create a copy of DailyLogsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $DailyLogsStateCopyWith<DailyLogsState> get copyWith => _$DailyLogsStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyLogsState&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate)&&(identical(other.currentLog, currentLog) || other.currentLog == currentLog)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyLogsState&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate)&&(identical(other.selectedLog, selectedLog) || other.selectedLog == selectedLog)&&(identical(other.currentLog, currentLog) || other.currentLog == currentLog)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,selectedDate,currentLog,isLoading);
+int get hashCode => Object.hash(runtimeType,selectedDate,selectedLog,currentLog,isLoading);
 
 @override
 String toString() {
-  return 'DailyLogsState(selectedDate: $selectedDate, currentLog: $currentLog, isLoading: $isLoading)';
+  return 'DailyLogsState(selectedDate: $selectedDate, selectedLog: $selectedLog, currentLog: $currentLog, isLoading: $isLoading)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $DailyLogsStateCopyWith<$Res>  {
   factory $DailyLogsStateCopyWith(DailyLogsState value, $Res Function(DailyLogsState) _then) = _$DailyLogsStateCopyWithImpl;
 @useResult
 $Res call({
- DateTime selectedDate, DailyLogEntity? currentLog, bool isLoading
+ DateTime selectedDate, DailyLogEntity? selectedLog, DailyLogEntity? currentLog, bool isLoading
 });
 
 
@@ -62,10 +62,11 @@ class _$DailyLogsStateCopyWithImpl<$Res>
 
 /// Create a copy of DailyLogsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? selectedDate = null,Object? currentLog = freezed,Object? isLoading = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? selectedDate = null,Object? selectedLog = freezed,Object? currentLog = freezed,Object? isLoading = null,}) {
   return _then(_self.copyWith(
 selectedDate: null == selectedDate ? _self.selectedDate : selectedDate // ignore: cast_nullable_to_non_nullable
-as DateTime,currentLog: freezed == currentLog ? _self.currentLog : currentLog // ignore: cast_nullable_to_non_nullable
+as DateTime,selectedLog: freezed == selectedLog ? _self.selectedLog : selectedLog // ignore: cast_nullable_to_non_nullable
+as DailyLogEntity?,currentLog: freezed == currentLog ? _self.currentLog : currentLog // ignore: cast_nullable_to_non_nullable
 as DailyLogEntity?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
@@ -152,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime selectedDate,  DailyLogEntity? currentLog,  bool isLoading)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime selectedDate,  DailyLogEntity? selectedLog,  DailyLogEntity? currentLog,  bool isLoading)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DailyLogsState() when $default != null:
-return $default(_that.selectedDate,_that.currentLog,_that.isLoading);case _:
+return $default(_that.selectedDate,_that.selectedLog,_that.currentLog,_that.isLoading);case _:
   return orElse();
 
 }
@@ -173,10 +174,10 @@ return $default(_that.selectedDate,_that.currentLog,_that.isLoading);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime selectedDate,  DailyLogEntity? currentLog,  bool isLoading)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime selectedDate,  DailyLogEntity? selectedLog,  DailyLogEntity? currentLog,  bool isLoading)  $default,) {final _that = this;
 switch (_that) {
 case _DailyLogsState():
-return $default(_that.selectedDate,_that.currentLog,_that.isLoading);case _:
+return $default(_that.selectedDate,_that.selectedLog,_that.currentLog,_that.isLoading);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +194,10 @@ return $default(_that.selectedDate,_that.currentLog,_that.isLoading);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime selectedDate,  DailyLogEntity? currentLog,  bool isLoading)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime selectedDate,  DailyLogEntity? selectedLog,  DailyLogEntity? currentLog,  bool isLoading)?  $default,) {final _that = this;
 switch (_that) {
 case _DailyLogsState() when $default != null:
-return $default(_that.selectedDate,_that.currentLog,_that.isLoading);case _:
+return $default(_that.selectedDate,_that.selectedLog,_that.currentLog,_that.isLoading);case _:
   return null;
 
 }
@@ -208,10 +209,11 @@ return $default(_that.selectedDate,_that.currentLog,_that.isLoading);case _:
 
 
 class _DailyLogsState implements DailyLogsState {
-  const _DailyLogsState({required this.selectedDate, this.currentLog, this.isLoading = false});
+  const _DailyLogsState({required this.selectedDate, this.selectedLog, this.currentLog, this.isLoading = false});
   
 
 @override final  DateTime selectedDate;
+@override final  DailyLogEntity? selectedLog;
 @override final  DailyLogEntity? currentLog;
 @override@JsonKey() final  bool isLoading;
 
@@ -225,16 +227,16 @@ _$DailyLogsStateCopyWith<_DailyLogsState> get copyWith => __$DailyLogsStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyLogsState&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate)&&(identical(other.currentLog, currentLog) || other.currentLog == currentLog)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyLogsState&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate)&&(identical(other.selectedLog, selectedLog) || other.selectedLog == selectedLog)&&(identical(other.currentLog, currentLog) || other.currentLog == currentLog)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,selectedDate,currentLog,isLoading);
+int get hashCode => Object.hash(runtimeType,selectedDate,selectedLog,currentLog,isLoading);
 
 @override
 String toString() {
-  return 'DailyLogsState(selectedDate: $selectedDate, currentLog: $currentLog, isLoading: $isLoading)';
+  return 'DailyLogsState(selectedDate: $selectedDate, selectedLog: $selectedLog, currentLog: $currentLog, isLoading: $isLoading)';
 }
 
 
@@ -245,7 +247,7 @@ abstract mixin class _$DailyLogsStateCopyWith<$Res> implements $DailyLogsStateCo
   factory _$DailyLogsStateCopyWith(_DailyLogsState value, $Res Function(_DailyLogsState) _then) = __$DailyLogsStateCopyWithImpl;
 @override @useResult
 $Res call({
- DateTime selectedDate, DailyLogEntity? currentLog, bool isLoading
+ DateTime selectedDate, DailyLogEntity? selectedLog, DailyLogEntity? currentLog, bool isLoading
 });
 
 
@@ -262,10 +264,11 @@ class __$DailyLogsStateCopyWithImpl<$Res>
 
 /// Create a copy of DailyLogsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? selectedDate = null,Object? currentLog = freezed,Object? isLoading = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? selectedDate = null,Object? selectedLog = freezed,Object? currentLog = freezed,Object? isLoading = null,}) {
   return _then(_DailyLogsState(
 selectedDate: null == selectedDate ? _self.selectedDate : selectedDate // ignore: cast_nullable_to_non_nullable
-as DateTime,currentLog: freezed == currentLog ? _self.currentLog : currentLog // ignore: cast_nullable_to_non_nullable
+as DateTime,selectedLog: freezed == selectedLog ? _self.selectedLog : selectedLog // ignore: cast_nullable_to_non_nullable
+as DailyLogEntity?,currentLog: freezed == currentLog ? _self.currentLog : currentLog // ignore: cast_nullable_to_non_nullable
 as DailyLogEntity?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,
   ));

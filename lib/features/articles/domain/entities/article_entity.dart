@@ -11,6 +11,7 @@ class ArticleEntity extends Equatable {
     required this.contentURI,
     required this.categories,
     this.content = '',
+    this.imageUrl,
   });
 
   final String id;
@@ -21,6 +22,7 @@ class ArticleEntity extends Equatable {
   final String contentURI;
   final String content;
   final List<String> categories;
+  final String? imageUrl;
 
   ArticleEntity copyWith({
     String? id,
@@ -31,6 +33,7 @@ class ArticleEntity extends Equatable {
     String? contentURI,
     String? content,
     List<String>? categories,
+    String? imageUrl,
   }) {
     return ArticleEntity(
       id: id ?? this.id,
@@ -41,11 +44,12 @@ class ArticleEntity extends Equatable {
       contentURI: contentURI ?? this.contentURI,
       content: content ?? this.content,
       categories: categories ?? this.categories,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
     id,
     title,
     subtitle,
@@ -54,5 +58,6 @@ class ArticleEntity extends Equatable {
     contentURI,
     content,
     categories,
+    imageUrl,
   ];
 }

@@ -203,7 +203,10 @@ class _CalendarAddLogSheetState extends State<CalendarAddLogSheet> {
                     ],
                   ),
                   SliverFillOverscroll(
-                    child: ColoredBox(color: colorScheme.surface),
+                    child: Container(
+                      color: colorScheme.surface,
+                      height: MediaQuery.of(context).padding.bottom + 16,
+                    ),
                   ),
                 ],
               ),

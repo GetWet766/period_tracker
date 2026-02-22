@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:material_symbols_icons/get.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:periodility/core/utils/color_extension.dart';
 import 'package:periodility/features/articles/domain/entities/article_entity.dart';
 
@@ -28,7 +30,9 @@ abstract class ArticleModel with _$ArticleModel {
       id: id,
       title: title,
       subtitle: subtitle,
-      icon: SymbolsGet.get(icon, .rounded),
+      icon: IconDataRounded(
+        SymbolsGet.map.entries.firstWhere((e) => e.key == icon).value,
+      ),
       color: color.toColor(),
       contentURI: contentURI,
       categories: categories,

@@ -22,7 +22,7 @@ class _HomeMainInfoState extends State<HomeMainInfo> {
   @override
   void initState() {
     super.initState();
-    context.read<DailyLogsCubit>().loadLogForDate(DateTime.now());
+    context.read<DailyLogsCubit>().getCurrentLog(DateTime.now());
   }
 
   @override

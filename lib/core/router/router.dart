@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:periodility/core/router/go_router_refresh_stream.dart';
-import 'package:periodility/features/articles/presentation/screens/learn_list_screen.dart';
-import 'package:periodility/features/articles/presentation/screens/learn_post_screen.dart';
+import 'package:periodility/features/articles/presentation/screens/articles_list_screen.dart';
+import 'package:periodility/features/articles/presentation/screens/article_detail_screen.dart';
+import 'package:periodility/features/articles/presentation/screens/category_articles_screen.dart';
 import 'package:periodility/features/calendar/presentation/modals/calendar_add_log_sheet.dart';
 import 'package:periodility/features/calendar/presentation/screens/calendar_screen.dart';
 import 'package:periodility/features/home/presentation/screens/home_screen.dart';
 import 'package:periodility/features/splash/presentation/cubit/splash_cubit.dart';
 import 'package:periodility/features/splash/presentation/screens/splash_screen.dart';
+import 'package:periodility/features/care/presentation/screens/care_screen.dart';
+import 'package:periodility/core/common/screens/error_screen.dart';
 import 'package:scaffold_navigation/scaffold_navigation.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
@@ -44,6 +47,7 @@ class AppRouter {
     initialLocation: SplashScreen.routePath,
     refreshListenable: GoRouterRefreshStream(_splashCubit.stream),
     redirect: _redirect,
+    errorBuilder: (context, state) => ErrorScreen(error: state.error),
     routes: [
       GoRoute(
         path: SplashScreen.routePath,
@@ -53,13 +57,22 @@ class AppRouter {
       ),
       GoRoute(
         path: '/learn',
-        builder: (context, state) => const LearnListScreen(),
+        builder: (context, state) => const ArticlesListScreen(),
         routes: [
           GoRoute(
-            path: ':id',
-            builder: (context, state) => LearnPostScreen(
-              id: state.pathParameters['id']!,
+            path: ':category_id',
+            builder: (context, state) => CategoryArticlesScreen(
+              id: state.pathParameters['category_id']!,
+              title: state.uri.queryParameters['title'] ?? 'Статьи',
             ),
+            routes: [
+              GoRoute(
+                path: ':article_id',
+                builder: (context, state) => ArticleDetailScreen(
+                  id: state.pathParameters['article_id']!,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -131,11 +144,7 @@ class AppRouter {
                 name: 'care',
                 path: '/care',
                 pageBuilder: (context, state) => const NoTransitionPage(
-                  child: Scaffold(
-                    body: Center(
-                      child: FlutterLogo(),
-                    ),
-                  ),
+                  child: CareScreen(),
                 ),
               ),
             ],

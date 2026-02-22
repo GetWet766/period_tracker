@@ -21,7 +21,7 @@ class DailyLogsCubit extends Cubit<DailyLogsState> {
   Future<void> loadLogForDate(DateTime date) async {
     emit(state.copyWith(isLoading: true, selectedDate: date));
     final log = await _getDailyLogUseCase(date);
-    emit(state.copyWith(currentLog: log, isLoading: false));
+    emit(state.copyWith(selectedLog: log, isLoading: false));
   }
 
   Future<void> saveLog({
@@ -42,6 +42,12 @@ class DailyLogsCubit extends Cubit<DailyLogsState> {
     );
 
     await _saveDailyLogUseCase(newLog);
-    emit(state.copyWith(currentLog: newLog));
+    emit(state.copyWith(selectedLog: newLog));
+  }
+
+  Future<void> getCurrentLog(DateTime date) async {
+    emit(state.copyWith(isLoading: true));
+    final log = await _getDailyLogUseCase(date);
+    emit(state.copyWith(currentLog: log, isLoading: false));
   }
 }

@@ -12,14 +12,20 @@ import 'package:periodility/features/articles/presentation/cubit/article_categor
 import 'package:periodility/features/articles/presentation/cubit/articles_cubit.dart';
 import 'package:periodility/features/articles/presentation/widgets/article_tile.dart';
 
-class LearnListScreen extends StatefulWidget {
-  const LearnListScreen({super.key});
+class CategoryArticlesScreen extends StatefulWidget {
+  const CategoryArticlesScreen({
+    required this.id,
+    required this.title,
+    super.key,
+  });
+  final String id;
+  final String title;
 
   @override
-  State<LearnListScreen> createState() => _LearnListScreenState();
+  State<CategoryArticlesScreen> createState() => _CategoryArticlesScreenState();
 }
 
-class _LearnListScreenState extends State<LearnListScreen> {
+class _CategoryArticlesScreenState extends State<CategoryArticlesScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
@@ -27,8 +33,8 @@ class _LearnListScreenState extends State<LearnListScreen> {
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          const TrackerAppBar(
-            title: Text('Информация'),
+          TrackerAppBar(
+            title: Text(widget.title),
           ),
         ],
         body: RefreshIndicator(
@@ -72,9 +78,7 @@ class _LearnListScreenState extends State<LearnListScreen> {
                     builder: (context, state) {
                       final categories = categoriesState
                           .where(
-                            (cat) => state.any(
-                              (article) => article.categories.contains(cat),
-                            ),
+                            (category) => category.contains(widget.id),
                           )
                           .toList();
 
@@ -99,7 +103,7 @@ class _LearnListScreenState extends State<LearnListScreen> {
                                       (article) => ArticleTile(
                                         article: article,
                                         onTap: () => context.push(
-                                          '/learn/${article.id}',
+                                          '/learn/${article.categories.first}/${article.id}',
                                         ),
                                       ),
                                     )

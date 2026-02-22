@@ -46,7 +46,7 @@ jobs:
         run: flutter pub get
 
       - name: Build Web
-        run: flutter build web --release --no-wasm --no-tree-shake-icons --base-href "/${{ github.event.repository.name }}/"
+        run: flutter build web --release --no-tree-shake-icons --base-href "/${{ github.event.repository.name }}/"
         # Обрати внимание: base-href нужен, если сайт не в корне домена (например username.github.io/repo-name/)
 
       - name: Upload Pages artifact
