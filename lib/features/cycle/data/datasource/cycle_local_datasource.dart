@@ -32,8 +32,6 @@ class CycleLocalDataSourceImpl implements CycleLocalDataSource {
   // Получить самый свежий цикл (текущий)
   @override
   Future<CycleModel?> getLatestCycle() async {
-    sl<Talker>().handle(await getAllCycles());
-
     // await _client.writeAdaptive(
     //   (isar) {
     //     isar.cycleModels.clear();

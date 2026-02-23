@@ -1,11 +1,14 @@
 import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:periodility/core/dependencies/injection.dart';
 import 'package:periodility/core/errors/failures.dart';
-import 'package:periodility/features/cycle/domain/services/cycle_calculator.dart';
+import 'package:periodility/core/services/ad_service.dart';
+import 'package:periodility/core/services/analytics_service.dart';
 import 'package:periodility/features/cycle/domain/entities/cycle_entity.dart';
+import 'package:periodility/features/cycle/domain/services/cycle_calculator.dart';
 import 'package:periodility/features/cycle/domain/usecases/delete_cycle_usecase.dart';
 import 'package:periodility/features/cycle/domain/usecases/finish_current_cycle_usecase.dart';
 import 'package:periodility/features/cycle/domain/usecases/get_current_cycle_usecase.dart';
@@ -14,8 +17,8 @@ import 'package:periodility/features/cycle/domain/usecases/start_new_cycle_useca
 import 'package:periodility/features/cycle/domain/usecases/update_cycle_usecase.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-part 'cycle_state.dart';
 part 'cycle_cubit.freezed.dart';
+part 'cycle_state.dart';
 
 class CycleCubit extends Cubit<CycleState> {
   CycleCubit({
@@ -52,7 +55,7 @@ class CycleCubit extends Cubit<CycleState> {
   }
 
   Future<void> init() async {
-    print('CycleCubit: init() called');
+    sl<Talker>().debug('CycleCubit: init() called');
     emit(state.copyWith(isLoading: true));
 
     // Cancel existing subscription to avoid duplicates
@@ -93,11 +96,11 @@ class CycleCubit extends Cubit<CycleState> {
     });
 
     // Also fetch current explicitly
-    print('CycleCubit: fetching current cycle...');
+    sl<Talker>().debug('CycleCubit: fetching current cycle...');
     (await _getCurrentCycleUseCase()).fold(
-      (l) => print('CycleCubit: Init fetch current error: $l'),
+      (l) => sl<Talker>().error('CycleCubit: Init fetch current error: $l'),
       (r) {
-        print('CycleCubit: Init fetch current success: $r');
+        sl<Talker>().info('CycleCubit: Init fetch current success: $r');
         _updateStateWithData(current: r);
       },
     );
@@ -148,6 +151,7 @@ class CycleCubit extends Cubit<CycleState> {
   // Начать новый цикл (кнопка "У меня начались месячные")
   Future<void> startPeriod() async {
     final result = await _startNewCycleUseCase(startDate: DateTime.now());
+    sl<AnalyticsService>().logEvent('period_started');
     result.fold(
       (l) => sl<Talker>().handle('Error starting cycle: $l'),
       (r) async {
@@ -162,7 +166,11 @@ class CycleCubit extends Cubit<CycleState> {
 
   // Завершить текущий цикл
   Future<void> endPeriod() async {
+    sl<AnalyticsService>().logEvent('period_ended');
     await _finishCurrentCycleUseCase(endDate: DateTime.now());
     await init();
+
+    // Show interstitial ad after ending period
+    sl<AdService>().showDefaultInterstitial();
   }
 }

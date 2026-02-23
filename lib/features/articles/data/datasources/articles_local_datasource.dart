@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:extensions_plus/extensions_plus.dart';
 import 'package:flutter/services.dart';
-import 'package:periodility/core/constants/articles.dart';
-import 'package:periodility/core/errors/exceptions.dart';
-import 'package:periodility/features/articles/data/models/article_model.dart';
+import 'package:periodility/core/constants/constants.dart';
+import 'package:periodility/core/errors/errors.dart';
+import 'package:periodility/features/articles/data/data.dart';
 
 abstract class ArticlesLocalDataSource {
   Future<List<String>> getCategories();

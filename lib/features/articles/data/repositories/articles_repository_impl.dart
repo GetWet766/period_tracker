@@ -1,13 +1,14 @@
 import 'package:dartz/dartz.dart';
-import 'package:periodility/core/errors/failures.dart';
-import 'package:periodility/features/articles/data/datasources/articles_local_datasource.dart';
-import 'package:periodility/features/articles/domain/entities/article_entity.dart';
-import 'package:periodility/features/articles/domain/repositories/articles_repository.dart';
+import 'package:periodility/core/errors/errors.dart';
+import 'package:periodility/features/articles/data/data.dart';
+import 'package:periodility/features/articles/domain/domain.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class ArticlesRepositoryImpl implements ArticlesRepository {
-  ArticlesRepositoryImpl(this._localDataSource);
+  ArticlesRepositoryImpl(this._localDataSource, this._talker);
 
   final ArticlesLocalDataSource _localDataSource;
+  final Talker _talker;
 
   @override
   Future<Either<Failure, List<ArticleEntity>>> getArticles({
@@ -19,7 +20,8 @@ class ArticlesRepositoryImpl implements ArticlesRepository {
           .map((el) => _withImage(el.toEntity()))
           .toList();
       return Right(articles);
-    } catch (e) {
+    } catch (e, st) {
+      _talker.handle(e, st, 'ArticlesRepository: getArticles error');
       return Left(CacheFailure(e.toString()));
     }
   }
@@ -56,7 +58,8 @@ class ArticlesRepositoryImpl implements ArticlesRepository {
         content: articleContent,
       );
       return Right(articleEntity);
-    } catch (e) {
+    } catch (e, st) {
+      _talker.handle(e, st, 'ArticlesRepository: getArticle error ($id)');
       return Left(CacheFailure(e.toString()));
     }
   }
@@ -65,9 +68,9 @@ class ArticlesRepositoryImpl implements ArticlesRepository {
   Future<Either<Failure, List<String>>> getCategories() async {
     try {
       final categories = await _localDataSource.getCategories();
-
       return Right(categories);
-    } catch (e) {
+    } catch (e, st) {
+      _talker.handle(e, st, 'ArticlesRepository: getCategories error');
       return Left(CacheFailure(e.toString()));
     }
   }

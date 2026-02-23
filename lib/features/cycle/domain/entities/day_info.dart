@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:periodility/core/l10n/gen/app_localizations.dart';
 import 'package:periodility/features/cycle/domain/entities/cycle_entity.dart';
 
 enum PregnancyProbability { none, low, medium, high }
@@ -24,16 +25,16 @@ class DayInfo extends Equatable {
   final bool isOvulationDay;
   final int? daysUntilNextPeriod;
 
-  String get phaseDescription {
+  String phaseDescription(AppLocalizations l10n) {
     switch (phase) {
       case CyclePhase.menstruation:
-        return 'Менструация';
+        return l10n.phase_menstruation;
       case CyclePhase.follicular:
-        return 'Фолликулярная фаза';
+        return l10n.phase_follicular;
       case CyclePhase.ovulation:
-        return 'Овуляция';
+        return l10n.phase_ovulation;
       case CyclePhase.luteal:
-        return 'Лютеиновая фаза';
+        return l10n.phase_luteal;
     }
   }
 
@@ -63,16 +64,16 @@ class DayInfo extends Equatable {
     }
   }
 
-  String get pregnancyProbabilityDescription {
+  String pregnancyProbabilityDescription(AppLocalizations l10n) {
     switch (pregnancyProbability) {
       case PregnancyProbability.none:
-        return 'Очень низкая';
+        return l10n.prob_very_low;
       case PregnancyProbability.low:
-        return 'Низкая';
+        return l10n.prob_low;
       case PregnancyProbability.medium:
-        return 'Средняя';
+        return l10n.prob_medium;
       case PregnancyProbability.high:
-        return 'Высокая';
+        return l10n.prob_high;
     }
   }
 

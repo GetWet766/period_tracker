@@ -3,13 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:periodility/core/common/widgets/custom_list_tile.dart';
-import 'package:periodility/core/common/widgets/icon_container.dart';
-import 'package:periodility/core/common/widgets/paralax_snap_sheet.dart';
-import 'package:periodility/core/common/widgets/section_container.dart';
-import 'package:periodility/core/common/widgets/tracker_app_bar.dart';
+import 'package:periodility/core/common/widgets/widgets.dart';
 import 'package:periodility/core/constants/log_constants.dart';
 import 'package:periodility/core/dependencies/injection.dart';
+import 'package:periodility/core/l10n/l10n_mapper.dart';
+import 'package:periodility/core/services/analytics_service.dart';
 import 'package:periodility/core/utils/locale_extension.dart';
 import 'package:periodility/features/calendar/presentation/widgets/calendar.dart';
 import 'package:periodility/features/cycle/domain/entities/daily_log_entity.dart';
@@ -21,6 +19,9 @@ import 'package:periodility/features/cycle/presentation/cubit/daily_logs_cubit.d
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
 
+  static const routePath = '/calendar';
+  static const routeName = 'calendar';
+
   @override
   State<CalendarScreen> createState() => _CalendarScreenState();
 }
@@ -29,12 +30,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTime selectedDay = DateTime.now();
 
   @override
+  void initState() {
+    super.initState();
+    sl<AnalyticsService>().logScreenView('Calendar');
+  }
+
+  @override
   Widget build(BuildContext context) {
     final textTheme = TextTheme.of(context);
 
     return Scaffold(
       body: ParallaxSnapSheet(
-        sliverAppBar: const TrackerAppBar(title: Text('Календарь')),
+        sliverAppBar: TrackerAppBar(title: Text(context.l10n.nav_calendar)),
         backgroundContent: Padding(
           padding: const EdgeInsets.all(16),
           child: BlocBuilder<CycleCubit, CycleState>(
@@ -86,7 +93,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             selectedDayLog.mood == null &&
                             (selectedDayLog.notes?.isEmpty ?? true)))
                       SectionContainer(
-                        title: 'Записанные данные',
+                        title: context.l10n.recorded_data,
                         child: OutlinedButton(
                           onPressed: showCreateLogs,
                           style: OutlinedButton.styleFrom(
@@ -97,7 +104,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             minimumSize: const Size.fromHeight(56),
                           ),
                           child: Text(
-                            'Добавить запись',
+                            context.l10n.add_record,
                             style: textTheme.bodyLarge,
                           ),
                         ),
@@ -107,6 +114,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         context,
                         selectedDayLog,
                       ),
+                    const AppBannerAd(),
                   ],
                 );
               },
@@ -132,7 +140,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       context.l10n.localeName,
     ).format(date);
 
-    return context.l10n.calendarDayInfo(isToday.toString(), formattedDate);
+    return context.l10n.calendarDayInfo(formattedDate, isToday.toString());
   }
 
   Widget _buildDayInfoSection(
@@ -151,11 +159,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
         dayInfo.date.day == nowDate.day;
 
     return SectionContainer(
-      title:
-          '${isToday ? 'Сегодня: ' : ''}${DateFormat(
-            'd MMMM',
-            context.l10n.localeName,
-          ).format(dayInfo.date)}',
+      title: context.l10n.calendarDayInfo(
+        DateFormat(
+          'd MMMM',
+          context.l10n.localeName,
+        ).format(dayInfo.date),
+        isToday.toString(),
+      ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         clipBehavior: Clip.antiAlias,
@@ -166,24 +176,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
             _buildInfoRow(
               context,
               'cycle-day',
-              'День цикла',
-              '${dayInfo.cycleDay}-й день',
+              context.l10n.cycle_day,
+              context.l10n.cycle_day_n(dayInfo.cycleDay.toString()),
               Symbols.calendar_today_rounded,
               Colors.teal,
             ),
             _buildInfoRow(
               context,
               dayInfo.phase.name,
-              'Фаза цикла',
-              dayInfo.phaseDescription,
+              context.l10n.cycle_phase,
+              dayInfo.phaseDescription(context.l10n),
               dayInfo.phaseIcon,
               dayInfo.phaseColor,
             ),
             _buildInfoRow(
               context,
               'pregnancy-probability',
-              'Вероятность беременности',
-              dayInfo.pregnancyProbabilityDescription,
+              context.l10n.pregnancy_probability,
+              dayInfo.pregnancyProbabilityDescription(context.l10n),
               Symbols.crib_rounded,
               Colors.pink,
               isDanger: dayInfo.pregnancyDanger,
@@ -227,7 +237,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final textTheme = TextTheme.of(context);
 
     return SectionContainer(
-      title: 'Записанные данные',
+      title: context.l10n.recorded_data,
       onPressed: showCreateLogs,
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -251,7 +261,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Интенсивность: ${log.flowLevels!.map((e) => e.displayName).join(', ')}',
+                      '${context.l10n.intensity}: ${log.flowLevels!.map((e) => e.getLocalizedName(context.l10n)).join(', ')}',
                       style: textTheme.bodyMedium,
                     ),
                   ),
@@ -267,14 +277,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Настроение: ${log.mood}',
+                    '${context.l10n.mood}: ${translateL10n(log.mood!, context.l10n)}',
                     style: textTheme.bodyMedium,
                   ),
                 ],
               ),
             if (log.symptoms != null && log.symptoms!.isNotEmpty) ...[
               Text(
-                'Симптомы:',
+                '${context.l10n.symptoms}:',
                 style: textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -290,7 +300,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4, bottom: 4),
                         child: Text(
-                          category,
+                          translateL10n(category, context.l10n),
                           style: textTheme.bodySmall?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,
@@ -302,7 +312,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         runSpacing: 4,
                         children: symptoms.map((symptom) {
                           return Chip(
-                            label: Text(symptom),
+                            label: Text(translateL10n(symptom, context.l10n)),
                             visualDensity: VisualDensity.compact,
                           );
                         }).toList(),
@@ -316,7 +326,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   (log.flowLevels != null && log.flowLevels!.isNotEmpty))
                 const Divider(),
               Text(
-                'Заметки:',
+                '${context.l10n.notes}:',
                 style: textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),

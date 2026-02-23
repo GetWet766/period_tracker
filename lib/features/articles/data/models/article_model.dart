@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:material_symbols_icons/get.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:periodility/core/utils/color_extension.dart';
-import 'package:periodility/features/articles/domain/entities/article_entity.dart';
+import 'package:periodility/core/utils/utils.dart';
+import 'package:periodility/features/articles/domain/domain.dart';
 
 part 'article_model.freezed.dart';
 part 'article_model.g.dart';

@@ -4,12 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:periodility/core/common/widgets/custom_list_tile.dart';
 import 'package:periodility/core/common/widgets/icon_container.dart';
+import 'package:periodility/core/common/widgets/paralax_snap_sheet.dart';
 import 'package:periodility/core/common/widgets/section_container.dart';
 import 'package:periodility/core/common/widgets/tiles_column_view.dart';
 import 'package:periodility/core/common/widgets/tracker_app_bar.dart';
+import 'package:periodility/core/common/widgets/widgets.dart';
 import 'package:periodility/features/articles/domain/entities/article_entity.dart';
 import 'package:periodility/features/articles/presentation/cubit/articles_cubit.dart';
-import 'package:periodility/core/common/widgets/paralax_snap_sheet.dart';
 
 class CareScreen extends StatelessWidget {
   const CareScreen({super.key});
@@ -205,6 +206,7 @@ class CareScreen extends StatelessWidget {
             },
           ),
         ),
+        const AppBannerAd(),
         const SizedBox(height: 40),
       ],
     );

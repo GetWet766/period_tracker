@@ -2,10 +2,11 @@ import 'package:extensions_plus/extensions_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
-import 'package:periodility/core/common/widgets/block_container.dart';
-import 'package:periodility/core/common/widgets/sliver_fill_overscroll.dart';
-import 'package:periodility/core/common/widgets/tracker_app_bar.dart';
-import 'package:periodility/features/articles/presentation/cubit/articles_cubit.dart';
+import 'package:periodility/core/common/widgets/widgets.dart';
+import 'package:periodility/core/dependencies/injection.dart';
+import 'package:periodility/core/services/ad_service.dart';
+import 'package:periodility/core/services/analytics_service.dart';
+import 'package:periodility/features/articles/presentation/presentation.dart';
 
 class ArticleDetailScreen extends StatefulWidget {
   const ArticleDetailScreen({required this.id, super.key});
@@ -21,6 +22,14 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
   void initState() {
     super.initState();
     context.read<ArticlesCubit>().getArticle(id: widget.id);
+    sl<AnalyticsService>().logScreenView('ArticleDetail: ${widget.id}');
+  }
+
+  @override
+  void dispose() {
+    // Show ad when leaving article
+    sl<AdService>().showDefaultInterstitial();
+    super.dispose();
   }
 
   @override

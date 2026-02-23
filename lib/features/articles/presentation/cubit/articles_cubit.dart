@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:periodility/features/articles/domain/entities/article_entity.dart';
-import 'package:periodility/features/articles/domain/usecases/get_article_usecase.dart';
-import 'package:periodility/features/articles/domain/usecases/get_articles_usecase.dart';
+import 'package:periodility/features/articles/domain/domain.dart';
 
 part 'articles_state.dart';
 

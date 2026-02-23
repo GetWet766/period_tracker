@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:periodility/core/common/widgets/block_container.dart';
 import 'package:periodility/core/common/widgets/custom_list_tile.dart';
 import 'package:periodility/core/common/widgets/section_container.dart';
@@ -9,11 +10,13 @@ import 'package:periodility/core/common/widgets/sliver_fill_overscroll.dart';
 import 'package:periodility/core/common/widgets/tiles_column_view.dart';
 import 'package:periodility/core/common/widgets/tracker_app_bar.dart';
 import 'package:periodility/core/constants/log_constants.dart';
+import 'package:periodility/core/dependencies/injection.dart';
+import 'package:periodility/core/l10n/l10n_mapper.dart';
+import 'package:periodility/core/services/analytics_service.dart';
 import 'package:periodility/core/utils/locale_extension.dart';
 import 'package:periodility/features/cycle/domain/entities/flow_level.dart';
 import 'package:periodility/features/cycle/presentation/cubit/daily_logs_cubit.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
 class CalendarAddLogSheet extends StatefulWidget {
   const CalendarAddLogSheet({
@@ -40,6 +43,7 @@ class _CalendarAddLogSheetState extends State<CalendarAddLogSheet> {
     super.initState();
     _notesController = TextEditingController();
     context.read<DailyLogsCubit>().loadLogForDate(widget.date);
+    sl<AnalyticsService>().logScreenView('AddLog');
   }
 
   @override
@@ -70,6 +74,15 @@ class _CalendarAddLogSheetState extends State<CalendarAddLogSheet> {
       mood: _selectedMood,
       notes: _notesController.text.isNotEmpty ? _notesController.text : null,
       flowLevels: _selectedFlowLevels.isNotEmpty ? _selectedFlowLevels : null,
+    );
+    sl<AnalyticsService>().logEvent(
+      'log_saved',
+      parameters: {
+        'has_mood': (_selectedMood != null).toString(),
+        'symptoms_count': _selectedSymptoms.length.toString(),
+        'flow_levels_count': _selectedFlowLevels.length.toString(),
+        'has_notes': _notesController.text.isNotEmpty.toString(),
+      },
     );
     context.pop();
   }
@@ -221,14 +234,14 @@ class _CalendarAddLogSheetState extends State<CalendarAddLogSheet> {
     return BlockContainer(
       bottomRounded: true,
       child: SectionContainer(
-        title: 'Выделения',
+        title: context.l10n.intensity,
         child: Wrap(
           spacing: 8,
           runSpacing: 8,
           children: FlowLevel.values.map((flow) {
             final isSelected = _selectedFlowLevels.contains(flow);
             return FilterChip(
-              label: Text(flow.displayName),
+              label: Text(flow.getLocalizedName(context.l10n)),
               selected: isSelected,
               onSelected: (_) => _toggleFlow(flow),
             );
@@ -242,7 +255,7 @@ class _CalendarAddLogSheetState extends State<CalendarAddLogSheet> {
     return BlockContainer(
       bottomRounded: true,
       child: SectionContainer(
-        title: 'Настроение',
+        title: context.l10n.mood,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           clipBehavior: Clip.none,
@@ -251,7 +264,7 @@ class _CalendarAddLogSheetState extends State<CalendarAddLogSheet> {
             children: LogConstants.moods.map((mood) {
               final isSelected = _selectedMood == mood;
               return ChoiceChip(
-                label: Text(mood),
+                label: Text(translateL10n(mood, context.l10n)),
                 selected: isSelected,
                 onSelected: (_) => _toggleMood(mood),
               );
@@ -266,7 +279,7 @@ class _CalendarAddLogSheetState extends State<CalendarAddLogSheet> {
     return BlockContainer(
       bottomRounded: true,
       child: SectionContainer(
-        title: 'Симптомы',
+        title: context.l10n.symptoms,
         child: TilesColumnView(
           children: LogConstants.symptomsByCategory.entries.map((entry) {
             final category = entry.key;
@@ -279,7 +292,10 @@ class _CalendarAddLogSheetState extends State<CalendarAddLogSheet> {
               title: Row(
                 children: [
                   Expanded(
-                    child: Text(category, overflow: TextOverflow.ellipsis),
+                    child: Text(
+                      translateL10n(category, context.l10n),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   if (selectedCount > 0) ...[
                     const SizedBox(width: 8),
@@ -321,7 +337,9 @@ class _CalendarAddLogSheetState extends State<CalendarAddLogSheet> {
                                   symptom,
                                 );
                                 return FilterChip(
-                                  label: Text(symptom),
+                                  label: Text(
+                                    translateL10n(symptom, context.l10n),
+                                  ),
                                   selected: isSelected,
                                   onSelected: (_) => _toggleSymptom(symptom),
                                 );
@@ -342,13 +360,13 @@ class _CalendarAddLogSheetState extends State<CalendarAddLogSheet> {
   Widget _buildNotesSection(TextTheme textTheme) {
     return BlockContainer(
       child: SectionContainer(
-        title: 'Заметки',
+        title: context.l10n.notes,
         child: TextField(
           controller: _notesController,
           maxLines: 4,
           minLines: 2,
           decoration: InputDecoration(
-            hintText: 'Добавьте заметки о вашем дне...',
+            hintText: context.l10n.add_notes_hint,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
             ),

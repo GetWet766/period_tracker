@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:periodility/core/app/app_providers.dart';
+import 'package:periodility/core/app/app.dart';
 import 'package:periodility/core/common/cubit/theme/theme_cubit.dart';
 import 'package:periodility/core/l10n/gen/app_localizations.dart';
 import 'package:periodility/core/theme/theme.dart';

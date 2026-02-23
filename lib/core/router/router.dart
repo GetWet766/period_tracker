@@ -3,17 +3,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:periodility/core/common/screens/error_screen.dart';
 import 'package:periodility/core/router/go_router_refresh_stream.dart';
-import 'package:periodility/features/articles/presentation/screens/articles_list_screen.dart';
+import 'package:periodility/core/utils/locale_extension.dart';
 import 'package:periodility/features/articles/presentation/screens/article_detail_screen.dart';
+import 'package:periodility/features/articles/presentation/screens/articles_list_screen.dart';
 import 'package:periodility/features/articles/presentation/screens/category_articles_screen.dart';
 import 'package:periodility/features/calendar/presentation/modals/calendar_add_log_sheet.dart';
 import 'package:periodility/features/calendar/presentation/screens/calendar_screen.dart';
+import 'package:periodility/features/care/presentation/screens/care_screen.dart';
 import 'package:periodility/features/home/presentation/screens/home_screen.dart';
 import 'package:periodility/features/splash/presentation/cubit/splash_cubit.dart';
 import 'package:periodility/features/splash/presentation/screens/splash_screen.dart';
-import 'package:periodility/features/care/presentation/screens/care_screen.dart';
-import 'package:periodility/core/common/screens/error_screen.dart';
 import 'package:scaffold_navigation/scaffold_navigation.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
@@ -27,18 +28,18 @@ class AppRouter {
     debugLabel: 'indexed_stack',
   );
 
-  final List<NavigationDestination> _destinations = const [
+  List<NavigationDestination> getDestinations(BuildContext context) => [
     NavigationDestination(
-      icon: Icon(Symbols.home_rounded),
-      label: 'Главная',
+      icon: const Icon(Symbols.home_rounded),
+      label: context.l10n.nav_home,
     ),
     NavigationDestination(
-      icon: Icon(Symbols.calendar_month_rounded),
-      label: 'Календарь',
+      icon: const Icon(Symbols.calendar_month_rounded),
+      label: context.l10n.nav_calendar,
     ),
     NavigationDestination(
-      icon: Icon(Symbols.person_heart_rounded),
-      label: 'Уход',
+      icon: const Icon(Symbols.person_heart_rounded),
+      label: context.l10n.nav_care,
     ),
   ];
 
@@ -63,7 +64,8 @@ class AppRouter {
             path: ':category_id',
             builder: (context, state) => CategoryArticlesScreen(
               id: state.pathParameters['category_id']!,
-              title: state.uri.queryParameters['title'] ?? 'Статьи',
+              title:
+                  state.uri.queryParameters['title'] ?? context.l10n.articles,
             ),
             routes: [
               GoRoute(
@@ -79,16 +81,16 @@ class AppRouter {
       StatefulShellRoute.indexedStack(
         key: _shellRouteIndexedStack,
         builder: (context, state, navigationShell) => ScaffoldNavigation(
-          destinations: _destinations,
+          destinations: getDestinations(context),
           navigationShell: navigationShell,
         ),
         branches: [
           StatefulShellBranch(
-            initialLocation: '/home',
+            initialLocation: HomeScreen.routePath,
             routes: [
               GoRoute(
-                name: 'home',
-                path: '/home',
+                name: HomeScreen.routeName,
+                path: HomeScreen.routePath,
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: HomeScreen(),
                 ),
@@ -96,11 +98,11 @@ class AppRouter {
             ],
           ),
           StatefulShellBranch(
-            initialLocation: '/calendar',
+            initialLocation: CalendarScreen.routePath,
             routes: [
               GoRoute(
-                name: 'calendar',
-                path: '/calendar',
+                name: CalendarScreen.routeName,
+                path: CalendarScreen.routePath,
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: CalendarScreen(),
                 ),

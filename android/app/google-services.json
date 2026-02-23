@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "904587325956",
+    "project_id": "periodility",
+    "storage_bucket": "periodility.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904587325956:android:789af494b7d55a24923b51",
+        "android_client_info": {
+          "package_name": "com.heed.periodility"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAe1zYMymB_SH6TYzcfUQINpZkvM9YXHCg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

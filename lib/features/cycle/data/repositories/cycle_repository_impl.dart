@@ -5,29 +5,31 @@ import 'package:periodility/features/cycle/data/datasource/cycle_local_datasourc
 import 'package:periodility/features/cycle/data/models/cycle_model.dart';
 import 'package:periodility/features/cycle/domain/entities/cycle_entity.dart';
 import 'package:periodility/features/cycle/domain/repositories/cycle_repository.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 class CycleRepositoryImpl implements CycleRepository {
   const CycleRepositoryImpl({
     required CycleService cycleService,
     required CycleLocalDataSource localDataSource,
+    required Talker talker,
   }) : _cycleService = cycleService,
-       _localDataSource = localDataSource;
+       _localDataSource = localDataSource,
+       _talker = talker;
 
   final CycleService _cycleService;
   final CycleLocalDataSource _localDataSource;
-  // final CycleRemoteDataSource _remoteDataSource;
+  final Talker _talker;
 
   @override
   Stream<Either<Failure, List<CycleEntity>>> getCycleHistory() async* {
     try {
       final localCycles = await _localDataSource.getAllCycles();
       yield Right(localCycles.map((cycle) => cycle.toEntity()).toList());
-    } catch (e) {
+    } catch (e, st) {
+      _talker.handle(e, st, 'CycleRepository: getCycleHistory error');
       yield Left(CacheFailure(e.toString()));
     }
-
-    // final remoteCycles = await _remoteDataSource.getAllCycles();
   }
 
   @override
@@ -53,7 +55,8 @@ class CycleRepositoryImpl implements CycleRepository {
         return Right(entityNew);
       }
       return Right(entity);
-    } catch (e) {
+    } catch (e, st) {
+      _talker.handle(e, st, 'CycleRepository: getCurrentCycle error');
       return Left(CacheFailure(e.toString()));
     }
   }
@@ -69,7 +72,8 @@ class CycleRepositoryImpl implements CycleRepository {
 
       await _localDataSource.saveCycle(newCycle);
       return const Right(null);
-    } catch (e) {
+    } catch (e, st) {
+      _talker.handle(e, st, 'CycleRepository: startNewCycle error');
       return Left(CacheFailure(e.toString()));
     }
   }
@@ -79,7 +83,6 @@ class CycleRepositoryImpl implements CycleRepository {
     try {
       final current = await _localDataSource.getLatestCycle();
       if (current != null && current.endDate == null) {
-        // Проверяем, чтобы дата окончания не была раньше даты начала
         if (endDate.isBefore(current.startDate)) {
           return const Left(
             UnknownFailure("Date of end can't be before date of start!"),
@@ -91,7 +94,8 @@ class CycleRepositoryImpl implements CycleRepository {
       }
 
       return const Right(null);
-    } catch (e) {
+    } catch (e, st) {
+      _talker.handle(e, st, 'CycleRepository: finishCurrentCycle error');
       return Left(CacheFailure(e.toString()));
     }
   }
@@ -109,7 +113,8 @@ class CycleRepositoryImpl implements CycleRepository {
 
       await _localDataSource.saveCycle(model);
       return const Right(null);
-    } catch (e) {
+    } catch (e, st) {
+      _talker.handle(e, st, 'CycleRepository: updateCycle error');
       return Left(CacheFailure(e.toString()));
     }
   }
@@ -119,7 +124,8 @@ class CycleRepositoryImpl implements CycleRepository {
     try {
       await _localDataSource.deleteCycle(id);
       return const Right(null);
-    } catch (e) {
+    } catch (e, st) {
+      _talker.handle(e, st, 'CycleRepository: deleteCycle error');
       return Left(CacheFailure(e.toString()));
     }
   }

@@ -62,6 +62,13 @@ dependencies:
   talker_flutter: ^5.1.13
   talker_bloc_logger: ^5.1.13
   form_builder_validators: ^11.3.0
+  gap: ^3.0.1
+  
+  firebase_core: ^4.4.0
+  firebase_analytics: ^12.1.2
+  firebase_crashlytics: ^5.0.7
+  yandex_mobileads: ^7.18.0
+  appmetrica_plugin: ^3.4.0
 
 dev_dependencies:
   flutter_test:

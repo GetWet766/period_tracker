@@ -1,63 +1,499 @@
 {
   "@@locale": "en",
   "appTitle": "Periodility",
-  "@appTitle": {
-    "description": "Name of the app."
+  "nav_home": "Home",
+  "@nav_home": {
+    "description": "Label for the Home tab in bottom navigation"
+  },
+  "nav_calendar": "Calendar",
+  "@nav_calendar": {
+    "description": "Label for the Calendar tab in bottom navigation"
+  },
+  "nav_care": "Care",
+  "@nav_care": {
+    "description": "Label for the Care tab in bottom navigation"
+  },
+  "articles": "Articles",
+  "@articles": {
+    "description": "Title for the articles section"
+  },
+  "recorded_data": "Recorded data",
+  "@recorded_data": {
+    "description": "Heading for the section showing user's logs for a specific day"
+  },
+  "add_record": "Add record",
+  "@add_record": {
+    "description": "Button text to open the screen for adding a new daily log"
+  },
+  "cycle_day": "Cycle day",
+  "@cycle_day": {
+    "description": "Label for the current day of the menstrual cycle"
+  },
+  "cycle_day_n": "{day}-th day",
+  "@cycle_day_n": {
+    "description": "Formatted text for cycle day number",
+    "placeholders": {
+      "day": {
+        "type": "String",
+        "example": "5"
+      }
+    }
+  },
+  "cycle_phase": "Cycle phase",
+  "@cycle_phase": {
+    "description": "Label for the current phase of the cycle"
+  },
+  "pregnancy_probability": "Pregnancy probability",
+  "@pregnancy_probability": {
+    "description": "Label for the chance of getting pregnant on a specific day"
+  },
+  "intensity": "Intensity",
+  "@intensity": {
+    "description": "Label for period flow intensity"
+  },
+  "mood": "Mood",
+  "@mood": {
+    "description": "Label for the user's emotional state"
+  },
+  "symptoms": "Symptoms",
+  "@symptoms": {
+    "description": "Label for physical or mental symptoms recorded"
+  },
+  "notes": "Notes",
+  "@notes": {
+    "description": "Label for text notes added by the user"
+  },
+  "prob_very_low": "Very low",
+  "@prob_very_low": {
+    "description": "Pregnancy probability level: Very low"
+  },
+  "prob_low": "Low",
+  "@prob_low": {
+    "description": "Pregnancy probability level: Low"
+  },
+  "prob_medium": "Medium",
+  "@prob_medium": {
+    "description": "Pregnancy probability level: Medium"
+  },
+  "prob_high": "High",
+  "@prob_high": {
+    "description": "Pregnancy probability level: High"
+  },
+  "period_ended": "Finished",
+  "@period_ended": {
+    "description": "Button text to mark the end of a period"
+  },
+  "period_started": "Started",
+  "@period_started": {
+    "description": "Button text to mark the start of a period"
   },
   "articleCategory": "{category, select, other{All articles} phases{Phases of cycle} care{Care of yourself} health{Health} tips{Tips} additions{Additions}}",
   "@articleCategory": {
-      "description": "Article category",
-      "placeholders": {
-          "category": {
-            "type":"String",
-            "example":"1" 
-          }
+    "description": "Article categories filter labels",
+    "placeholders": {
+      "category": {
+        "type": "String"
       }
+    }
   },
   "calendarDayInfo": "{isToday, select, true{Today: {date}} other{{date}}}",
   "@calendarDayInfo": {
-    "description": "Info about days in calendar",
+    "description": "Display text for selected date in calendar screen",
     "placeholders": {
-      "isToday": {
-        "type": "String"
-      },
       "date": {
-        "type": "String"
+        "type": "String",
+        "example": "23 February"
+      },
+      "isToday": {
+        "type": "String",
+        "example": "true"
       }
     }
   },
   "phase_menstruation": "Menstruation",
-  "@phase_menstruation": {},
+  "@phase_menstruation": {
+    "description": "Cycle phase name: Menstruation"
+  },
   "phase_follicular": "Follicular phase",
-  "@phase_follicular": {},
+  "@phase_follicular": {
+    "description": "Cycle phase name: Follicular phase"
+  },
   "phase_ovulation": "Ovulation",
-  "@phase_ovulation": {},
-  "phase_luteal": "Lucien phase",
-  "@phase_luteal": {},
+  "@phase_ovulation": {
+    "description": "Cycle phase name: Ovulation"
+  },
+  "phase_luteal": "Luteal phase",
+  "@phase_luteal": {
+    "description": "Cycle phase name: Luteal phase"
+  },
   "until_period": "{daysUntil, plural, =0{Monthly periods are expected today} =1{Monthly periods starts tomorrow} other{Up to monthly periods}}",
   "@until_period": {
+    "description": "Days remaining until next menstruation",
     "placeholders": {
-      "daysUntil": {}
+      "daysUntil": {
+        "type": "num",
+        "example": "5"
+      }
     }
   },
   "days_until_period": "{days, plural, =0{{days} days left} one{{days} day left} other{{days} days left}}",
   "@days_until_period": {
+    "description": "Count of days until period for pluralization",
     "placeholders": {
-      "days": {}
+      "days": {
+        "type": "num",
+        "example": "3"
+      }
     }
   },
   "today_is_period_day": "Today is period day",
-  "@today_is_period_day": {},
+  "@today_is_period_day": {
+    "description": "Indication that today is a period day"
+  },
   "period_day_number": "{day, plural, =0{Day {day}} one{Day {day}} other{Day {day}}}",
   "@period_day_number": {
+    "description": "Number of the current period day",
     "placeholders": {
-      "day": {}
+      "day": {
+        "type": "num",
+        "example": "2"
+      }
     }
   },
   "days_until_period_top": "Days until period",
-  "@days_until_period_top": {},
+  "@days_until_period_top": {
+    "description": "Header text for countdown to period"
+  },
   "no_info": "No information",
-  "@no_info": {},
+  "@no_info": {
+    "description": "Placeholder when data is missing"
+  },
   "how_do_you_feel_today": "How are you feeling today?",
-  "@how_do_you_feel_today": {}
+  "@how_do_you_feel_today": {
+    "description": "Greeting/prompt in the log recording screen"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button label"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button label"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button label"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button label"
+  },
+  "mood_happy": "Happy",
+  "@mood_happy": {
+    "description": "Mood: Happy"
+  },
+  "mood_sad": "Sad",
+  "@mood_sad": {
+    "description": "Mood: Sad"
+  },
+  "mood_anxious": "Anxious",
+  "@mood_anxious": {
+    "description": "Mood: Anxious"
+  },
+  "mood_calm": "Calm",
+  "@mood_calm": {
+    "description": "Mood: Calm"
+  },
+  "mood_irritable": "Irritable",
+  "@mood_irritable": {
+    "description": "Mood: Irritable"
+  },
+  "mood_energetic": "Energetic",
+  "@mood_energetic": {
+    "description": "Mood: Energetic"
+  },
+  "mood_fatigue": "Fatigue",
+  "@mood_fatigue": {
+    "description": "Mood: Fatigue"
+  },
+  "mood_apathetic": "Apathetic",
+  "@mood_apathetic": {
+    "description": "Mood: Apathetic"
+  },
+  "mood_sensitive": "Sensitive",
+  "@mood_sensitive": {
+    "description": "Mood: Sensitive"
+  },
+  "mood_confused": "Confused",
+  "@mood_confused": {
+    "description": "Mood: Confused"
+  },
+  "mood_focused": "Focused",
+  "@mood_focused": {
+    "description": "Mood: Focused"
+  },
+  "mood_in_love": "In love",
+  "@mood_in_love": {
+    "description": "Mood: In love"
+  },
+  "mood_angry": "Angry",
+  "@mood_angry": {
+    "description": "Mood: Angry"
+  },
+  "mood_inspired": "Inspired",
+  "@mood_inspired": {
+    "description": "Mood: Inspired"
+  },
+  "cat_body": "Body",
+  "@cat_body": {
+    "description": "Category for physical symptoms"
+  },
+  "cat_gi": "Gastrointestinal",
+  "@cat_gi": {
+    "description": "Category for GI-related symptoms"
+  },
+  "cat_mental": "Psyche and mental",
+  "@cat_mental": {
+    "description": "Category for psychological symptoms"
+  },
+  "cat_discharge": "Discharge",
+  "@cat_discharge": {
+    "description": "Category for vaginal discharge symptoms"
+  },
+  "cat_other": "Other",
+  "@cat_other": {
+    "description": "Category for miscellaneous logs"
+  },
+  "symp_headache": "Headache",
+  "@symp_headache": {
+    "description": "Symptom: Headache"
+  },
+  "symp_back_pain": "Back pain",
+  "@symp_back_pain": {
+    "description": "Symptom: Back pain"
+  },
+  "symp_cramps": "Cramps",
+  "@symp_cramps": {
+    "description": "Symptom: Cramps"
+  },
+  "symp_breast_tenderness": "Breast tenderness",
+  "@symp_breast_tenderness": {
+    "description": "Symptom: Breast tenderness"
+  },
+  "symp_bloating": "Bloating",
+  "@symp_bloating": {
+    "description": "Symptom: Bloating"
+  },
+  "symp_edema": "Edema",
+  "@symp_edema": {
+    "description": "Symptom: Edema (swelling)"
+  },
+  "symp_fatigue": "Fatigue",
+  "@symp_fatigue": {
+    "description": "Symptom: Fatigue"
+  },
+  "symp_joint_pain": "Joint pain",
+  "@symp_joint_pain": {
+    "description": "Symptom: Joint pain"
+  },
+  "symp_muscle_pain": "Muscle pain",
+  "@symp_muscle_pain": {
+    "description": "Symptom: Muscle pain"
+  },
+  "symp_chills": "Chills",
+  "@symp_chills": {
+    "description": "Symptom: Chills"
+  },
+  "symp_hot_flashes": "Hot flashes",
+  "@symp_hot_flashes": {
+    "description": "Symptom: Hot flashes"
+  },
+  "symp_nausea": "Nausea",
+  "@symp_nausea": {
+    "description": "Symptom: Nausea"
+  },
+  "symp_dizziness": "Dizziness",
+  "@symp_dizziness": {
+    "description": "Symptom: Dizziness"
+  },
+  "symp_acne": "Acne",
+  "@symp_acne": {
+    "description": "Symptom: Acne"
+  },
+  "symp_oily_skin": "Oily skin",
+  "@symp_oily_skin": {
+    "description": "Symptom: Oily skin"
+  },
+  "symp_dry_skin": "Dry skin",
+  "@symp_dry_skin": {
+    "description": "Symptom: Dry skin"
+  },
+  "symp_increased_appetite": "Increased appetite",
+  "@symp_increased_appetite": {
+    "description": "Symptom: Increased appetite"
+  },
+  "symp_loss_of_appetite": "Loss of appetite",
+  "@symp_loss_of_appetite": {
+    "description": "Symptom: Loss of appetite"
+  },
+  "symp_sweet_cravings": "Sweet cravings",
+  "@symp_sweet_cravings": {
+    "description": "Symptom: Craving sweets"
+  },
+  "symp_salty_cravings": "Salty cravings",
+  "@symp_salty_cravings": {
+    "description": "Symptom: Craving salty food"
+  },
+  "symp_carb_cravings": "Carbohydrate cravings",
+  "@symp_carb_cravings": {
+    "description": "Symptom: Craving carbs"
+  },
+  "symp_heartburn": "Heartburn",
+  "@symp_heartburn": {
+    "description": "Symptom: Heartburn"
+  },
+  "symp_gas": "Gas",
+  "@symp_gas": {
+    "description": "Symptom: Gas/Flatulence"
+  },
+  "symp_constipation": "Constipation",
+  "@symp_constipation": {
+    "description": "Symptom: Constipation"
+  },
+  "symp_diarrhea": "Diarrhea",
+  "@symp_diarrhea": {
+    "description": "Symptom: Diarrhea"
+  },
+  "symp_insomnia": "Insomnia",
+  "@symp_insomnia": {
+    "description": "Symptom: Insomnia"
+  },
+  "symp_drowsiness": "Drowsiness",
+  "@symp_drowsiness": {
+    "description": "Symptom: Drowsiness"
+  },
+  "symp_vivid_dreams": "Vivid dreams",
+  "@symp_vivid_dreams": {
+    "description": "Symptom: Vivid dreams"
+  },
+  "symp_hard_prosek": "Hard to wake up",
+  "@symp_hard_prosek": {
+    "description": "Symptom: Difficulty waking up"
+  },
+  "symp_distraction": "Distraction",
+  "@symp_distraction": {
+    "description": "Symptom: Lack of focus"
+  },
+  "symp_brain_fog": "Brain fog",
+  "@symp_brain_fog": {
+    "description": "Symptom: Brain fog"
+  },
+  "symp_stress": "Stress",
+  "@symp_stress": {
+    "description": "Symptom: Stress"
+  },
+  "symp_tearfulness": "Tearfulness",
+  "@symp_tearfulness": {
+    "description": "Symptom: Easy to cry"
+  },
+  "symp_panic_attack": "Panic attack",
+  "@symp_panic_attack": {
+    "description": "Symptom: Panic attack"
+  },
+  "symp_mood_swings": "Mood swings",
+  "@symp_mood_swings": {
+    "description": "Symptom: Mood swings"
+  },
+  "symp_ocd": "OCD flare-up",
+  "@symp_ocd": {
+    "description": "Symptom: OCD flare-up"
+  },
+  "symp_high_libido": "High libido",
+  "@symp_high_libido": {
+    "description": "Symptom: High libido"
+  },
+  "symp_low_libido": "Low libido",
+  "@symp_low_libido": {
+    "description": "Symptom: Low libido"
+  },
+  "symp_clear": "Clear",
+  "@symp_clear": {
+    "description": "Discharge type: Clear"
+  },
+  "symp_white": "White",
+  "@symp_white": {
+    "description": "Discharge type: White"
+  },
+  "symp_sticky": "Sticky",
+  "@symp_sticky": {
+    "description": "Discharge type: Sticky"
+  },
+  "symp_dryness": "Dryness",
+  "@symp_dryness": {
+    "description": "Sensation: Dryness"
+  },
+  "symp_cream": "Cream",
+  "@symp_cream": {
+    "description": "Discharge type: Creamy"
+  },
+  "symp_egg_white": "Egg white",
+  "@symp_egg_white": {
+    "description": "Discharge type: Egg white (ovulation)"
+  },
+  "symp_yellowish": "Yellowish",
+  "@symp_yellowish": {
+    "description": "Discharge type: Yellowish"
+  },
+  "symp_thick": "Thick",
+  "@symp_thick": {
+    "description": "Discharge type: Thick"
+  },
+  "symp_cold": "Cold",
+  "@symp_cold": {
+    "description": "Condition: Cold/Flu symptoms"
+  },
+  "symp_fever": "Fever",
+  "@symp_fever": {
+    "description": "Condition: High temperature"
+  },
+  "symp_allergy": "Allergy",
+  "@symp_allergy": {
+    "description": "Condition: Allergy"
+  },
+  "symp_pills": "Taking pills",
+  "@symp_pills": {
+    "description": "Action: Medication taken"
+  },
+  "symp_doctor": "Doctor visit",
+  "@symp_doctor": {
+    "description": "Action: Visited a doctor"
+  },
+  "symp_workout": "Workout",
+  "@symp_workout": {
+    "description": "Action: Physical exercise"
+  },
+  "flow_spotting": "Spotting",
+  "@flow_spotting": {
+    "description": "Flow intensity: Spotting"
+  },
+  "flow_low": "Low",
+  "@flow_low": {
+    "description": "Flow intensity: Low"
+  },
+  "flow_medium": "Medium",
+  "@flow_medium": {
+    "description": "Flow intensity: Medium"
+  },
+  "flow_heavy": "Heavy",
+  "@flow_heavy": {
+    "description": "Flow intensity: Heavy"
+  },
+  "flow_sticky": "Sticky",
+  "@flow_sticky": {
+    "description": "Flow consistency: Sticky"
+  },
+  "add_notes_hint": "Add notes about your day...",
+  "@add_notes_hint": {
+    "description": "Hint text for the notes input field"
+  }
 }

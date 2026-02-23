@@ -2,62 +2,501 @@
   "@@locale": "ru",
   "appTitle": "Periodility",
   "@appTitle": {
-    "description": "Название приложения."
+    "description": "Название приложения"
+  },
+  "nav_home": "Главная",
+  "@nav_home": {
+    "description": "Метка для вкладки Главная в нижней навигации"
+  },
+  "nav_calendar": "Календарь",
+  "@nav_calendar": {
+    "description": "Метка для вкладки Календарь в нижней навигации"
+  },
+  "nav_care": "Уход",
+  "@nav_care": {
+    "description": "Метка для вкладки Уход в нижней навигации"
+  },
+  "articles": "Статьи",
+  "@articles": {
+    "description": "Заголовок раздела со статьями"
+  },
+  "recorded_data": "Записанные данные",
+  "@recorded_data": {
+    "description": "Заголовок раздела с логами пользователя за день"
+  },
+  "add_record": "Добавить запись",
+  "@add_record": {
+    "description": "Текст кнопки для открытия экрана добавления новой записи"
+  },
+  "cycle_day": "День цикла",
+  "@cycle_day": {
+    "description": "Метка текущего дня менструального цикла"
+  },
+  "cycle_day_n": "{day}-й день",
+  "@cycle_day_n": {
+    "description": "Форматированный текст номера дня цикла",
+    "placeholders": {
+      "day": {
+        "type": "String",
+        "example": "5"
+      }
+    }
+  },
+  "cycle_phase": "Фаза цикла",
+  "@cycle_phase": {
+    "description": "Метка текущей фазы цикла"
+  },
+  "pregnancy_probability": "Вероятность беременности",
+  "@pregnancy_probability": {
+    "description": "Метка шанса забеременеть в конкретный день"
+  },
+  "intensity": "Интенсивность",
+  "@intensity": {
+    "description": "Метка интенсивности выделений"
+  },
+  "mood": "Настроение",
+  "@mood": {
+    "description": "Метка эмоционального состояния пользователя"
+  },
+  "symptoms": "Симптомы",
+  "@symptoms": {
+    "description": "Метка записанных физических или ментальных симптомов"
+  },
+  "notes": "Заметки",
+  "@notes": {
+    "description": "Метка для текстовых заметок пользователя"
+  },
+  "prob_very_low": "Очень низкая",
+  "@prob_very_low": {
+    "description": "Уровень вероятности беременности: Очень низкая"
+  },
+  "prob_low": "Низкая",
+  "@prob_low": {
+    "description": "Уровень вероятности беременности: Низкая"
+  },
+  "prob_medium": "Средняя",
+  "@prob_medium": {
+    "description": "Уровень вероятности беременности: Средняя"
+  },
+  "prob_high": "Высокая",
+  "@prob_high": {
+    "description": "Уровень вероятности беременности: Высокая"
+  },
+  "period_ended": "Закончились",
+  "@period_ended": {
+    "description": "Текст кнопки для отметки окончания менструации"
+  },
+  "period_started": "Начались",
+  "@period_started": {
+    "description": "Текст кнопки для отметки начала менструации"
   },
   "articleCategory": "{category, select, other{Все статьи} phases{Фазы цикла} care{Забота о себе} health{Здоровье} tips{Советы} additions{Дополнительно}}",
   "@articleCategory": {
-      "description": "Категория статьи",
-      "placeholders": {
-          "category": {
-            "type":"String",
-            "example":"1" 
-          }
+    "description": "Метки фильтров категорий статей",
+    "placeholders": {
+      "category": {
+        "type": "String"
       }
+    }
   },
   "calendarDayInfo": "{isToday, select, true{Сегодня: {date}} other{{date}}}",
   "@calendarDayInfo": {
-    "description": "Информация о дне в календаре",
+    "description": "Отображение выбранной даты на экране календаря",
     "placeholders": {
-      "isToday": {
-        "type": "String"
-      },
       "date": {
-        "type": "String"
+        "type": "String",
+        "example": "23 февраля"
+      },
+      "isToday": {
+        "type": "String",
+        "example": "true"
       }
     }
   },
   "phase_menstruation": "Менструация",
-  "@phase_menstruation": {},
+  "@phase_menstruation": {
+    "description": "Название фазы цикла: Менструация"
+  },
   "phase_follicular": "Фолликулярная фаза",
-  "@phase_follicular": {},
+  "@phase_follicular": {
+    "description": "Название фазы цикла: Фолликулярная фаза"
+  },
   "phase_ovulation": "Овуляция",
-  "@phase_ovulation": {},
+  "@phase_ovulation": {
+    "description": "Название фазы цикла: Овуляция"
+  },
   "phase_luteal": "Лютеиновая фаза",
-  "@phase_luteal": {},
+  "@phase_luteal": {
+    "description": "Название фазы цикла: Лютеиновая фаза"
+  },
   "until_period": "{daysUntil, plural, =0{Сегодня ожидаются месячные} one{Завтра начнутся месячные} few{До месячных} other{До месячных}}",
   "@until_period": {
+    "description": "Количество дней до следующей менструации",
     "placeholders": {
-      "daysUntil": {}
+      "daysUntil": {
+        "type": "num",
+        "example": "5"
+      }
     }
   },
   "days_until_period": "{days, plural, =0{Осталось {days} дней} one{Остался {days} день} few{{days} дня} other{{days} дней}}",
   "@days_until_period": {
+    "description": "Счетчик дней до месячных для плюрализации",
     "placeholders": {
-      "days": {}
+      "days": {
+        "type": "num",
+        "example": "3"
+      }
     }
   },
   "today_is_period_day": "Сегодня день месячных",
-  "@today_is_period_day": {},
+  "@today_is_period_day": {
+    "description": "Указание, что сегодня день менструации"
+  },
   "period_day_number": "{day, plural, =0{{day} день} one{{day} день} few{{day} дня} other{{day} дней}}",
   "@period_day_number": {
+    "description": "Номер текущего дня менструации",
     "placeholders": {
-      "day": {}
+      "day": {
+        "type": "num",
+        "example": "2"
+      }
     }
   },
   "days_until_period_top": "До месячных осталось",
-  "@days_until_period_top": {},
+  "@days_until_period_top": {
+    "description": "Заголовок для обратного отсчета до месячных"
+  },
   "no_info": "Нет информации",
-  "@no_info": {},
+  "@no_info": {
+    "description": "Заглушка при отсутствии данных"
+  },
   "how_do_you_feel_today": "Как Вы себя чувствуете сегодня?",
-  "@how_do_you_feel_today": {}
+  "@how_do_you_feel_today": {
+    "description": "Приветствие/подсказка на экране записи лога"
+  },
+  "save": "Сохранить",
+  "@save": {
+    "description": "Метка кнопки сохранения"
+  },
+  "cancel": "Отменить",
+  "@cancel": {
+    "description": "Метка кнопки отмены"
+  },
+  "edit": "Изменить",
+  "@edit": {
+    "description": "Метка кнопки изменения"
+  },
+  "delete": "Удалить",
+  "@delete": {
+    "description": "Метка кнопки удаления"
+  },
+  "mood_happy": "Счастливое",
+  "@mood_happy": {
+    "description": "Настроение: Счастливое"
+  },
+  "mood_sad": "Грустное",
+  "@mood_sad": {
+    "description": "Настроение: Грустное"
+  },
+  "mood_anxious": "Тревожное",
+  "@mood_anxious": {
+    "description": "Настроение: Тревожное"
+  },
+  "mood_calm": "Спокойное",
+  "@mood_calm": {
+    "description": "Настроение: Спокойное"
+  },
+  "mood_irritable": "Раздражительное",
+  "@mood_irritable": {
+    "description": "Настроение: Раздражительное"
+  },
+  "mood_energetic": "Энергичное",
+  "@mood_energetic": {
+    "description": "Настроение: Энергичное"
+  },
+  "mood_fatigue": "Усталое",
+  "@mood_fatigue": {
+    "description": "Настроение: Усталое"
+  },
+  "mood_apathetic": "Апатичное",
+  "@mood_apathetic": {
+    "description": "Настроение: Апатичное"
+  },
+  "mood_sensitive": "Чувствительное",
+  "@mood_sensitive": {
+    "description": "Настроение: Чувствительное"
+  },
+  "mood_confused": "Растерянное",
+  "@mood_confused": {
+    "description": "Настроение: Растерянное"
+  },
+  "mood_focused": "Сосредоточенное",
+  "@mood_focused": {
+    "description": "Настроение: Сосредоточенное"
+  },
+  "mood_in_love": "Влюбленное",
+  "@mood_in_love": {
+    "description": "Настроение: Влюбленное"
+  },
+  "mood_angry": "Злое",
+  "@mood_angry": {
+    "description": "Настроение: Злое"
+  },
+  "mood_inspired": "Вдохновленное",
+  "@mood_inspired": {
+    "description": "Настроение: Вдохновленное"
+  },
+  "cat_body": "Тело",
+  "@cat_body": {
+    "description": "Категория физических симптомов"
+  },
+  "cat_gi": "Желудочно-кишечный тракт",
+  "@cat_gi": {
+    "description": "Категория симптомов ЖКТ"
+  },
+  "cat_mental": "Психика и ментальное состояние",
+  "@cat_mental": {
+    "description": "Категория психологических симптомов"
+  },
+  "cat_discharge": "Выделения (кроме менструальных)",
+  "@cat_discharge": {
+    "description": "Категория симптомов вагинальных выделений"
+  },
+  "cat_other": "Другое",
+  "@cat_other": {
+    "description": "Категория прочих логов"
+  },
+  "symp_headache": "Головная боль",
+  "@symp_headache": {
+    "description": "Симптом: Головная боль"
+  },
+  "symp_back_pain": "Боль в спине",
+  "@symp_back_pain": {
+    "description": "Симптом: Боль в спине"
+  },
+  "symp_cramps": "Спазмы",
+  "@symp_cramps": {
+    "description": "Симптом: Спазмы"
+  },
+  "symp_breast_tenderness": "Чувствительность груди",
+  "@symp_breast_tenderness": {
+    "description": "Симптом: Чувствительность груди"
+  },
+  "symp_bloating": "Вздутие",
+  "@symp_bloating": {
+    "description": "Симптом: Вздутие"
+  },
+  "symp_edema": "Отеки",
+  "@symp_edema": {
+    "description": "Симптом: Отеки"
+  },
+  "symp_fatigue": "Усталость",
+  "@symp_fatigue": {
+    "description": "Симптом: Усталость"
+  },
+  "symp_joint_pain": "Боль в суставах",
+  "@symp_joint_pain": {
+    "description": "Симптом: Боль в суставах"
+  },
+  "symp_muscle_pain": "Боль в мышцах",
+  "@symp_muscle_pain": {
+    "description": "Симптом: Боль в мышцах"
+  },
+  "symp_chills": "Озноб",
+  "@symp_chills": {
+    "description": "Симптом: Озноб"
+  },
+  "symp_hot_flashes": "Приливы жара",
+  "@symp_hot_flashes": {
+    "description": "Симптом: Приливы жара"
+  },
+  "symp_nausea": "Тошнота",
+  "@symp_nausea": {
+    "description": "Симптом: Тошнота"
+  },
+  "symp_dizziness": "Головокружение",
+  "@symp_dizziness": {
+    "description": "Симптом: Головокружение"
+  },
+  "symp_acne": "Акне",
+  "@symp_acne": {
+    "description": "Симптом: Акне"
+  },
+  "symp_oily_skin": "Жирная кожа",
+  "@symp_oily_skin": {
+    "description": "Симптом: Жирная кожа"
+  },
+  "symp_dry_skin": "Сухая кожа",
+  "@symp_dry_skin": {
+    "description": "Симптом: Сухая кожа"
+  },
+  "symp_increased_appetite": "Повышенный аппетит",
+  "@symp_increased_appetite": {
+    "description": "Симптом: Повышенный аппетит"
+  },
+  "symp_loss_of_appetite": "Потеря аппетита",
+  "@symp_loss_of_appetite": {
+    "description": "Симптом: Потеря аппетита"
+  },
+  "symp_sweet_cravings": "Тяга к сладкому",
+  "@symp_sweet_cravings": {
+    "description": "Симптом: Тяга к сладкому"
+  },
+  "symp_salty_cravings": "Тяга к соленому",
+  "@symp_salty_cravings": {
+    "description": "Симптом: Тяга к соленому"
+  },
+  "symp_carb_cravings": "Тяга к углеводам",
+  "@symp_carb_cravings": {
+    "description": "Симптом: Тяга к углеводам"
+  },
+  "symp_heartburn": "Изжога",
+  "@symp_heartburn": {
+    "description": "Симптом: Изжога"
+  },
+  "symp_gas": "Газы",
+  "@symp_gas": {
+    "description": "Симптом: Газы/Метеоризм"
+  },
+  "symp_constipation": "Запор",
+  "@symp_constipation": {
+    "description": "Симптом: Запор"
+  },
+  "symp_diarrhea": "Диарея",
+  "@symp_diarrhea": {
+    "description": "Симптом: Диарея"
+  },
+  "symp_insomnia": "Бессонница",
+  "@symp_insomnia": {
+    "description": "Симптом: Бессонница"
+  },
+  "symp_drowsiness": "Сонливость",
+  "@symp_drowsiness": {
+    "description": "Симптом: Сонливость"
+  },
+  "symp_vivid_dreams": "Яркие сны",
+  "@symp_vivid_dreams": {
+    "description": "Симптом: Яркие сны"
+  },
+  "symp_hard_prosek": "Трудно просыпаться",
+  "@symp_hard_prosek": {
+    "description": "Симптом: Трудности с пробуждением"
+  },
+  "symp_distraction": "Рассеянность",
+  "@symp_distraction": {
+    "description": "Симптом: Рассеянность"
+  },
+  "symp_brain_fog": "Затуманенность сознания",
+  "@symp_brain_fog": {
+    "description": "Симптом: Затуманенность сознания"
+  },
+  "symp_stress": "Стресс",
+  "@symp_stress": {
+    "description": "Симптом: Стресс"
+  },
+  "symp_tearfulness": "Плаксивость",
+  "@symp_tearfulness": {
+    "description": "Симптом: Плаксивость"
+  },
+  "symp_panic_attack": "Паническая атака",
+  "@symp_panic_attack": {
+    "description": "Симптом: Паническая атака"
+  },
+  "symp_mood_swings": "Перепады настроения",
+  "@symp_mood_swings": {
+    "description": "Симптом: Перепады настроения"
+  },
+  "symp_ocd": "Обострение ОКР",
+  "@symp_ocd": {
+    "description": "Симптом: Обострение ОКР"
+  },
+  "symp_high_libido": "Повышенное либидо",
+  "@symp_high_libido": {
+    "description": "Симптом: Повышенное либидо"
+  },
+  "symp_low_libido": "Пониженное либидо",
+  "@symp_low_libido": {
+    "description": "Симптом: Пониженное либидо"
+  },
+  "symp_clear": "Прозрачные",
+  "@symp_clear": {
+    "description": "Тип выделений: Прозрачные"
+  },
+  "symp_white": "Белые",
+  "@symp_white": {
+    "description": "Тип выделений: Белые"
+  },
+  "symp_sticky": "Липкие",
+  "@symp_sticky": {
+    "description": "Тип выделений: Липкие"
+  },
+  "symp_dryness": "Сухость",
+  "@symp_dryness": {
+    "description": "Ощущение: Сухость"
+  },
+  "symp_cream": "Крем",
+  "@symp_cream": {
+    "description": "Тип выделений: Кремообразные"
+  },
+  "symp_egg_white": "Яичный белок",
+  "@symp_egg_white": {
+    "description": "Тип выделений: Яичный белок (овуляция)"
+  },
+  "symp_yellowish": "Желтоватые",
+  "@symp_yellowish": {
+    "description": "Тип выделений: Желтоватые"
+  },
+  "symp_thick": "Густые",
+  "@symp_thick": {
+    "description": "Тип выделений: Густые"
+  },
+  "symp_cold": "Простуда",
+  "@symp_cold": {
+    "description": "Состояние: Простуда/Грипп"
+  },
+  "symp_fever": "Температура",
+  "@symp_fever": {
+    "description": "Состояние: Высокая температура"
+  },
+  "symp_allergy": "Аллергия",
+  "@symp_allergy": {
+    "description": "Состояние: Аллергия"
+  },
+  "symp_pills": "Прием таблеток",
+  "@symp_pills": {
+    "description": "Действие: Прием лекарств"
+  },
+  "symp_doctor": "Визит к врачу",
+  "@symp_doctor": {
+    "description": "Действие: Визит к врачу"
+  },
+  "symp_workout": "Тренировка",
+  "@symp_workout": {
+    "description": "Действие: Физическая тренировка"
+  },
+  "flow_spotting": "Мажущие",
+  "@flow_spotting": {
+    "description": "Интенсивность выделений: Мажущие"
+  },
+  "flow_low": "Скудные",
+  "@flow_low": {
+    "description": "Интенсивность выделений: Скудные"
+  },
+  "flow_medium": "Умеренные",
+  "@flow_medium": {
+    "description": "Интенсивность выделений: Умеренные"
+  },
+  "flow_heavy": "Обильные",
+  "@flow_heavy": {
+    "description": "Интенсивность выделений: Обильные"
+  },
+  "flow_sticky": "Вязкие",
+  "@flow_sticky": {
+    "description": "Консистенция выделений: Вязкие"
+  },
+  "add_notes_hint": "Добавьте заметки о вашем дне...",
+  "@add_notes_hint": {
+    "description": "Подсказка в поле ввода заметок"
+  }
 }

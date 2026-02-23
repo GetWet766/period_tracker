@@ -1,11 +1,17 @@
+import 'dart:async';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:isar_plus/isar_plus.dart';
 import 'package:path_provider/path_provider.dart';
+
 import 'package:periodility/core/common/cubit/theme/theme_cubit.dart';
+import 'package:periodility/core/services/ad_service.dart';
+import 'package:periodility/core/services/analytics_service.dart';
 import 'package:periodility/core/services/cycle_service.dart';
+
 import 'package:periodility/core/services/notification_service.dart';
 import 'package:periodility/features/articles/data/datasources/articles_local_datasource.dart';
 import 'package:periodility/features/articles/data/repositories/articles_repository_impl.dart';
@@ -37,6 +43,7 @@ import 'package:periodility/features/cycle/domain/usecases/update_cycle_usecase.
 import 'package:periodility/features/cycle/presentation/cubit/cycle_cubit.dart';
 import 'package:periodility/features/cycle/presentation/cubit/daily_logs_cubit.dart';
 import 'package:periodility/features/splash/presentation/cubit/splash_cubit.dart';
+import 'package:periodility/firebase_options.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 final GetIt sl = GetIt.instance;
@@ -53,6 +60,14 @@ Future<void> configureDependencies() async {
 
 Future<void> _initSystem() async {
   await initializeDateFormatting();
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
+  }
 
   await dotenv.load(fileName: 'dotenv');
   final talker = TalkerFlutter.init();
@@ -78,6 +93,16 @@ Future<void> _initSystem() async {
   sl
     // Services
     ..registerLazySingleton<Talker>(() => talker)
+    ..registerLazySingleton<AnalyticsService>(
+      () {
+        final service = AnalyticsService(talker: sl());
+        unawaited(service.init(dotenv.get('APPMETRICA_KEY')));
+        return service;
+      },
+    )
+    ..registerLazySingleton<AdService>(
+      () => AdService(talker: sl()),
+    )
     ..registerLazySingleton<NotificationService>(() => notificationService)
     ..registerLazySingleton(() => isar)
     // Cubits
@@ -88,6 +113,7 @@ Future<void> _initSystem() async {
         articlesCubit: sl(),
         cycleCubit: sl(),
         dailyLogsCubit: sl(),
+        adService: sl(),
       )..initApplication(),
     );
 }
@@ -112,7 +138,7 @@ void _articlesFeature() {
     ..registerLazySingleton(() => GetCategoriesUseCase(sl()))
     // Repositories
     ..registerLazySingleton<ArticlesRepository>(
-      () => ArticlesRepositoryImpl(sl()),
+      () => ArticlesRepositoryImpl(sl(), sl()),
     )
     // DataSources
     ..registerLazySingleton<ArticlesLocalDataSource>(
@@ -160,10 +186,11 @@ void _cycleFeature() {
       () => CycleRepositoryImpl(
         cycleService: sl(),
         localDataSource: sl(),
+        talker: sl(),
       ),
     )
     ..registerLazySingleton<DailyLogsRepository>(
-      () => DailyLogsRepositoryImpl(sl()),
+      () => DailyLogsRepositoryImpl(sl(), sl()),
     )
     // DataSources
     ..registerLazySingleton<CycleLocalDataSource>(

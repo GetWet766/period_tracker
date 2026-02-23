@@ -1,83 +1,83 @@
 class LogConstants {
   static const List<String> moods = [
-    'Счастливое', // Happy
-    'Грустное', // Sad
-    'Тревожное', // Anxious
-    'Спокойное', // Calm
-    'Раздражительное', // Irritable
-    'Энергичное', // Energetic
-    'Усталое', // Fatigue
-    'Апатичное', // Apathetic
-    'Чувствительное', // Sensitive
-    'Растерянное', // Confused
-    'Сосредоточенное', // Focused
-    'Влюбленное', // In love
-    'Злое', // Angry
-    'Вдохновленное', // Inspired
+    'mood_happy',
+    'mood_sad',
+    'mood_anxious',
+    'mood_calm',
+    'mood_irritable',
+    'mood_energetic',
+    'mood_fatigue',
+    'mood_apathetic',
+    'mood_sensitive',
+    'mood_confused',
+    'mood_focused',
+    'mood_in_love',
+    'mood_angry',
+    'mood_inspired',
   ];
 
   static const Map<String, List<String>> symptomsByCategory = {
-    'Тело': [
-      'Головная боль',
-      'Боль в спине',
-      'Спазмы',
-      'Чувствительность груди',
-      'Вздутие',
-      'Отеки',
-      'Усталость',
-      'Боль в суставах',
-      'Боль в мышцах',
-      'Озноб',
-      'Приливы жара',
-      'Тошнота',
-      'Головокружение',
-      'Акне',
-      'Жирная кожа',
-      'Сухая кожа',
+    'cat_body': [
+      'symp_headache',
+      'symp_back_pain',
+      'symp_cramps',
+      'symp_breast_tenderness',
+      'symp_bloating',
+      'symp_edema',
+      'symp_fatigue',
+      'symp_joint_pain',
+      'symp_muscle_pain',
+      'symp_chills',
+      'symp_hot_flashes',
+      'symp_nausea',
+      'symp_dizziness',
+      'symp_acne',
+      'symp_oily_skin',
+      'symp_dry_skin',
     ],
-    'Желудочно-кишечный тракт': [
-      'Повышенный аппетит',
-      'Потеря аппетита',
-      'Тяга к сладкому',
-      'Тяга к соленому',
-      'Тяга к углеводам',
-      'Изжога',
-      'Газы',
-      'Запор',
-      'Диарея',
+    'cat_gi': [
+      'symp_increased_appetite',
+      'symp_loss_of_appetite',
+      'symp_sweet_cravings',
+      'symp_salty_cravings',
+      'symp_carb_cravings',
+      'symp_heartburn',
+      'symp_gas',
+      'symp_constipation',
+      'symp_diarrhea',
     ],
-    'Психика и ментальное состояние': [
-      'Бессонница',
-      'Сонливость',
-      'Яркие сны',
-      'Трудно просыпаться',
-      'Рассеянность',
-      'Затуманенность сознания',
-      'Стресс',
-      'Плаксивость',
-      'Паническая атака',
-      'Перепады настроения',
-      'Обострение ОКР',
-      'Повышенное либидо',
-      'Пониженное либидо',
+    'cat_mental': [
+      'symp_insomnia',
+      'symp_drowsiness',
+      'symp_vivid_dreams',
+      'symp_hard_prosek',
+      'symp_distraction',
+      'symp_brain_fog',
+      'symp_stress',
+      'symp_tearfulness',
+      'symp_panic_attack',
+      'symp_mood_swings',
+      'symp_ocd',
+      'symp_high_libido',
+      'symp_low_libido',
     ],
-    'Выделения (кроме менструальных)': [
-      'Прозрачные',
-      'Белые',
-      'Липкие',
-      'Сухость',
-      'Крем',
-      'Яичный белок',
-      'Желтоватые',
-      'Густые',
+    'cat_discharge': [
+      'symp_clear',
+      'symp_white',
+      'symp_sticky',
+      'symp_dryness',
+      'symp_cream',
+      'symp_egg_white',
+      'symp_yellowish',
+      'symp_thick',
     ],
-    'Другое': [
-      'Простуда',
-      'Температура',
-      'Аллергия',
-      'Прием таблеток',
-      'Визит к врачу',
-      'Тренировка',
+    'cat_other': [
+      'symp_cold',
+      'symp_fever',
+      'symp_allergy',
+      'symp_pills',
+      'symp_doctor',
+      'symp_workout',
     ],
   };
 }

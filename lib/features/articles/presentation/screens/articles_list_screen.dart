@@ -2,15 +2,12 @@ import 'package:extensions_plus/extensions_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:periodility/core/common/widgets/section_container.dart';
-import 'package:periodility/core/common/widgets/sliver_fill_overscroll.dart';
-import 'package:periodility/core/common/widgets/tiles_column_view.dart';
-import 'package:periodility/core/common/widgets/tracker_app_bar.dart';
-import 'package:periodility/core/utils/locale_extension.dart';
-import 'package:periodility/features/articles/domain/entities/article_entity.dart';
-import 'package:periodility/features/articles/presentation/cubit/article_categories_cubit.dart';
-import 'package:periodility/features/articles/presentation/cubit/articles_cubit.dart';
-import 'package:periodility/features/articles/presentation/widgets/article_tile.dart';
+import 'package:periodility/core/common/widgets/widgets.dart';
+import 'package:periodility/core/dependencies/injection.dart';
+import 'package:periodility/core/services/analytics_service.dart';
+import 'package:periodility/core/utils/utils.dart';
+import 'package:periodility/features/articles/domain/domain.dart';
+import 'package:periodility/features/articles/presentation/presentation.dart';
 
 class ArticlesListScreen extends StatefulWidget {
   const ArticlesListScreen({super.key});
@@ -21,14 +18,20 @@ class ArticlesListScreen extends StatefulWidget {
 
 class _ArticlesListScreenState extends State<ArticlesListScreen> {
   @override
+  void initState() {
+    super.initState();
+    sl<AnalyticsService>().logScreenView('ArticlesList');
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
 
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          const TrackerAppBar(
-            title: Text('Информация'),
+          TrackerAppBar(
+            title: Text(context.l10n.articles),
           ),
         ],
         body: RefreshIndicator(
@@ -113,6 +116,7 @@ class _ArticlesListScreenState extends State<ArticlesListScreen> {
                   );
                 },
               ),
+              const SliverToBoxAdapter(child: AppBannerAd()),
               SliverFillOverscroll(
                 child: Container(
                   height: 16 + context.paddingBottom,

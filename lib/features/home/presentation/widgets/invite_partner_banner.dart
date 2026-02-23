@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:periodility/core/common/widgets/section_container.dart';
 import 'package:periodility/core/utils/button_utils.dart';
 
 class InvitePartnerBanner extends StatelessWidget {
@@ -12,48 +13,51 @@ class InvitePartnerBanner extends StatelessWidget {
     final colorScheme = ColorScheme.of(context);
     final textTheme = TextTheme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: 12,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 8,
-            children: [
-              const CircleAvatar(
-                radius: 26,
-                child: Icon(Symbols.person_rounded),
-              ),
-              Icon(
-                Symbols.link_2_rounded,
-                color: colorScheme.primary,
-              ),
-              const CircleAvatar(
-                radius: 26,
-                child: Icon(Symbols.person_rounded),
-              ),
-            ],
-          ),
-          Text(
-            'Укрепляйте доверие и заботу - помогите партнеру'
-            ' понять, что Вы чувствуете',
-            textAlign: TextAlign.center,
-            style: textTheme.bodyLarge?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+    return SectionContainer(
+      title: 'Добавьте партнера',
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 12,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 8,
+              children: [
+                const CircleAvatar(
+                  radius: 26,
+                  child: Icon(Symbols.person_rounded),
+                ),
+                Icon(
+                  Symbols.link_2_rounded,
+                  color: colorScheme.primary,
+                ),
+                const CircleAvatar(
+                  radius: 26,
+                  child: Icon(Symbols.person_rounded),
+                ),
+              ],
             ),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom().sm(context),
-            onPressed: onPressed,
-            child: const Text('Пригласить'),
-          ),
-        ],
+            Text(
+              'Укрепляйте доверие и заботу - помогите партнеру'
+              ' понять, что Вы чувствуете',
+              textAlign: TextAlign.center,
+              style: textTheme.bodyLarge?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom().sm(context),
+              onPressed: onPressed,
+              child: const Text('Пригласить'),
+            ),
+          ],
+        ),
       ),
     );
   }
